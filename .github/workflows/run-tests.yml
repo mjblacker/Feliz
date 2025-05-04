@@ -7,7 +7,7 @@ on:
     branches: [ main, feliz_v3.0 ]
 
 jobs:
-  run-script:
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +19,11 @@ jobs:
         with:
           dotnet-version: '8.0.x'  # or whatever version you need
 
-      - name: Setup Node.js and NPM
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'  # or another version if needed
-          cache: 'npm'
+    #   - name: Setup Node.js and NPM
+    #     uses: actions/setup-node@v4
+    #     with:
+    #       node-version: '20'  # or another version if needed
+    #       cache: 'npm'
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
