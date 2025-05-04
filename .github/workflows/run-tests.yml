@@ -25,6 +25,9 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
       - name: Install dependencies
         run: npm install
 
