@@ -1,5 +1,4 @@
-module Tests
-
+module Tests.ComponentsTests
 
 open Fable.Core
 open Fable.Core.JsInterop

@@ -11,6 +11,8 @@
     <Compile Include="PropHelpers.test.fs" />
     <Compile Include="Components.fs" />
     <Compile Include="Components.test.fs" />
+    <Compile Include="EnsureJSX.fs" />
+    <Compile Include="EnsureJSX.test.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Browser.Dom" />

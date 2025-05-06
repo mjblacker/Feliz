@@ -55,7 +55,7 @@ open ReactComponentHelpers
 /// <summary>Transforms a function into a React function component. Make sure the function is defined at the module level</summary>
 type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string, ?memo: bool) =
     inherit MemberDeclarationPluginAttribute()
-    override _.FableMinimumVersion = "4.0"
+    override _.FableMinimumVersion = "5.0"
     new() = ReactComponentAttribute(exportDefault=false)
     new(exportDefault: bool) = ReactComponentAttribute(exportDefault=exportDefault,?import=None, ?from=None)
     new(import: string, from: string) = ReactComponentAttribute(exportDefault=false,import=import, from=from)
