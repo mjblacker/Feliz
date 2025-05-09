@@ -14,7 +14,7 @@ type IPopoverProperty = interface end
 type popover =
     /// The popover content.
     static member inline body (content: ReactElement list) =
-        unbox<IPopoverProperty> ("body", React.fragment content)
+        unbox<IPopoverProperty> ("body", React.Fragment content)
     /// Determines Whether or not the popover is rendered.
     static member inline isOpen(value: bool) =
         unbox<IPopoverProperty> ("isOpen", value)
@@ -41,13 +41,16 @@ type popover =
         unbox<IPopoverProperty> ("tipSize", 0.01)
     /// The content that this popover will orient itself around.
     static member inline children (children: ReactElement list) =
-        unbox<IPopoverProperty> ("children", React.keyedFragment("popoverChildren", children))
+        unbox<IPopoverProperty> ("children", React.KeyedFragment("popoverChildren", children))
 
 [<Erase>]
 type Popover =
     static member inline popover (properties: IPopoverProperty list) =
         let defaults = createObj [ "body" ==> Html.none ]
-        Interop.reactApi.createElement(importDefault "react-popover", Interop.objectAssign defaults (createObj !!properties))
+        ReactLegacy.createElement(
+            (importDefault "react-popover" |> unbox<ReactElement>), 
+            Interop.objectAssign defaults (createObj !!properties)
+        )
 
 module popover =
     /// Sets a preference of where to position the Popover. Only useful to specify placement in case of multiple available fits. Defaults to `auto`.

@@ -47,6 +47,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Fable.Core" />
     <PackageReference Include="Fable.React.Types" />
     <PackageReference Include="Fable.ReactDom.Types" />
   </ItemGroup>

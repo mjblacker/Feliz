@@ -51,7 +51,7 @@ module UseMediaQueryExtension =
         /// to re-render when the specified media query changes.
         [<Hook>]
         static member useMediaQuery (mediaQuery: string) =
-            let mq, setMq = React.useState(fun () -> window.matchMedia(mediaQuery).matches)
+            let (mq: bool), setMq = React.useState(fun () -> window.matchMedia(mediaQuery).matches)
 
             React.useEffect(fun () ->
                 let mediaQueryList = window.matchMedia(mediaQuery)

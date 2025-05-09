@@ -8,79 +8,79 @@ type Svg =
     /// SVG Image element, not to be confused with HTML img alias.
     static member inline image xs = Interop.createSvgElement "image" xs
     /// SVG Image element, not to be confused with HTML img alias.
-    static member inline image (children: #seq<ReactElement>) = Interop.reactElementWithChildren "image" children
+    static member inline image (children: #seq<ReactElement>) = Interop.createElementWithChildren "image" children
     /// The svg element is a container that defines a new coordinate system and viewport. It is used as the outermost element of SVG documents, but it can also be used to embed an SVG fragment inside an SVG or HTML document.
     static member inline svg xs = Interop.createSvgElement "svg" xs
     /// The svg element is a container that defines a new coordinate system and viewport. It is used as the outermost element of SVG documents, but it can also be used to embed an SVG fragment inside an SVG or HTML document.
-    static member inline svg (children: #seq<ReactElement>) = Interop.reactElementWithChildren "svg" children
+    static member inline svg (children: #seq<ReactElement>) = Interop.createElementWithChildren "svg" children
     static member inline circle xs = Interop.createSvgElement "circle" xs
-    static member inline circle (children: #seq<ReactElement>) = Interop.reactElementWithChildren "circle" children
+    static member inline circle (children: #seq<ReactElement>) = Interop.createElementWithChildren "circle" children
     static member inline clipPath xs = Interop.createSvgElement "clipPath" xs
-    static member inline clipPath (children: #seq<ReactElement>) = Interop.reactElementWithChildren "clipPath" children
+    static member inline clipPath (children: #seq<ReactElement>) = Interop.createElementWithChildren "clipPath" children
     /// The <defs> element is used to store graphical objects that will be used at a later time. Objects created inside a <defs> element are not rendered directly. To display them you have to reference them (with a <use> element for example). https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
     static member inline defs xs = Interop.createSvgElement "defs" xs
     /// The <defs> element is used to store graphical objects that will be used at a later time. Objects created inside a <defs> element are not rendered directly. To display them you have to reference them (with a <use> element for example). https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs
-    static member inline defs (children: #seq<ReactElement>) = Interop.reactElementWithChildren "defs" children
+    static member inline defs (children: #seq<ReactElement>) = Interop.createElementWithChildren "defs" children
     /// The <desc> element provides an accessible, long-text description of any SVG container element or graphics element.
     static member inline desc xs = Interop.createSvgElement "desc" xs
     /// The <desc> element provides an accessible, long-text description of any SVG container element or graphics element.
-    static member inline desc (value: string) = Interop.reactElementWithChild "desc" value
+    static member inline desc (value: string) = Interop.createElementWithChild "desc" value
     static member inline ellipse xs = Interop.createSvgElement "ellipse" xs
-    static member inline ellipse (children: #seq<ReactElement>) = Interop.reactElementWithChildren "ellipse" children
+    static member inline ellipse (children: #seq<ReactElement>) = Interop.createElementWithChildren "ellipse" children
     static member inline feBlend xs = Interop.createSvgElement "feBlend" xs
-    static member inline feBlend (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feBlend" children
+    static member inline feBlend (children: #seq<ReactElement>) = Interop.createElementWithChildren "feBlend" children
     static member inline feColorMatrix xs = Interop.createSvgElement "feColorMatrix" xs
-    static member inline feColorMatrix (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feColorMatrix" children
+    static member inline feColorMatrix (children: #seq<ReactElement>) = Interop.createElementWithChildren "feColorMatrix" children
     static member inline feComponentTransfer xs = Interop.createSvgElement "feComponentTransfer" xs
-    static member inline feComponentTransfer (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feComponentTransfer" children
+    static member inline feComponentTransfer (children: #seq<ReactElement>) = Interop.createElementWithChildren "feComponentTransfer" children
     static member inline feComposite xs = Interop.createSvgElement "feComposite" xs
-    static member inline feComposite (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feComposite" children
+    static member inline feComposite (children: #seq<ReactElement>) = Interop.createElementWithChildren "feComposite" children
     static member inline feConvolveMatrix xs = Interop.createSvgElement "feConvolveMatrix" xs
-    static member inline feConvolveMatrix (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feConvolveMatrix" children
+    static member inline feConvolveMatrix (children: #seq<ReactElement>) = Interop.createElementWithChildren "feConvolveMatrix" children
     static member inline feDiffuseLighting xs = Interop.createSvgElement "feDiffuseLighting" xs
-    static member inline feDiffuseLighting (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feDiffuseLighting" children
+    static member inline feDiffuseLighting (children: #seq<ReactElement>) = Interop.createElementWithChildren "feDiffuseLighting" children
     static member inline feDisplacementMap xs = Interop.createSvgElement "feDisplacementMap" xs
-    static member inline feDisplacementMap (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feDisplacementMap" children
+    static member inline feDisplacementMap (children: #seq<ReactElement>) = Interop.createElementWithChildren "feDisplacementMap" children
     static member inline feDistantLight xs = Interop.createSvgElement "feDistantLight" xs
-    static member inline feDistantLight (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feDistantLight" children
+    static member inline feDistantLight (children: #seq<ReactElement>) = Interop.createElementWithChildren "feDistantLight" children
     static member inline feDropShadow xs = Interop.createSvgElement "feDropShadow" xs
-    static member inline feDropShadow (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feDropShadow" children
+    static member inline feDropShadow (children: #seq<ReactElement>) = Interop.createElementWithChildren "feDropShadow" children
     static member inline feFlood xs = Interop.createSvgElement "feFlood" xs
-    static member inline feFlood (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feFlood" children
+    static member inline feFlood (children: #seq<ReactElement>) = Interop.createElementWithChildren "feFlood" children
     static member inline feFuncA xs = Interop.createSvgElement "feFuncA" xs
-    static member inline feFuncA (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feFuncA" children
+    static member inline feFuncA (children: #seq<ReactElement>) = Interop.createElementWithChildren "feFuncA" children
     static member inline feFuncB xs = Interop.createSvgElement "feFuncB" xs
-    static member inline feFuncB (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feFuncB" children
+    static member inline feFuncB (children: #seq<ReactElement>) = Interop.createElementWithChildren "feFuncB" children
     static member inline feFuncG xs = Interop.createSvgElement "feFuncG" xs
-    static member inline feFuncG (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feFuncG" children
+    static member inline feFuncG (children: #seq<ReactElement>) = Interop.createElementWithChildren "feFuncG" children
     static member inline feFuncR xs = Interop.createSvgElement "feFuncR" xs
-    static member inline feFuncR (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feFuncR" children
+    static member inline feFuncR (children: #seq<ReactElement>) = Interop.createElementWithChildren "feFuncR" children
     static member inline feGaussianBlur xs = Interop.createSvgElement "feGaussianBlur" xs
-    static member inline feGaussianBlur (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feGaussianBlur" children
+    static member inline feGaussianBlur (children: #seq<ReactElement>) = Interop.createElementWithChildren "feGaussianBlur" children
     static member inline feImage xs = Interop.createSvgElement "feImage" xs
-    static member inline feImage (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feImage" children
+    static member inline feImage (children: #seq<ReactElement>) = Interop.createElementWithChildren "feImage" children
     static member inline feMerge xs = Interop.createSvgElement "feMerge" xs
-    static member inline feMerge (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feMerge" children
+    static member inline feMerge (children: #seq<ReactElement>) = Interop.createElementWithChildren "feMerge" children
     static member inline feMergeNode xs = Interop.createSvgElement "feMergeNode" xs
-    static member inline feMergeNode (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feMergeNode" children
+    static member inline feMergeNode (children: #seq<ReactElement>) = Interop.createElementWithChildren "feMergeNode" children
     static member inline feMorphology xs = Interop.createSvgElement "feMorphology" xs
-    static member inline feMorphology (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feMorphology" children
+    static member inline feMorphology (children: #seq<ReactElement>) = Interop.createElementWithChildren "feMorphology" children
     static member inline feOffset xs = Interop.createSvgElement "feOffset" xs
-    static member inline feOffset (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feOffset" children
+    static member inline feOffset (children: #seq<ReactElement>) = Interop.createElementWithChildren "feOffset" children
     static member inline fePointLight xs = Interop.createSvgElement "fePointLight" xs
-    static member inline fePointLight (children: #seq<ReactElement>) = Interop.reactElementWithChildren "fePointLight" children
+    static member inline fePointLight (children: #seq<ReactElement>) = Interop.createElementWithChildren "fePointLight" children
     static member inline feSpecularLighting xs = Interop.createSvgElement "feSpecularLighting" xs
-    static member inline feSpecularLighting (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feSpecularLighting" children
+    static member inline feSpecularLighting (children: #seq<ReactElement>) = Interop.createElementWithChildren "feSpecularLighting" children
     static member inline feSpotLight xs = Interop.createSvgElement "feSpotLight" xs
-    static member inline feSpotLight (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feSpotLight" children
+    static member inline feSpotLight (children: #seq<ReactElement>) = Interop.createElementWithChildren "feSpotLight" children
     static member inline feTile xs = Interop.createSvgElement "feTile" xs
-    static member inline feTile (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feTile" children
+    static member inline feTile (children: #seq<ReactElement>) = Interop.createElementWithChildren "feTile" children
     static member inline feTurbulence xs = Interop.createSvgElement "feTurbulence" xs
-    static member inline feTurbulence (children: #seq<ReactElement>) = Interop.reactElementWithChildren "feTurbulence" children
+    static member inline feTurbulence (children: #seq<ReactElement>) = Interop.createElementWithChildren "feTurbulence" children
     static member inline filter xs = Interop.createSvgElement "filter" xs
-    static member inline filter (children: #seq<ReactElement>) = Interop.reactElementWithChildren "filter" children
+    static member inline filter (children: #seq<ReactElement>) = Interop.createElementWithChildren "filter" children
     static member inline foreignObject xs = Interop.createSvgElement "foreignObject" xs
-    static member inline foreignObject (children: #seq<ReactElement>) = Interop.reactElementWithChildren "foreignObject" children
+    static member inline foreignObject (children: #seq<ReactElement>) = Interop.createElementWithChildren "foreignObject" children
     /// The <g> SVG element is a container used to group other SVG elements.
     ///
     /// Transformations applied to the <g> element are performed on its child elements, and its attributes are inherited by its children. It can also group multiple elements to be referenced later with the <use> element.
@@ -88,55 +88,55 @@ type Svg =
     /// The <g> SVG element is a container used to group other SVG elements.
     ///
     /// Transformations applied to the <g> element are performed on its child elements, and its attributes are inherited by its children. It can also group multiple elements to be referenced later with the <use> element.
-    static member inline g (children: #seq<ReactElement>) = Interop.reactElementWithChildren "g" children
+    static member inline g (children: #seq<ReactElement>) = Interop.createElementWithChildren "g" children
     static member inline line xs = Interop.createSvgElement "line" xs
-    static member inline line (children: #seq<ReactElement>) = Interop.reactElementWithChildren "line" children
+    static member inline line (children: #seq<ReactElement>) = Interop.createElementWithChildren "line" children
     static member inline linearGradient xs = Interop.createSvgElement "linearGradient" xs
-    static member inline linearGradient (children: #seq<ReactElement>) = Interop.reactElementWithChildren "linearGradient" children
+    static member inline linearGradient (children: #seq<ReactElement>) = Interop.createElementWithChildren "linearGradient" children
     /// The <marker> element defines the graphic that is to be used for drawing arrowheads or polymarkers on a given <path>, <line>, <polyline> or <polygon> element.
     static member inline marker xs = Interop.createSvgElement "marker" xs
     /// The <marker> element defines the graphic that is to be used for drawing arrowheads or polymarkers on a given <path>, <line>, <polyline> or <polygon> element.
-    static member inline marker (children: #seq<ReactElement>) = Interop.reactElementWithChildren "marker" children
+    static member inline marker (children: #seq<ReactElement>) = Interop.createElementWithChildren "marker" children
     /// The <mask> element defines an alpha mask for compositing the current object into the background. A mask is used/referenced using the mask attribute.
     static member inline mask xs = Interop.createSvgElement "mask" xs
     /// The <mask> element defines an alpha mask for compositing the current object into the background. A mask is used/referenced using the mask attribute.
-    static member inline mask (children: #seq<ReactElement>) = Interop.reactElementWithChildren "mask" children
+    static member inline mask (children: #seq<ReactElement>) = Interop.createElementWithChildren "mask" children
     static member inline mpath xs = Interop.createSvgElement "mpath" xs
-    static member inline mpath (children: #seq<ReactElement>) = Interop.reactElementWithChildren "mpath" children
+    static member inline mpath (children: #seq<ReactElement>) = Interop.createElementWithChildren "mpath" children
     static member inline path xs = Interop.createSvgElement "path" xs
-    static member inline path (children: #seq<ReactElement>) = Interop.reactElementWithChildren "path" children
+    static member inline path (children: #seq<ReactElement>) = Interop.createElementWithChildren "path" children
     static member inline pattern xs = Interop.createSvgElement "pattern" xs
-    static member inline pattern (children: #seq<ReactElement>) = Interop.reactElementWithChildren "pattern" children
+    static member inline pattern (children: #seq<ReactElement>) = Interop.createElementWithChildren "pattern" children
     static member inline polygon xs = Interop.createSvgElement "polygon" xs
-    static member inline polygon (children: #seq<ReactElement>) = Interop.reactElementWithChildren "polygon" children
+    static member inline polygon (children: #seq<ReactElement>) = Interop.createElementWithChildren "polygon" children
     static member inline polyline xs = Interop.createSvgElement "polyline" xs
-    static member inline polyline (children: #seq<ReactElement>) = Interop.reactElementWithChildren "polyline" children
+    static member inline polyline (children: #seq<ReactElement>) = Interop.createElementWithChildren "polyline" children
     static member inline set xs = Interop.createSvgElement "set" xs
-    static member inline set (children: #seq<ReactElement>) = Interop.reactElementWithChildren "set" children
+    static member inline set (children: #seq<ReactElement>) = Interop.createElementWithChildren "set" children
     static member inline stop xs = Interop.createSvgElement "stop" xs
-    static member inline stop (children: #seq<ReactElement>) = Interop.reactElementWithChildren "stop" children
+    static member inline stop (children: #seq<ReactElement>) = Interop.createElementWithChildren "stop" children
     static member inline style xs = Interop.createSvgElement "style" xs
-    static member inline style (value: string) = Interop.reactElementWithChild "style" value
+    static member inline style (value: string) = Interop.createElementWithChild "style" value
     static member inline switch xs = Interop.createSvgElement "switch" xs
-    static member inline switch (children: #seq<ReactElement>) = Interop.reactElementWithChildren "switch" children
+    static member inline switch (children: #seq<ReactElement>) = Interop.createElementWithChildren "switch" children
     static member inline symbol xs = Interop.createSvgElement "symbol" xs
-    static member inline symbol (children: #seq<ReactElement>) = Interop.reactElementWithChildren "symbol" children
+    static member inline symbol (children: #seq<ReactElement>) = Interop.createElementWithChildren "symbol" children
     static member inline text xs = Interop.createSvgElement "text" xs
-    static member inline text (content: string) = Interop.reactElementWithChild "text" content
+    static member inline text (content: string) = Interop.createElementWithChild "text" content
     static member inline title xs = Interop.createSvgElement "title" xs
-    static member inline title (content: string) = Interop.reactElementWithChild "title" content
+    static member inline title (content: string) = Interop.createElementWithChild "title" content
     static member inline textPath xs = Interop.createSvgElement "textPath" xs
-    static member inline textPath (children: #seq<ReactElement>) = Interop.reactElementWithChildren "textPath" children
+    static member inline textPath (children: #seq<ReactElement>) = Interop.createElementWithChildren "textPath" children
     static member inline tspan xs = Interop.createSvgElement "tspan" xs
-    static member inline tspan (children: #seq<ReactElement>) = Interop.reactElementWithChildren "tspan" children
+    static member inline tspan (children: #seq<ReactElement>) = Interop.createElementWithChildren "tspan" children
     static member inline use' xs = Interop.createSvgElement "use" xs
-    static member inline use' (children: #seq<ReactElement>) = Interop.reactElementWithChildren "use" children
+    static member inline use' (children: #seq<ReactElement>) = Interop.createElementWithChildren "use" children
     static member inline radialGradient xs = Interop.createSvgElement "radialGradient" xs
-    static member inline radialGradient (children: #seq<ReactElement>) = Interop.reactElementWithChildren "radialGradient" children
+    static member inline radialGradient (children: #seq<ReactElement>) = Interop.createElementWithChildren "radialGradient" children
     static member inline rect xs = Interop.createSvgElement "rect" xs
-    static member inline rect (children: #seq<ReactElement>) = Interop.reactElementWithChildren "rect" children
+    static member inline rect (children: #seq<ReactElement>) = Interop.createElementWithChildren "rect" children
     static member inline view xs = Interop.createSvgElement "view" xs
-    static member inline view (children: #seq<ReactElement>) = Interop.reactElementWithChildren "view" children
+    static member inline view (children: #seq<ReactElement>) = Interop.createElementWithChildren "view" children
 
 type svg =
         /// Specifies a CSS class for this element.
@@ -197,7 +197,7 @@ type svg =
     /// Represents the base frequency parameter for the noise function of the
     /// <feTurbulence> filter primitive.
     static member inline baseFrequency (horizontal: int, vertical: int) = Interop.svgAttribute "baseFrequency" (unbox<string> horizontal  + "," + unbox<string> vertical)
-    static member inline children (elements: ReactElement list) = prop.children elements |> unbox<ISvgAttribute>
+    static member inline children (elements: ReactElement list) = Interop.svgAttribute "children" elements
     /// The SVG cx attribute define the x-axis coordinate of a center point.
     ///
     /// Three elements are using this attribute: <circle>, <ellipse>, and <radialGradient>
@@ -395,12 +395,7 @@ type svg =
     static member inline height (value: int) = Interop.svgAttribute "height" value
     /// Defines the position and dimension, in user space, of an SVG viewport.
     static member inline viewBox (minX: int, minY: int, width: int, height: int) =
-        Interop.svgAttribute "viewBox" (
-            (unbox<string> minX) + " " +
-            (unbox<string> minY) + " " +
-            (unbox<string> width) + " " +
-            (unbox<string> height)
-        )
+        Interop.svgAttribute "viewBox" ($"{minX} {minY} {width} {height}")
 
     /// Set visible area of the SVG image.
     static member inline viewPort (x: int, y: int, height: int, width: int) =
@@ -899,13 +894,12 @@ type svg =
         Interop.svgAttribute "transform" removedUnit
     /// Defines a list of transform definitions that are applied to an element and the element's children.
     static member inline transform (transforms: seq<ITransformProperty>) =
-        let removedUnits =
-            transforms
-            |> unbox<seq<string>>
-            |> Seq.map (fun transform -> transform.Replace("px", "").Replace("deg", ""))
-            |> String.concat " "
+        transforms
+        |> unbox<seq<string>>
+        |> Seq.map (fun transform -> transform.Replace("px", "").Replace("deg", ""))
+        |> String.concat " "
+        |> Interop.svgAttribute "transform" 
 
-        Interop.svgAttribute "transform" removedUnits
     /// Specifies the XML Namespace of the document.
     ///
     /// Default value is "http://www.w3.org/2000/svg".

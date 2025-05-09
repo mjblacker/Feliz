@@ -34,7 +34,8 @@ module RoughViz =
         | HorizontalBar
         | Pie
 
-    let private buildChart = React.functionComponent("RoughViz", fun (props: {| chartType: ChartType; config: obj list |}) ->
+    [<ReactComponent>]
+    let private buildChart (props: {| chartType: ChartType; config: obj list |}) =
         let elementId = React.useRef("RoughViz" + (Guid.NewGuid().ToString().Substring(10)))
         let rerendered, setRerendered = React.useState(false)
         let elementRef = React.useElementRef()
@@ -108,7 +109,7 @@ module RoughViz =
             prop.id elementId.current
             prop.ref elementRef
             prop.style [ style.width (length.percent 100) ]
-        ])
+        ]
 
     let barChart (properties: IBarChartProperty list) = buildChart {| chartType = Bar; config = unbox properties |}
 

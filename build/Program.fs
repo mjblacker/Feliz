@@ -18,7 +18,10 @@ module Tests =
             fsprojFiles
             |> Array.exists (fun path ->
                 let projName = Path.GetFileNameWithoutExtension(path)
-                projName.Equals(substr, StringComparison.OrdinalIgnoreCase)
+                projName
+                    .Replace(".tests", "", StringComparison.OrdinalIgnoreCase) // do this before ".test", or it will keep the "s".abs
+                    .Replace(".test", "", StringComparison.OrdinalIgnoreCase)
+                    .Equals(substr, StringComparison.OrdinalIgnoreCase)
             )
         | None -> fsprojFiles.Length > 0
 
@@ -51,6 +54,11 @@ module Tests =
         )
 
     let runAll (filteropt: string option) =
+        match filteropt with
+        | Some filter ->
+            printfn "Running tests in folder matching %s" filter
+        | None ->
+            printfn "Running tests in all folders"
         let testFolders = findValidTestFolders TestRoot filteropt
         for folder in testFolders do
             let folderName = Path.GetFileName(folder)

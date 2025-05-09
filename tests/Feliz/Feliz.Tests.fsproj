@@ -9,10 +9,12 @@
   <ItemGroup>
     <Compile Include="CodeSplitting.fs" />
     <Compile Include="PropHelpers.test.fs" />
-    <Compile Include="Components.fs" />
-    <Compile Include="Components.test.fs" />
+    <Compile Include="Legacy.fs" />
+    <Compile Include="Legacy.test.fs" />
     <Compile Include="EnsureJSX.fs" />
     <Compile Include="EnsureJSX.test.fs" />
+    <Compile Include="ReactBindings.fs" />
+    <Compile Include="ReactBindings.test.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Fable.Browser.Dom" />

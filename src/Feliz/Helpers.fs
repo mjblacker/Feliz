@@ -3,6 +3,7 @@
 open System
 open System.ComponentModel
 open Fable.Core
+open Fable.Core.JsInterop
 
 [<EditorBrowsable(EditorBrowsableState.Never); Erase>]
 [<RequireQualifiedAccess>]

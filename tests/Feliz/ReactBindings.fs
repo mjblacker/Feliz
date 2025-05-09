@@ -1,0 +1,255 @@
+module Tests.ReactBindings
+
+open Fable.Core
+open Feliz
+
+module TestContext =
+    let MyContext = React.createContext<{|state: string; setState: string -> unit|}>()
+
+[<Erase; Mangle(false)>]
+type Components =
+
+    [<ReactComponent>]
+    static member ComponentUseState(?init: int) =
+        let count, setCount = React.useState 0
+
+        Html.div [
+            Html.p [
+                prop.testId "count"
+                prop.text count
+            ]
+            Html.button [
+                prop.onClick (fun _ -> setCount(count + 1))
+                prop.testId "increment"
+                prop.text "Increment"
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member FragmentComponent () =
+        React.Fragment [
+            Html.p [ prop.testId "first"; prop.text "Hello" ]
+            Html.p [ prop.testId "second"; prop.text "World" ]
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseCallback(onCreate: (unit -> unit) -> unit) =
+        let count, setCount = React.useState 0
+
+        let handleClick = React.useCallback(
+            (fun () ->
+                Browser.Dom.console.log("Clicked", count)
+            ),
+            [| box count |]
+        )
+
+        onCreate handleClick
+
+        Html.button [
+            prop.onClick (fun _ -> setCount(count + 1))
+            prop.testId "increment"
+            prop.text $"Count: {count}"
+        ]
+
+    [<ReactComponent>]
+    static member ComponentContextConsumer() =
+        let value = React.useContext(TestContext.MyContext)
+
+        Html.div [
+            Html.div [
+                prop.testId "context-value"
+                prop.text value.state
+            ]
+            Html.button [
+                prop.onClick (fun _ -> value.setState "Updated value")
+                prop.testId "update-context"
+                prop.text "Update Context"
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member ComponentContextProvider() =
+        let value, setValue = React.useState "Provided value"
+
+        React.contextProvider(
+            TestContext.MyContext, 
+            {| state = value; setState = setValue|}, 
+            [
+                Components.ComponentContextConsumer()
+            ]
+        )
+
+    [<ReactComponent>]
+    static member ComponentUseInputRef () =
+        let inputRef = React.useInputRef()
+
+        let handleClick () =
+            match inputRef.current with
+            | Some el -> el.value <- "Updated via ref"
+            | None -> ()
+
+        Html.div [
+            Html.input [
+                prop.testId "my-input"
+                prop.ref inputRef
+            ]
+            Html.button [
+                prop.testId "update-button"
+                prop.text "Update input"
+                prop.onClick (fun _ -> handleClick())
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseRefForValue () =
+        // Ref is used to store a value
+        let countRef = React.useRef(0)
+        let state, setState = React.useState(0)
+
+        let handleIncrement () =
+            countRef.current <- countRef.current + 1
+
+        Html.div [
+            Html.div [
+                prop.testId "count-display"
+                prop.text state
+            ]
+            Html.button [
+                prop.testId "increment-ref-button"
+                prop.text "Increment ref"
+                prop.onClick (fun _ -> handleIncrement())
+            ]
+            Html.button [
+                prop.testId "update-state-button"
+                prop.text "Increment state"
+                prop.onClick (fun _ -> setState countRef.current)
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseMemo () =
+        // Simple memoized value based on count
+        let count, setCount = React.useState 0
+        let memoizedValue = React.useMemo((fun () -> $"Memoized count: {count}"))
+
+        Html.div [
+            Html.div [
+                prop.testId "memoized-value"
+                prop.text memoizedValue
+            ]
+            Html.div [
+                prop.testId "count"
+                prop.text count
+            ]
+            Html.button [
+                prop.testId "increment-button"
+                prop.text "Increment"
+                prop.onClick (fun _ -> setCount(count + 1))
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseMemoWithDependency () =
+        // Simple memoized value based on count
+        let count, setCount = React.useState 0
+        let memoizedValue = React.useMemo((fun () -> $"Memoized count: {count}"), [|box count|])
+
+        Html.div [
+            Html.div [
+                prop.testId "memoized-value"
+                prop.text memoizedValue
+            ]
+            Html.div [
+                prop.testId "count"
+                prop.text count
+            ]
+            Html.button [
+                prop.testId "increment-button"
+                prop.text "Increment"
+                prop.onClick (fun _ -> setCount(count + 1))
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseEffectWithUnmount(effect: unit -> unit, disposeEffect: unit -> unit) =
+        React.useEffect(
+            (fun () ->
+                effect()
+                fun () -> disposeEffect()
+            )
+        )
+
+        Html.div [
+
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseEffectIDisposable(effect: unit -> unit, disposeEffect: unit -> unit) =
+        React.useEffectOnce(
+            (fun () ->
+                effect()
+                React.createDisposable(disposeEffect)
+            )
+        )
+
+        Html.div [
+
+        ]
+
+    
+    [<ReactComponent>]
+    static member ComponentUseLayoutEffectWithUnmount(effect: unit -> unit, disposeEffect: unit -> unit) =
+        React.useEffect(
+            (fun () ->
+                effect()
+                fun () -> disposeEffect()
+            )
+        )
+
+        Html.div [
+
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseLayoutEffectIDisposable(effect: unit -> unit, disposeEffect: unit -> unit) =
+        React.useEffectOnce(
+            (fun () ->
+                effect()
+                React.createDisposable(disposeEffect)
+            )
+        )
+
+        Html.div [
+
+        ]
+
+    [<ReactComponent>]
+    static member ComponentUseCancelationTokenSubcomponent(onToken: System.Threading.CancellationToken -> unit) =
+        let token = React.useCancellationToken()
+
+        React.useEffectOnce(fun () ->
+            onToken token.current
+        )
+
+        Html.div [ ]
+
+    // [<ReactComponent>]
+    // static member ComponentUseCancelationToken() =
+    //     let tokenRef = React.useRef(None)
+    //     let mountSubcomponent, setState = React.useState(true)
+
+    //     Html.div [
+    //         if mountSubcomponent then
+    //             Components.ComponentUseCancelationTokenSubcomponent(fun token ->
+    //                 tokenRef.current <- Some token
+    //             )
+    //         Html.div [
+    //             prop.testId "cancellation-token"
+    //             prop.text (match tokenRef.current with | Some token when token.IsCancellationRequested -> "Cancelled" | _ -> "Not Cancelled")
+    //         ]
+    //         Html.button [
+    //             prop.testId "unmount-button"
+    //             prop.text "Cancel"
+    //             prop.onClick (fun _ -> setState(false))
+    //         ]
+    //     ]

@@ -158,6 +158,7 @@ type markdown =
 [<Erase>]
 type Markdown =
     static member inline markdown (properties: IReactProperty list) =
-        Interop.reactApi.createElement(importDefault "react-markdown", createObj !!properties)
+        JSX.create (importDefault "react-markdown") properties
+        |> unbox<ReactElement>
     static member inline markdown (sourceMarkdown: string) =
-        Interop.reactApi.createElement(importDefault "react-markdown", createObj [ "children" ==> sourceMarkdown ])
+        JSX.create (importDefault "react-markdown") [ "children" ==> sourceMarkdown ]

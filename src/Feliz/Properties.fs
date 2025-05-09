@@ -434,9 +434,9 @@ type prop =
     static member inline charset (value: string) = Interop.mkAttr "charSet" value
 
     /// Children of this React element.
-    static member inline children (value: Fable.React.ReactElement) = Interop.mkAttr "children" value
+    static member inline children (value: ReactElement) = Interop.mkAttr "children" value
     /// Children of this React element.
-    static member inline children (elems: Fable.React.ReactElement seq) = Interop.mkAttr "children" (Interop.reactApi.Children.toArray (Array.ofSeq elems))
+    static member inline children (elems: ReactElement seq) = Interop.mkAttr "children" elems
 
     /// A URL that designates a source document or message for the information quoted. This attribute is intended to
     /// point to information explaining the context or the reference for the quote.

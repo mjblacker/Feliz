@@ -29,7 +29,8 @@ module UseElmish =
         | Increment -> state + 1, Cmd.none
         | IncrementAgain -> state + 1, Cmd.ofMsg Increment
 
-    let render = React.functionComponent(fun (props: {| subtitle: string |}) ->
+    [<ReactComponent>]
+    let render (props: {| subtitle: string |}) =
         let state, dispatch = React.useElmish(init, update, [|box props.subtitle|])
 
         Html.div [
@@ -52,9 +53,10 @@ module UseElmish =
                 prop.testId "increment-again"
             ]
 
-        ])
+        ]
 
-    let wrapper = React.functionComponent(fun () ->
+    [<ReactComponent>]
+    let wrapper () =
         let count, setCount = React.useState 0
         Html.div [
             Html.button [
@@ -63,7 +65,7 @@ module UseElmish =
                 prop.testId "increment-wrapper"
             ]
             render {| subtitle = if count < 2 then "foo" else "bar" |}
-        ])
+        ]
 
 describe "UseElmish" <| fun () ->
     testPromise "useElmish works" <| fun () -> promise {
@@ -120,7 +122,7 @@ describe "UseElmish" <| fun () ->
     }
 
     testPromise "useElmish works with React.strictMode" <| fun () -> promise {
-        let render = RTL.render(React.strictMode [ UseElmish.wrapper() ])
+        let render = RTL.render(React.StrictMode [ UseElmish.wrapper() ])
 
         Expect.toHaveTextContent (render.getByTestId("count")) "0" //"Should be initial state"
 

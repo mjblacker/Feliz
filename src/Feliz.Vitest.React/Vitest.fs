@@ -2,8 +2,15 @@ namespace Feliz.Vitest
 
 open Fable.Core
 
+[<Erase>]
+type IVi =
+    abstract member ``fn``: 't -> 't
+
 [<AutoOpen>]
 module Vitest =
+
+    [<Import("vi", from = "vitest")>]
+    let vi: IVi = jsNative
 
     /// Alias "it"
     [<Import("test", from = "vitest")>]

@@ -20,10 +20,12 @@ type PigeonMaps =
             "zoom" ==> 3
             unbox map.provider.openStreetMap
         ]
-
-        Interop.reactApi.createElement(import "Map" "pigeon-maps", Interop.objectAssign defaults (createObj !!properties))
+        ReactLegacy.createElement(
+            (import "Map" "pigeon-maps" |> unbox<ReactElement>),
+            Interop.objectAssign defaults (createObj !!properties)
+        )
     static member inline marker (properties: IReactProperty list) =
         Interop.createMarker (createObj !!properties)
 
     static member inline zoomControl (properties: IReactProperty list) =
-        Interop.reactApi.createElement (import "ZoomControl" "pigeon-maps", obj())
+        ReactLegacy.createElement (import "ZoomControl" "pigeon-maps" |> unbox<ReactElement>, createObj !!properties)

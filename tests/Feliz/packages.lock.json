@@ -94,6 +94,7 @@
       "feliz": {
         "type": "Project",
         "dependencies": {
+          "Fable.Core": "[4.5.0, )",
           "Fable.React.Types": "[18.4.0, )",
           "Fable.ReactDom.Types": "[18.2.0, )",
           "Feliz.CompilerPlugins": "[2.2.0, )"

@@ -32,22 +32,23 @@ module Delay =
         let inline mkDelaySuspenseAttr (key: string) (value: obj) = unbox<IDelaySuspenseProperty>(key, value)
     
     [<EditorBrowsable(EditorBrowsableState.Never)>]
-    let delayComp = React.functionComponent(fun (input: DelayProps) ->
+    [<ReactComponent>]
+    let DelayComp(input: DelayProps) =
         let ct = React.useCancellationToken()
-        let timeElapsed,setTimeElapsed = React.useState false
-        let setTimeElapsed = React.useCallbackRef(setTimeElapsed)
+        let timeElapsed, setTimeElapsed = React.useState false
+        let setTimeElapsed = React.useCallback(setTimeElapsed)
 
         React.useEffectOnce(fun () ->
             async {
                 do! Async.Sleep (Option.defaultValue 100 input.waitFor)
-
+                printfn "setTimeElapsed called"
                 setTimeElapsed true
             }
             |> fun a -> Async.StartImmediate(a, ct.current)
         )
 
         if timeElapsed then input.children
-        else Option.defaultValue Html.none input.fallback)
+        else Option.defaultValue Html.none input.fallback
     
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     #if FABLE_COMPILER
@@ -61,14 +62,14 @@ module Delay =
         #endif
 
         Option.defaultValue  (unbox {| children = Html.none |}) input.delay
-        |> fun delayProps -> React.suspense(input.children, fallback = delayComp delayProps)
+        |> fun delayProps -> React.Suspense(input.children, fallback = DelayComp delayProps)
 
     [<Erase>]
     type delay =
         /// Element that will be displayed after the delay.
         static member inline children (element: ReactElement) = Interop.mkDelayAttr "children" element
         /// Elements that will be displayed after the delay.
-        static member inline children (elements: ReactElement list) = Interop.mkDelayAttr "children" (React.fragment elements)
+        static member inline children (elements: ReactElement list) = Interop.mkDelayAttr "children" (React.Fragment elements)
         
         /// Time in ms to wait before displaying the children.
         ///
@@ -82,7 +83,7 @@ module Delay =
         /// Elements to render for the duration of the delay.
         ///
         /// Defaults to Html.none.
-        static member inline fallback (elements: ReactElement list) = Interop.mkDelayAttr "fallback" (React.fragment elements)
+        static member inline fallback (elements: ReactElement list) = Interop.mkDelayAttr "fallback" (React.Fragment elements)
 
     [<Erase>]
     type delaySuspense =
@@ -101,7 +102,7 @@ module Delay =
         /// Optionally renders a provided component instead for that duration.
         /// </summary>
         /// <param name='properties'>The properties for the React.delay component.</param>
-        static member inline delay (properties: IDelayProperty list) = delayComp (unbox<DelayProps>(createObj !!properties))
+        static member inline delay (properties: IDelayProperty list) = DelayComp (unbox<DelayProps>(createObj !!properties))
         /// <summary>
         /// Delays rendering the children of this component for 100ms, rendering nothing for the duration.
         /// </summary>

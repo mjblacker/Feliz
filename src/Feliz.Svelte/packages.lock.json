@@ -63,6 +63,7 @@
       "feliz": {
         "type": "Project",
         "dependencies": {
+          "Fable.Core": "[4.5.0, )",
           "Fable.React.Types": "[18.4.0, )",
           "Fable.ReactDom.Types": "[18.2.0, )",
           "Feliz.CompilerPlugins": "[2.2.0, )"
@@ -102,11 +103,8 @@
       "Fable.Core": {
         "type": "CentralTransitive",
         "requested": "[4.5.0, )",
-        "resolved": "3.2.7",
-        "contentHash": "XYvisWEqzYap+9USQGRyI4F9DmZY5EE3STMiwnvlSrwoqHmZRPHyQR3Rp2oGv/mpzNy7PViKdgCiKC/eviG2Ng==",
-        "dependencies": {
-          "FSharp.Core": "4.7.2"
-        }
+        "resolved": "4.5.0",
+        "contentHash": "ZcX8XN5sQZGCbrS8VYnsa/ynhrCBfpDyqDkTl33GTXOpgfKibxoq0+W0hCSbRzuukVNoLtqGL/B6+8yTNDXbNA=="
       },
       "Fable.React.Types": {
         "type": "CentralTransitive",

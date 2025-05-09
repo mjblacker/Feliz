@@ -3,10 +3,9 @@
 open Fable.Core.JsInterop
 open Feliz
 
-let myCodeSplitComponent = React.functionComponent(fun () ->
+[<ReactComponent(true)>]
+let MyCodeSplitComponent () =
     Html.div [
         prop.testId "async-load"
         prop.text "Loaded"
-    ])
-
-exportDefault myCodeSplitComponent
+    ]

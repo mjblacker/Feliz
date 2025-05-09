@@ -72,7 +72,7 @@ module Interop =
 type SelectSearch() =
     static member inline selectSearch (properties: ISelectSearchAttribute list) =
         let inputProperties = createObj !!properties
-        Interop.reactApi.createElement(importDefault "react-select-search", Interop.objectAssign Interop.defaultProps inputProperties)
+        ReactLegacy.createElement (importDefault "react-select-search" |> unbox<ReactElement>, Interop.objectAssign Interop.defaultProps inputProperties)
 
 type OptionRendererProps = {
     attributes: IReactProperty seq

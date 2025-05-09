@@ -1,3 +1,24 @@
 module Tests.EnsureJSXTests
 
-let x = 1
+
+open Fable.Core
+open Fable.Core.JsInterop
+open Feliz
+open Browser
+open Fable.ReactTestingLibrary
+open Fable.Core
+open Feliz.Vitest
+open EnsureJSX
+
+describe "EnsureJSX Tests" <| fun _ ->
+
+    test "Html elements can be rendered" <| fun _ ->
+        RTL.render(
+            Components.DivWithClassesAndChildren()
+        ) |> ignore
+
+        let div = RTL.screen.getByTestId "simpleDiv"
+
+        Expect.toBeInTheDocument div
+
+    

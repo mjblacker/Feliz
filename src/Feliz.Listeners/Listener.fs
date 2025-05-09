@@ -63,7 +63,7 @@ module React =
             let removeOptions = React.useMemo((fun () -> Impl.createRemoveOptions options), [| options |])
             let fn = React.useMemo((fun () -> unbox<#Event> >> action), [| action |])
 
-            let listener = React.useCallbackRef(fun () ->
+            let listener = React.useCallback(fun () ->
                 match addOptions with
                 | Some options -> document.addEventListener(eventType, fn, options)
                 | None -> document.addEventListener(eventType, fn)
@@ -225,7 +225,7 @@ module React =
             let removeOptions = React.useMemo((fun () -> Impl.createRemoveOptions options), [| options |])
             let fn = React.useMemo((fun () -> unbox<#Event> >> action), [| action |])
 
-            let listener = React.useCallbackRef(fun () ->
+            let listener = React.useCallback(fun () ->
                 elemRef.current |> Option.iter(fun elem ->
                     match addOptions with
                     | Some options -> elem.addEventListener(eventType, fn, options)
@@ -421,7 +421,7 @@ module React =
             let removeOptions = React.useMemo((fun () -> Impl.createRemoveOptions options), [| options |])
             let fn = React.useMemo((fun () -> unbox<#Event> >> action), [| action |])
 
-            let listener = React.useCallbackRef(fun () ->
+            let listener = React.useCallback(fun () ->
                 match addOptions with
                 | Some options -> window.addEventListener(eventType, fn, options)
                 | None -> window.addEventListener(eventType, fn)
