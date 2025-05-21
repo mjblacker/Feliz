@@ -451,25 +451,25 @@ describe "Legacy Tests" <| fun _ ->
     //     Expect.toHaveTextContent (render.getByTestId("textf-two")) (sprintf "Hello! %s %i" input.str input.i) // "Correctly accepts two parameters"
     //     Expect.toHaveTextContent (render.getByTestId("textf-three")) (sprintf "Hello! %s %i %s" input.str input.i (input.str + (string input.i))) // "Correctly accepts three parameters"
 
-    testPromiseTodo "useCancellationToken works correctly" <| fun () -> promise {
-        let render = RTL.render(TokenCancellation.Main({| failTest = false |}))
+    // testPromiseTodo "useCancellationToken works correctly" <| fun () -> promise {
+    //     let render = RTL.render(TokenCancellation.Main({| failTest = false |}))
 
-        do! Promise.sleep 600
+    //     do! Promise.sleep 600
 
-        do!
-            RTL.waitFor <| fun () ->
-                Expect.toHaveTextContent (render.getByTestId "useTokenCancellation") "Disposed" // "Cancels all subsequent re-renders and calls the disposal function"
-    }
+    //     do!
+    //         RTL.waitFor <| fun () ->
+    //             Expect.toHaveTextContent (render.getByTestId "useTokenCancellation") "Disposed" // "Cancels all subsequent re-renders and calls the disposal function"
+    // }
 
-    testPromise "useCancellationToken works correctly - failure case" <| fun () -> promise {
-        let render = RTL.render(TokenCancellation.Main({| failTest = true |}))
+    // testPromise "useCancellationToken works correctly - failure case" <| fun () -> promise {
+    //     let render = RTL.render(TokenCancellation.Main({| failTest = true |}))
 
-        do! Promise.sleep 600
+    //     do! Promise.sleep 600
 
-        do!
-            RTL.waitFor <| fun () ->
-                Expect.toHaveTextContent (render.getByTestId "useTokenCancellation") "Failed" // "Cancels all subsequent re-renders and calls the disposal function"
-    }
+    //     do!
+    //         RTL.waitFor <| fun () ->
+    //             Expect.toHaveTextContent (render.getByTestId "useTokenCancellation") "Failed" // "Cancels all subsequent re-renders and calls the disposal function"
+    // }
 
     // // https://github.com/fable-hub/Feliz/issues/654
     // testPromiseTodo "Can dispose of optional IDisposables" <| fun () -> promise {

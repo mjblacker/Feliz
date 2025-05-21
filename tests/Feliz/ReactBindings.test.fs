@@ -10,6 +10,14 @@ open Fable.Core
 open Feliz.Vitest
 open ReactBindings
 
+
+type RTL with
+    [<Import("waitFor", "@testing-library/react")>]
+    static member waitFor<'T> (callback: unit -> 'T, ?options: obj) : JS.Promise<'T> = jsNative
+    [<Import("waitFor", "@testing-library/react")>]
+    static member waitFor<'T> (callback: unit -> JS.Promise<'T>, ?options: obj) : JS.Promise<'T> = jsNative
+
+
 describe "Counter (useState)" <| fun _ ->
     testPromise "increments count on button click" <| fun _ -> promise {
         let render = RTL.render (Components.ComponentUseState())
@@ -279,3 +287,47 @@ describe "useLayoutEffect" <| fun _ ->
 //             Expect.toBe tokenDiv.textContent "Cancelled" //"Token should be cancelled after unmount"
 //         )
 //     }
+
+describe "lazy" <| fun _ ->
+    testPromise "loads lazy component with typed text after checkbox is checked" <| fun _ -> promise {
+        let render = RTL.render (Components.LazyLoad())
+
+        // Ensure loading message is not present initially
+        Expect.toBeNull (RTL.screen.queryByText("Loading..."))
+
+        // Type into the input field
+        // let input = RTL.screen.getByTestId("input")
+        // do! RTL.userEvent.clear(input)
+        // do! RTL.userEvent.type'(input, "hello", 50)
+
+        // Click the checkbox to load the lazy component
+        let checkbox = RTL.screen.getByTestId("checkbox")
+        do! RTL.userEvent.click(checkbox)
+
+        // Wait for loading indicator
+        let! loading = RTL.waitFor<Types.HTMLElement option>(fun () ->
+            RTL.screen.queryByText("Loading...")
+            // promise {
+            //     let! loading = 
+            //     Expect.toHaveTextContent loading "Loadin2g..."
+            // }
+        )
+        Expect.expect(loading).``not``.toBeNull()
+
+        // Expect.toHaveTextContent loading "Loading..."
+
+        // do! RTL.waitFor(fun () ->
+        //     promise {
+        //         // Wait for the lazy component to appear
+        //         let! heading = RTL.screen.findByText("banana")
+        //         Expect.expect(heading).``not``.toBeNull()
+        //     }
+        //     |> Promise.start
+        // )
+        
+        
+
+        // // Check that the component was rendered with the correct props
+        // let! dynamicText = RTL.screen.findByText("hello")
+        // Expect.isNotNull dynamicText
+    }

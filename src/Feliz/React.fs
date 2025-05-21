@@ -465,6 +465,9 @@ useLayoutEffect(() => {
         JSX.create "StrictMode" [ "children" ==> children ] 
         |> unbox<ReactElement>
 
+    [<Emit("$0.lazy($1)")>]
+    static member inline private lazyInternal (import: (unit -> JS.Promise<'t>) -> 't) = jsNative
+
     /// <summary>
     /// Lets you define a component that is loaded dynamically. Which helps with code splitting.
     /// </summary>
@@ -500,6 +503,8 @@ useLayoutEffect(() => {
     /// </summary>
     /// <param name='children'>The elements that will be rendered within the suspense block.</param>
     /// <param name='fallback'>The element that will be rendered while the children are loading.</param>
+    [<ImportMember("react")>]
+    [<JSX.Component>]
     static member inline Suspense(children: ReactElement list, ?fallback: ReactElement) =
         JSX.create "Suspense" [ 
             "fallback" ==> "fallback";

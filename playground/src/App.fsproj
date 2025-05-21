@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="LazyComponent.fs" />
+    <Compile Include="Components.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Feliz\Feliz.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fable.Browser.Dom" />
+    <PackageReference Include="Fable.Promise" />
+  </ItemGroup>
+
+</Project>

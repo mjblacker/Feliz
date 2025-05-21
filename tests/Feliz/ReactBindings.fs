@@ -6,6 +6,9 @@ open Feliz
 module TestContext =
     let MyContext = React.createContext<{|state: string; setState: string -> unit|}>()
 
+[<Import("lazy", "react")>]
+let inline mylazy<'T>(x: unit -> JS.Promise<'T -> ReactElement>) : 'T -> ReactElement = jsNative
+
 [<Erase; Mangle(false)>]
 type Components =
 
@@ -232,6 +235,43 @@ type Components =
         )
 
         Html.div [ ]
+
+    [<ReactComponent>]
+    static member ComponentLazy() = mylazy(fun () ->
+        promise {
+            do! Promise.sleep 2000
+            return (fun (id,count,text,onClick) -> EnsureJSX.Components.ComponentWithArgs(id,count,?text=text,?onClick=onClick))
+        }
+    )
+
+    [<ReactComponent>]
+    static member LazyLoad() =
+        let showPreview, setShowPreview = React.useState(false)
+        let text, setText = React.useState("start")
+        Html.div [
+            Html.input [
+                prop.testId "input"
+                prop.value text
+                prop.onChange (fun (e: string) -> setText(e))
+            ]
+            Html.label [
+                Html.input [
+                    prop.testId "checkbox"
+                    prop.type' "checkbox"
+                    prop.onChange (fun (e: bool) -> setShowPreview(e))
+                ]
+                Html.text "Load Component"
+            ]
+            if showPreview then
+                React.Suspense(
+                    fallback = Html.div [ prop.testId "loading"; prop.text "Loading..." ],
+                    children = [
+                        Html.h1 "Preview"
+                        Components.ComponentLazy()("Test", 2, Some text, None)
+                    ]
+                )
+        ]
+
 
     // [<ReactComponent>]
     // static member ComponentUseCancelationToken() =

@@ -2557,7 +2557,7 @@ module Bindings =
         | None, None -> None
 
     type UserEventImport =
-        abstract clear: element:#HTMLElement -> unit
+        abstract clear: element:#HTMLElement -> JS.Promise<unit>
         abstract click: element:#HTMLElement * ?eventInit:obj * ?options:obj -> JS.Promise<unit>
         abstract dblClick: element:#HTMLElement * ?eventInit:obj -> unit
         [<Emit("$0.deselectOptions($1, Array.from($2))")>]
