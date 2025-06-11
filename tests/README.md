@@ -7,17 +7,17 @@ Uses vitest as test runner.
 To run all test projects; in project root, run:
 
 ```bash
-bun run test
+npm run test
 ```
 
 To run a specific test project; in the test project root, run:
 
 ```bash
-bun run test
+npm run test
 ```
 
 or in watch mode:
 
 ```bash
-bun run test:watch
+npm run test:watch
 ```

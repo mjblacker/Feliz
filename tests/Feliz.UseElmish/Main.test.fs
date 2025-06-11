@@ -76,8 +76,9 @@ describe "UseElmish" <| fun () ->
         do! RTL.userEvent.click(render.getByTestId("increment"))
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" // "Should have been incremented"
+            )
         }
 
     // See https://github.com/fable-compiler/fable-promise/issues/24#issuecomment-934328900
@@ -89,10 +90,10 @@ describe "UseElmish" <| fun () ->
         render.getByTestId("increment-again").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "2" //"Should have been incremented twice"
-
-    }
+            )
+        }
 
     testPromise "useElmish works with dependencies" <| fun () -> promise {
         let render = RTL.render(UseElmish.wrapper())
@@ -102,23 +103,23 @@ describe "UseElmish" <| fun () ->
         render.getByTestId("increment").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"Should have been incremented"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"State should be same because dependency hasn't changed"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "0" //"State should have been reset because dependency has changed"
-
+            )
     }
 
     testPromise "useElmish works with React.strictMode" <| fun () -> promise {
@@ -129,21 +130,21 @@ describe "UseElmish" <| fun () ->
         render.getByTestId("increment").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"Should have been incremented"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "1" //"State should be same because dependency hasn't changed"
-
+            )
 
         render.getByTestId("increment-wrapper").click()
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () ->
                 Expect.toHaveTextContent (render.getByTestId("count")) "0" //"State should have been reset because dependency has changed"
-
+            )
     }

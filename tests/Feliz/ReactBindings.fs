@@ -3,11 +3,18 @@ module Tests.ReactBindings
 open Fable.Core
 open Feliz
 
+[<Erase; Mangle(false)>]
 module TestContext =
+
     let MyContext = React.createContext<{|state: string; setState: string -> unit|}>()
 
-[<Import("lazy", "react")>]
-let inline mylazy<'T>(x: unit -> JS.Promise<'T -> ReactElement>) : 'T -> ReactElement = jsNative
+    let LazyLoadComponent: {|text: string option|} -> ReactElement = 
+        React.lazy'(fun () ->
+            promise {
+                do! Promise.sleep 2000
+                return! Fable.Core.JsInterop.importDynamic "./CodeSplitting.jsx"
+            }
+        )
 
 [<Erase; Mangle(false)>]
 type Components =
@@ -237,17 +244,9 @@ type Components =
         Html.div [ ]
 
     [<ReactComponent>]
-    static member ComponentLazy() = mylazy(fun () ->
-        promise {
-            do! Promise.sleep 2000
-            return (fun (id,count,text,onClick) -> EnsureJSX.Components.ComponentWithArgs(id,count,?text=text,?onClick=onClick))
-        }
-    )
-
-    [<ReactComponent>]
     static member LazyLoad() =
         let showPreview, setShowPreview = React.useState(false)
-        let text, setText = React.useState("start")
+        let text, setText = React.useState("Component loaded after 2 seconds")
         Html.div [
             Html.input [
                 prop.testId "input"
@@ -267,11 +266,19 @@ type Components =
                     fallback = Html.div [ prop.testId "loading"; prop.text "Loading..." ],
                     children = [
                         Html.h1 "Preview"
-                        Components.ComponentLazy()("Test", 2, Some text, None)
+                        unbox (JSX.create TestContext.LazyLoadComponent ["text", text])
                     ]
                 )
         ]
 
+    [<ReactComponent>]
+    static member ComponentStrictWithEffect(onInit: unit -> unit) =
+        React.useEffect((fun () -> onInit()), [||])
+
+        Html.div [
+            prop.testId "strict-effect"
+            prop.text "This component uses StrictMode with an effect"
+        ]
 
     // [<ReactComponent>]
     // static member ComponentUseCancelationToken() =

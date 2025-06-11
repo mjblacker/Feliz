@@ -10,14 +10,6 @@ open Fable.Core
 open Feliz.Vitest
 open ReactBindings
 
-
-type RTL with
-    [<Import("waitFor", "@testing-library/react")>]
-    static member waitFor<'T> (callback: unit -> 'T, ?options: obj) : JS.Promise<'T> = jsNative
-    [<Import("waitFor", "@testing-library/react")>]
-    static member waitFor<'T> (callback: unit -> JS.Promise<'T>, ?options: obj) : JS.Promise<'T> = jsNative
-
-
 describe "Counter (useState)" <| fun _ ->
     testPromise "increments count on button click" <| fun _ -> promise {
         let render = RTL.render (Components.ComponentUseState())
@@ -312,22 +304,27 @@ describe "lazy" <| fun _ ->
             //     Expect.toHaveTextContent loading "Loadin2g..."
             // }
         )
+
         Expect.expect(loading).``not``.toBeNull()
 
-        // Expect.toHaveTextContent loading "Loading..."
+        do! RTL.waitFor(fun () ->
+            promise {
+                // Wait for the lazy component to appear
+                let! lazyText = RTL.screen.findByText("Component loaded after 2 seconds")
+                Expect.expect(lazyText).``not``.toBeNull()
+            }
+            |> Promise.start
+        )
+    }
 
-        // do! RTL.waitFor(fun () ->
-        //     promise {
-        //         // Wait for the lazy component to appear
-        //         let! heading = RTL.screen.findByText("banana")
-        //         Expect.expect(heading).``not``.toBeNull()
-        //     }
-        //     |> Promise.start
-        // )
-        
-        
 
-        // // Check that the component was rendered with the correct props
-        // let! dynamicText = RTL.screen.findByText("hello")
-        // Expect.isNotNull dynamicText
+describe "Strict Mode with Effect" <| fun _ ->
+    testPromise "calls effect once on mount in StrictMode" <| fun _ -> promise {
+        let effect: unit -> unit = vi.fn(fun () -> console.log("Effect called"))
+        let render = RTL.render (React.StrictMode [
+            Components.ComponentStrictWithEffect(effect)
+        ])
+
+        // Check that effect was called once on mount
+        Expect.toHaveBeenCalledTimes effect 2 //"Effect should be called once on mount"
     }

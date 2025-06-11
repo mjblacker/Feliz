@@ -134,6 +134,11 @@ type RTL =
         Bindings.withinImport.invoke element
         |> Bindings.queriesForElement
 
+    [<Import("waitFor", "@testing-library/react")>]
+    static member waitFor<'T> (callback: unit -> 'T, ?options: obj) : JS.Promise<'T> = jsNative
+    [<Import("waitFor", "@testing-library/react")>]
+    static member waitFor<'T> (callback: unit -> JS.Promise<'T>, ?options: obj) : JS.Promise<'T> = jsNative
+
 type configureOption =
     /// The default value for the hidden option used by getByRole. 
     ///

@@ -461,12 +461,9 @@ useLayoutEffect(() => {
     /// </summary>
     /// <param name='children'>The elements that will be rendered with additional
     /// checks and warnings.</param>
-    static member inline StrictMode(children: ReactElement list) =
-        JSX.create "StrictMode" [ "children" ==> children ] 
-        |> unbox<ReactElement>
-
-    [<Emit("$0.lazy($1)")>]
-    static member inline private lazyInternal (import: (unit -> JS.Promise<'t>) -> 't) = jsNative
+    [<JSX.ComponentAttribute>]
+    static member inline StrictMode (children: ReactElement list) : ReactElement = 
+        unbox (JSX.create (import "StrictMode" "react") ["children", children])
 
     /// <summary>
     /// Lets you define a component that is loaded dynamically. Which helps with code splitting.

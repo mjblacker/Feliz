@@ -31,6 +31,13 @@ let DuspenseCompInner() =
 
 let asyncComponent : JS.Promise<unit -> ReactElement> = JsInterop.importDynamic "./CodeSplitting.fs"
 
+let LazyComponent: unit -> ReactElement =
+    React.lazy'(fun () -> promise {
+        do! Promise.sleep 1000
+        return! asyncComponent
+    })
+
+
 [<ReactComponent>]
 let DelaySuspenseComp () =
     React.delaySuspense [
@@ -49,10 +56,7 @@ let DelaySuspenseComp () =
         ]
 
         delaySuspense.children [
-            React.lazy'(fun () -> promise {
-                do! Promise.sleep 1000
-                return! asyncComponent
-            }) ()
+            unbox (JSX.create LazyComponent [])
         ]
     ]
 
@@ -64,9 +68,10 @@ describe "Feliz.Delay Tests" <| fun _ ->
         Expect.toBeTruthy (render.queryByTestId "render" |> Option.isNone) // "Child is not rendered initially"
 
         do!
-            RTL.waitFor <| fun () ->
+            RTL.waitFor (fun () -> 
                 Expect.toBeTruthy (render.queryByTestId "fallback" |> Option.isNone) // "Fallback is no longer rendered"
                 Expect.toBeTruthy (render.queryByTestId "render" |> Option.isSome) // "Child is now rendered"
+            )
     }
 
     testPromise "delaySuspense does not render until after time has passed" <| fun () -> promise {
