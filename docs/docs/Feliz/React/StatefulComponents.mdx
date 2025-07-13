@@ -1,6 +1,7 @@
 ---
 title: Stateful Components
---- 
+sidebar_position: 2
+---
 
 # Stateful Components
 
@@ -9,7 +10,15 @@ Components can be tremendously useful when they manage their internal state. Thi
 State with React components is incorporated using [React Hooks](https://reactjs.org/docs/hooks-intro.html) which allow you to define state variables inside your functional components. A common hook to use with React is the `React.useState` hook.
 
 > It is recommended that you use hooks only inside the defintion of your `[<ReactComponent>]` such that you could distinguish which parts of your application are simple functions and which parts are (stateful) components.
-<!-- 
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import Counter from '../../feliz-docs/fableoutput/Examples/React/Counter'
+import RawCounter from '!!raw-loader!../../feliz-docs/Examples/React/Counter.fs'
+
+<ComponentRender code={RawCounter}> 
+  <Counter />
+</ComponentRender>
+
 ```fsharp
 [<ReactComponent>]
 let Stateful() =
@@ -37,7 +46,7 @@ val value : 'T
 val setValue : 'T -> unit
 ```
 
-The `setValue` function is what is called a *setter function* which is why it is common to prefix the function with "set{*Something*}".
+The `setValue` function is what is called a *setter function* which is why it is common to prefix the function with "set[*Something*]".
 
 When you call that function, the `value` will be updated and the component re-renders using this newly updated `value`.
 
@@ -45,34 +54,12 @@ When you call that function, the `value` will be updated and the component re-re
 
 A single component can keep track of multiple state variables at the same time. Here is an example
 
-```fsharp
-[<ReactComponent>]
-let MultipleVariables() =
-    let (count, setCount) = React.useState(0)
-    let (textColor, setTextColor) = React.useState(color.red)
+import MultipleVariables from '../../feliz-docs/fableoutput/Examples/React/MultipleStateVariables'
+import RawMultipleVariables from '!!raw-loader!../../feliz-docs/Examples/React/MultipleStateVariables.fs'
 
-    Html.div [
-        Html.h1 [
-            prop.style [ style.color textColor ]
-            prop.text count
-        ]
-
-        Html.button [
-            prop.text "Increment"
-            prop.onClick (fun _ -> setCount(count + 1))
-        ]
-
-        Html.button [
-            prop.text "Red"
-            prop.onClick (fun _ -> setTextColor(color.red))
-        ]
-
-        Html.button [
-            prop.text "Blue"
-            prop.onClick (fun _ -> setTextColor(color.blue))
-        ]
-    ]
-```
+<ComponentRender code={RawMultipleVariables}> 
+  <MultipleVariables />
+</ComponentRender>
 
 ### Lazy State
 
@@ -112,6 +99,14 @@ let UseStateLazy() =
 
 You can use the built-in `React.useReducer` hook to build simple model-view-update style components inside your application:
 
+
+import UseReducer from '../../feliz-docs/fableoutput/Examples/React/UseReducer'
+import RawUseReducer from '!!raw-loader!../../feliz-docs/Examples/React/UseReducer.fs'
+
+<ComponentRender code={RawUseReducer}> 
+  <UseReducer />
+</ComponentRender>
+
 ```fsharp
 type State = { Count : int }
 
@@ -139,4 +134,4 @@ let Counter() =
 
         Html.h1 state.Count
     ]
-``` -->
+```

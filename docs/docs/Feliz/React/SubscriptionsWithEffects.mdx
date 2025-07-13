@@ -1,3 +1,7 @@
+---
+sidebar_position: 4
+---
+
 # Subscriptions with Effects
 
 In the previous section, we saw how `React.useEffect` can be used to issue a side-effect and control when and how that effect is re-executed. However, there are cases where you want to have some **cleanup** code after the component unmounts or the props has changed. For example when we subscribe to some event as the component mounts, we want to unsubscribe to that event when the component unmounts.
@@ -8,40 +12,14 @@ To use `React.useEffect` with a cleanup phase, we call one these function signat
 
 Where the first parameter of type `unit -> IDisposable` is the effect that returns `IDisposable` to signal that this effect has some cleanup code which runs after the component unmounts:
 
-```fsharp:effectful-timer
-open Feliz
-open Fable.Core.JS
+import ComponentRender from '@site/src/components/ComponentRender';
+import EffectfulTimer from '../../feliz-docs/fableoutput/Examples/React/EffectfulTimer'
+import RawEffectfulTimer from '!!raw-loader!../../feliz-docs/Examples/React/EffectfulTimer.fs'
 
-[<ReactComponent>]
-let EffectfulTimer() =
-    let (paused, setPaused) = React.useState(false)
-    // using useStateWithUpdater instead of useState
-    // to avoid stale closures in React.useEffect
-    let (value, setValue) = React.useStateWithUpdater(0)
+<ComponentRender code={RawEffectfulTimer}> 
+  <EffectfulTimer />
+</ComponentRender>
 
-    let subscribeToTimer() =
-        // start the timer
-        let subscriptionId = setInterval (fun _ -> if not paused then setValue (fun prev -> prev + 1)) 1000
-        // return IDisposable with cleanup code that stops the timer
-        { new IDisposable with member this.Dispose() = clearTimeout(subscriptionId) }
-
-    React.useEffect(subscribeToTimer, [| box paused |])
-
-    Html.div [
-        Html.h1 value
-
-        Html.button [
-            prop.className [
-                Bulma.Button
-                Bulma.IsLarge
-                if paused then Bulma.IsWarning else Bulma.IsPrimary
-            ]
-
-            prop.onClick (fun _ -> setPaused(not paused))
-            prop.text (if paused then "Resume" else "Pause")
-        ]
-    ]
-```
 Here we are subscribing with the value `subscribeToTimer` of type `unit -> IDisposable`:
 ```fsharp
 let subscribeToTimer() =

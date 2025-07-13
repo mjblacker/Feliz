@@ -6,20 +6,24 @@ sidebar_position: 6
 # Type-Safe CSS
 
 When you are working with a CSS framework such as [Bootstrap](https://getbootstrap.com/), [Bulma](https://bulma.io/), [FontAwesome](https://fontawesome.com/) or others, you often have to learn and remember a large number CSS class names to be able to use them in your application, for example to make a primary-colored button using Bulma, you write:
+
 ```fsharp
 Html.button [
     prop.className [ "button"; "is-primary" ]
     prop.text "Click"
 ]
 ```
+
 It would be nice if there was a way to browse through and discover these class names directly from your IDE. Of course, you could write a reusable module with these class names built-in:
+
 ```fsharp
 module Bulma =
     let [<Literal>] Button = "button"
     let [<Literal>] IsPrimary = "is-primary"
     // etc.
 ```
-This requires *a lot* of work and an unsustainable amount of maintenance because you have to write a module per CSS framework and update it whenever the module changes.
+
+This requires _a lot_ of work and an unsustainable amount of maintenance because you have to write a module per CSS framework and update it whenever the module changes.
 
 ### Typed CSS Classes to the rescue!
 

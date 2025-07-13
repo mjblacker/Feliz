@@ -5,6 +5,8 @@ sidebar_position: 9
 
 # Feliz.UseElmish [![Nuget](https://img.shields.io/nuget/v/Feliz.UseElmish.svg?maxAge=0&colorB=brightgreen)](https://www.nuget.org/packages/Feliz.UseElmish)
 
+import ComponentRender from '@site/src/components/ComponentRender';
+
 Besides being able to use Feliz in existing Elmish applications, you can also use Elmish as _part_ of your Feliz application. This is a different approach to building standalone React components that use Elmish internally to manage the state of the component but from the perspective of the consumer, it is just another React component.
 
 This approach simplifies the original Elmish model where the application state is explicitly passed down in parts to children and events are passed up to the parent components.
@@ -24,44 +26,12 @@ dotnet femto install Feliz.UseElmish
 
 Here is an example to demonstrate how to build such component:
 
-```fsharp
-open Feliz
-open Feliz.UseElmish
-open Elmish
+import ElmishCounter from '../feliz-docs/fableoutput/Examples/React/ElmishCounter'
+import RawElmishCounter from '!!raw-loader!../feliz-docs/Examples/React/ElmishCounter.fs'
 
-type Msg =
-    | Increment
-    | Decrement
-
-type State = { Count : int }
-
-let init() = { Count = 0 }, Cmd.none
-
-let update msg state =
-    match msg with
-    | Increment -> { state with Count = state.Count + 1 }, Cmd.none
-    | Decrement -> { state with Count = state.Count - 1 }, Cmd.none
-
-[<ReactComponent>]
-let Counter() =
-    let state, dispatch = React.useElmish(init, update, [| |])
-    Html.div [
-        Html.h1 state.Count
-        Html.button [
-            prop.text "Increment"
-            prop.onClick (fun _ -> dispatch Increment)
-        ]
-
-        Html.button [
-            prop.text "Decrement"
-            prop.onClick (fun _ -> dispatch Decrement)
-        ]
-    ]
-
-open Browser.Dom
-
-ReactDOM.render(Counter(), document.getElementById "feliz-app")
-```
+<ComponentRender code={RawElmishCounter}> 
+  <ElmishCounter />
+</ComponentRender>
 
 The difference here from a full-fledged Elmish applications is that there isn't an "Elmish entry point" to run the component and manage its life-cycle. Instead, the `React.useElmish` hooks manages the Elmish life-cycle internally within the React component so that it can run standalone inside other React components:
 
@@ -140,38 +110,12 @@ ReactDOM.render(App(), document.getElementById "feliz-app")
 
 Next, let's combine this hook with other React hooks such as `React.useState` and `React.useEffect`:
 
-```fsharp
-[<ReactComponent>]
-let Counter() =
-    let localCount, setLocalCount = React.useState(0)
-    let state, dispatch = React.useElmish(init, update, [| |])
+import ElmishCounterSubscription from '../feliz-docs/fableoutput/Examples/React/ElmishCounterSubscription'
+import RawElmishCounterSubscription from '!!raw-loader!../feliz-docs/Examples/React/ElmishCounterSubscription.fs'
 
-    let subscribeToTimer() =
-        // start the ticking
-        let subscriptionId = setTimeout (fun _ -> dispatch Increment) 1000
-        // return IDisposable with cleanup code
-        { new IDisposable with member this.Dispose() = clearTimeout(subscriptionId) }
-
-    React.useEffect(subscribeToTimer, [| |])
-
-    Html.div [
-        Html.h1 (state.Count + localCount)
-        Html.button [
-            prop.text "Increment"
-            prop.onClick (fun _ -> dispatch Increment)
-        ]
-
-        Html.button [
-            prop.text "Decrement"
-            prop.onClick (fun _ -> dispatch Decrement)
-        ]
-
-        Html.button [
-            prop.text "Increment local state"
-            prop.onClick (fun _ -> setLocalCount(localCount + 1))
-        ]
-    ]
-```
+<ComponentRender code={RawElmishCounterSubscription}> 
+  <ElmishCounterSubscription />
+</ComponentRender>
 
 ### Disposing of resources
 

@@ -3,13 +3,13 @@ title: Overview
 sidebar_position: 0
 ---
 
-# Feliz [![Nuget](https://img.shields.io/nuget/v/Feliz.svg?maxAge=0&colorB=brightgreen)](https://www.nuget.org/packages/Feliz) [![Build status](https://ci.appveyor.com/api/projects/status/yqinhayy1pgfcubp/branch/master?svg=true)](https://ci.appveyor.com/project/Zaid-Ajaj/feliz/branch/master)
+# Feliz [![Nuget](https://img.shields.io/nuget/v/Feliz.svg?maxAge=0&colorB=brightgreen)](https://www.nuget.org/packages/Feliz)
 
 A fresh retake of the base React DSL to build React applications, optimized for happiness.
 
 Here is how it looks like:
 
-```fs
+```fsharp
 module App
 
 open Feliz

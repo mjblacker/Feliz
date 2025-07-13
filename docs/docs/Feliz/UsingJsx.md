@@ -9,7 +9,7 @@ The DSL provided by Feliz makes it possible to write HTML code in a way that fit
 
 In these cases, using JSX is an option for you. Feliz provides a simple interop mechanism to easily consume components written in JSX inside your Fable application by means of the `[<ReactComponent>]` attribute. It goes as follows. Consider the following component written in JSX in a file called `About.jsx`:
 
-```js
+```jsx
 import React from "react";
 
 export const About = ({ title }) => {
@@ -69,7 +69,7 @@ In the syntax of the `[<ReactComponent>]` attribute, the `import` parameter valu
 
 There are a couple of things to think about when writing these imports.
 
-First of all, the input properties of the component in JSX can be _destructured_ form. The following comnponent is an example of that where `title` is the destructured or unpacked property of the input object.
+First of all, the input properties of the component in JSX can be _destructured_ form. The following component is an example of that where `title` is the destructured or unpacked property of the input object.
 
 ```js
 export const About = ({ title }) => {

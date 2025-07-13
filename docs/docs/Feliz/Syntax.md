@@ -9,7 +9,7 @@ Elements can take simple values as their only input such a string, a number, a s
 
 Learn how the standard HTML can be written in Feliz syntax using [Html2Feliz](https://thisfunctionaltom.github.io/Html2Feliz/)
 
-```fs
+```fsharp
 Html.h1 42
 
 Html.div "Hello there!"
@@ -22,8 +22,10 @@ Html.ul [
   Html.li [ Html.em "Three" ]
 ]
 ```
+
 You could also expand the attribute:
-```fs
+
+```fsharp
 Html.h1 [
     prop.className "title"
     prop.children [
@@ -31,17 +33,21 @@ Html.h1 [
     ]
 ]
 ```
+
 Note that you can't mix attributes and child elements. If you use the component overload taking `IReactProperty list`, you must use `prop.children` to specify the child elements, as shown above.
 
 However, in the specific case of a single `Html.text` child, you can also use the `prop.text` alias. The code above is the same as this:
-```fs
+
+```fsharp
 Html.h1 [
     prop.className "title"
     prop.text "Hello there"
 ]
 ```
+
 Single element child works too as input:
-```fs
+
+```fsharp
 Html.h1 (Html.strong "I am bold")
 
 // same as
@@ -59,7 +65,7 @@ Html.h1 [
 
 Input elements are dead simple to work with:
 
-```fs
+```fsharp
 Html.input [
     prop.className "input"
     prop.value state.Crendentials.Password // string
@@ -74,8 +80,10 @@ Html.input [
     prop.type'.checkbox
 ]
 ```
+
 Here the `onChange` property is overloaded with the following types
-```fs
+
+```fsharp
 // generic onChange event
 type onChange = Event -> unit
 // onChange for textual input boxes
@@ -93,7 +101,8 @@ type onChange = DateTime -> unit
 ### The empty element
 
 To render the empty element, i.e. instructing React to render nothing, use `Html.none`
-```fs
+
+```fsharp
 match state with
 | None -> Html.none
 | Some data -> render data
@@ -101,7 +110,7 @@ match state with
 
 ### Specifying class names
 
-```fs
+```fsharp
 prop.className "button" // => "button"
 prop.className [ "btn"; "btn-primary" ] // => "btn btn-primary"
 ```
@@ -110,16 +119,19 @@ The property `className` has overloads to combine a list of classes into a singl
 
 ### Enhanced keyboard events
 
-The events `prop.onKeyUp`, `prop.onKeyDown` and `onKeyPressed` are all of type `KeyboardEvent -> unit` which is correct. The input `KeyboardEvent` will contain information about the key that was pressed, its char code and whether it was pressed in combination with CTRL or SHIFT (or both). Alongside these default handlers, Feliz provides enhanced handlers that make it even *simpler* to handle certain key presses. For example, if you have a login form and you want to dispacch `Login` message when the user hits `Enter` (very common scenario), you can do it like this:
-```fs
+The events `prop.onKeyUp`, `prop.onKeyDown` and `onKeyPressed` are all of type `KeyboardEvent -> unit` which is correct. The input `KeyboardEvent` will contain information about the key that was pressed, its char code and whether it was pressed in combination with CTRL or SHIFT (or both). Alongside these default handlers, Feliz provides enhanced handlers that make it even _simpler_ to handle certain key presses. For example, if you have a login form and you want to dispacch `Login` message when the user hits `Enter` (very common scenario), you can do it like this:
+
+```fsharp
 Html.input [
     prop.onKeyUp (key.enter, fun _ -> dispatch Login)
     prop.onChange (UsernameChanged >> dispatch)
     prop.value state.Username
 ]
 ```
+
 Notice the first properties `prop.onKeyUp (key.enter, fun _ -> dispatch Login)`. It takes two parameters: one is the key we are matching against and another which is of the same type as the default handlers, namely: `KeyboardEvent -> unit`. This enhanced API also allows you to easily match against combinations of keys such with `CTRL` and `SHIFT` as follows:
-```fs
+
+```fsharp
 // Enter only
 prop.onKeyUp (key.enter, fun _ -> dispatch Login)
 // Enter + CTRL
