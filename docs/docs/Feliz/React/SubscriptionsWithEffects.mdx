@@ -16,7 +16,7 @@ import ComponentRender from '@site/src/components/ComponentRender';
 import EffectfulTimer from '../../feliz-docs/fableoutput/Examples/React/EffectfulTimer'
 import RawEffectfulTimer from '!!raw-loader!../../feliz-docs/Examples/React/EffectfulTimer.fs'
 
-<ComponentRender code={RawEffectfulTimer}> 
+<ComponentRender code={RawEffectfulTimer} triggerRender> 
   <EffectfulTimer />
 </ComponentRender>
 
@@ -53,57 +53,10 @@ if the component was unmounted).
 
 Here is an example of how you could use this:
 
-```fsharp:effectful-usecancellationtoken
-[<ReactComponent>]
-let UseToken(failedCallback: unit -> unit) =
-    let token = React.useCancellationToken()
-    React.useEffect(fun () ->
-        async {
-            do! Async.Sleep 4000
-            failedCallback()
-        }
-        |> fun a -> Async.StartImmediate(a,token.current)
-    )
+import UseCancellationTokenHook from '../../feliz-docs/fableoutput/Examples/React/UseCancellationTokenHook'
+import RawUseCancellationTokenHook from '!!raw-loader!../../feliz-docs/Examples/React/UseCancellationTokenHook.fs'
 
-    Html.none
+<ComponentRender code={RawUseCancellationTokenHook} triggerRender> 
+  <UseCancellationTokenHook />
+</ComponentRender>
 
-[<ReactComponent>]
-let Result(text: string) = Html.div text
-
-[<ReactComponent>]
-let Main() =
-    let renderChild,setRenderChild = React.useState true
-    let resultText,setResultText = React.useState "Pending..."
-
-    let setFailed = React.useCallbackRef(fun () -> setResultText "You didn't cancel me in time!")
-
-    Html.div [
-        if renderChild then UseToken(setFailed)
-        Result(resultText)
-        Html.button [
-            prop.classes [ Bulma.Button; Bulma.HasBackgroundPrimary; Bulma.HasTextWhite ]
-            prop.disabled(resultText = "Disposed")
-            prop.text "Dispose"
-            prop.onClick(fun _ ->
-                async {
-                    setResultText "Disposed"
-                    setRenderChild false
-                }
-                |> Async.StartImmediate
-            )
-        ]
-
-        Html.button [
-            prop.classes [ Bulma.Button; Bulma.HasBackgroundPrimary; Bulma.HasTextWhite ]
-            prop.disabled (renderChild && resultText = "Pending...")
-            prop.text "Reset"
-            prop.onClick(fun _ ->
-                async {
-                    setResultText "Pending..."
-                    setRenderChild true
-                }
-                |> Async.StartImmediate
-            )
-        ]
-    ]
-```

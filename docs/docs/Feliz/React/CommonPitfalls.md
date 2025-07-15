@@ -1,3 +1,8 @@
+---
+title: Common Pitfalls
+sidebar_position: 10
+---
+
 # Common Pitfalls (Applies only to Fable 2.x)
 
 When using React components, there are a couple of gotcha's to watch out for. Here are some examples to follow from.
@@ -6,7 +11,7 @@ When using React components, there are a couple of gotcha's to watch out for. He
 
 You might be tempted to use a tuple for multiple parameters of a React component but React expects a single object as the input properties. Use records, anonymous records or `unit` when defining input for React components.
 
-### <i class="fa fa-times" style="color:red; margin-right: 5px" ></i> Don't do this
+### ❌ Don't do this
 
 ```fsharp
 let counter = React.functionComponent(fun (min: int, max: int) ->
@@ -19,7 +24,7 @@ let counter = React.functionComponent(fun (min: int, max: int) ->
         ]
     ])
 ```
-### <i class="fa fa-check" style="color:lightgreen; margin-right: 5px" ></i> Do this
+### ✅ Do this
 ```fsharp
 let counter = React.functionComponent(fun (input: {| min: int; max: int |}) ->
     let (count, setCount) = React.useState(input.min)
@@ -31,7 +36,7 @@ let counter = React.functionComponent(fun (input: {| min: int; max: int |}) ->
         ]
     ])
 ```
-### <i class="fa fa-check" style="color:lightgreen; margin-right: 5px" ></i> Or this
+### ✅ Or this
 
 ```fsharp
 type CounterProps = { min: int; max: int }
@@ -50,7 +55,7 @@ let counter = React.functionComponent(fun (input: CounterProps) ->
 
 Even though you can define a React component inside another function, you definitely should *not* because the internal state of that component will be reset once the parent function (inside of which the component is defined) is re-evaulauated.
 
-### <i class="fa fa-times" style="color:red; margin-right: 5px" ></i> Don't do this
+### ❌ Don't do this
 ```fsharp
 let counter (start: int) =
     let counter' = React.functionComponent(fun (input: {| start: int |}) ->
@@ -65,7 +70,7 @@ let counter (start: int) =
 
     counter' {| start = start |}
 ```
-### <i class="fa fa-check" style="color:lightgreen; margin-right: 5px" ></i> Do this
+### ✅ Do this
 ```fsharp
 let counter' = React.functionComponent("Counter", fun (input: {| start: int |}) ->
     let (count, setCount) = React.useState(input.start)

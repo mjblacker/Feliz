@@ -1,3 +1,8 @@
+---
+sidebar_position: 12
+---
+
+
 # Strict Mode
 
 Strict mode is a tool for highlighting potential problems in an application. Like `React.fragment`,
@@ -10,10 +15,10 @@ In many cases the code you write won't ever cause any issues from strict mode, b
 about issues in components that you import. While you may not be able to directly fix those issues,
 it can point out potential issues, as well as inform you if your application is [concurrent mode ready].
 
-If you open your console after running this sample, you will see that there is now a warning.
+If you open your console after running the following example code, you will see that there is now a warning.
 This is because the created component uses an unsafe method.
 
-```fsharp:strict-mode
+```fsharp
 type StrictModeWarning () =
     inherit Fable.React.Component<obj,obj>()
 

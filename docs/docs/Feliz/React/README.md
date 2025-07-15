@@ -6,7 +6,7 @@ The React API provided by Feliz should feel very familiar to those who already k
 
 Here follows a full React example with a stateful component using a state variable hook.
 
-```fsharp:stateful-counter
+```fsharp
 module App
 
 open Feliz
@@ -20,16 +20,18 @@ let Counter() =
             prop.text "Increment"
             prop.onClick (fun _ -> setCount(count + 1))
         ]
-    ])
+    ]
 
 open Browser.Dom
 
 ReactDOM.render(Counter(), document.getElementById "root")
 ```
+
 This example is a direct mapping from the Javascript and React equivalent:
+
 ```js
-import ReactDOM from 'react-dom'
-import React, { useState } from 'react';
+import ReactDOM from "react-dom";
+import React, { useState } from "react";
 
 function Counter() {
   // Declare a new state variable, which we'll call "count"
@@ -38,12 +40,10 @@ function Counter() {
   return (
     <div>
       <h1>{count}</h1>
-      <button onClick={() => setCount(count + 1)}>
-        Increment
-      </button>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
     </div>
   );
 }
 
-ReactDOM.render(<Counter />, document.getElementById("root"))
+ReactDOM.render(<Counter />, document.getElementById("root"));
 ```

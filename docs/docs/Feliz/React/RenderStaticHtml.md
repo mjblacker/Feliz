@@ -1,3 +1,7 @@
+---
+sidebar_position: 11
+---
+
 # Render Static Html
 
 Using Feliz, you can render static HTML as a string from a `ReactElement` using the `ReactDOMServer` API.
@@ -5,7 +9,7 @@ Using Feliz, you can render static HTML as a string from a `ReactElement` using 
 
 ### `ReactDOMServer.renderToString()`
 
-```fsharp:static-html
+```fsharp
 [<ReactComponent>]
 let StaticHtml() =
     let html = Html.div [
@@ -23,7 +27,7 @@ let StaticHtml() =
 
 ### `ReactDOMServer.renderToStaticMarkup()`
 
-```fsharp:static-markup
+```fsharp
 [<ReactComponent>]
 let StaticMarkup() =
     let html = Html.div [
