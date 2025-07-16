@@ -78,7 +78,7 @@ const config: Config = {
       title: 'Feliz',
       logo: {
         alt: 'Feliz Logo',
-        src: 'img/fablelogo.svg',
+        src: 'img/felizlogo.svg',
         href: '/docs/',
       },
       items: [
@@ -132,6 +132,10 @@ const config: Config = {
             {
               label: 'Blog',
               to: '/blog',
+            },
+            {
+              label: 'Ecosystem',
+              to: '/ecosystem',
             },
             {
               label: 'GitHub',
