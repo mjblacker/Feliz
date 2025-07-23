@@ -19,5 +19,3 @@ describe "EnsureJSX Tests" <| fun _ ->
         let div = RTL.screen.getByTestId "simpleDiv"
 
         expect(div).toBeInTheDocument()
-
-    

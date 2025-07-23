@@ -284,3 +284,14 @@ describe "waitFor" <| fun _ -> (
         expect(number).toBe(42)
     }
 )
+
+describe "act" <| fun _ -> 
+    testPromise "act with function" <| fun () -> promise {
+        let reactElement = RTL.render(Component.Counter())
+        let incrementButton = RTL.screen.getByTestId("increase-button")
+
+        do! RTL.act(fun () -> Promise.sleep 2000)
+
+        let countDisplay = RTL.screen.getByTestId(CountDisplayTestId)
+        expect(countDisplay.textContent).toBe("Count: 0")
+    }

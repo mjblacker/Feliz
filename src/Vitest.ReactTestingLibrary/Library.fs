@@ -339,9 +339,10 @@ type RTL =
     [<ImportMember("@testing-library/react")>]
     static member cleanup () : unit = jsNative
 
-    // [<ImportMember("@testing-library/react")>]
-    // [<Emit("$0")>]
-    // static member act (actFn: unit -> Promise<unit>) : Promise<unit> = jsNative
+    [<ImportMember("@testing-library/react")>]
+    // [<Emit("new Promise((resolve, reject) => { $0(async () => { await $1(); resolve() }) })")>]
+    [<Emit("(async () => await $0($1))()")>]
+    static member act (actFn: unit -> Promise<unit>) : Promise<unit> = jsNative
 
     [<ImportMember("@testing-library/react")>]
     static member act (actFn: unit -> unit) : unit = jsNative
