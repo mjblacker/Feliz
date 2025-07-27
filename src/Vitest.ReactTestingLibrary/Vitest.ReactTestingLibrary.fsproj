@@ -6,17 +6,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Vitest.fs" />
-    <Compile Include="React.fs" />
+    <Compile Include="Library.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Fable.Core" />
+    <PackageReference Include="Fable.Promise" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fable.ReactTestingLibrary\Fable.ReactTestingLibrary.fsproj" />
     <ProjectReference Include="..\Feliz\Feliz.fsproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs;" Exclude="**\*.fs.js" PackagePath="fable\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NpmDependencies>
+        <NpmPackage Name="@testing-library/react" Version="gt 16.0.0 lt 17.0.0" ResolutionStrategy="Max" />
+    </NpmDependencies>
+  </PropertyGroup>
 
 </Project>
