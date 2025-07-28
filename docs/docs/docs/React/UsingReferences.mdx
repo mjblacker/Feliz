@@ -51,21 +51,6 @@ let FocusInputExample() =
     ]
 ```
 
-# Forwarding Refs
-
-You can also use `React.forwardRef` for passing refs to children components.
-
-In most cases the above examples will suit your needs, but in some use-cases such as creating libraries for reusable components, it can be useful.
-
-For more information see the React docs on [forwarding refs](https://reactjs.org/docs/forwarding-refs.html).
-
-import ForwardRef from '../../feliz-docs/fableoutput/Examples/React/ForwardRef'
-import RawForwardRef from '!!raw-loader!../../feliz-docs/Examples/React/ForwardRef.fs'
-
-<ComponentRender code={RawForwardRef}> 
-  <ForwardRef />
-</ComponentRender>
-
 # Overriding behavior with useImperativeHandle
 
 The hook `React.useImperativeHandle` allows you to override the behavior of the given `ref`.

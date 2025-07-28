@@ -10,6 +10,14 @@ let MyNonCodeSplitComponent() =
 
 let asyncComponent : JS.Promise<unit -> ReactElement> = JsInterop.importDynamic "./Counter.fs"
 
+let LazyLoadComponent: LazyComponent<unit> = 
+    React.lazy'(fun () ->
+        promise {
+            do! Promise.sleep 2000
+            return! JsInterop.importDynamic "./Counter.fs"
+        }
+    )
+
 [<ReactComponent(true)>]
 let CodeSplitting(delay: int option) =
 
@@ -20,16 +28,10 @@ let CodeSplitting(delay: int option) =
                 Html.div [
                     prop.text $"I will be loaded after {delay.Value} milliseconds!"
                 ]
-            React.suspense(
+            React.Suspense(
                 [
                     Html.div [
-                        React.lazy'((fun () ->
-                            promise {
-                                if delay.IsSome then
-                                    do! Promise.sleep (delay.Value)
-                                return! asyncComponent
-                            }
-                        ),())
+                        React.lazyRender(LazyLoadComponent, ())
                     ]
                 ], 
                 Html.div [

@@ -2,7 +2,8 @@ module Example.ImperativeHandle
 
 open Feliz
 
-let ForwardRefImperativeChild = React.forwardRef(fun ((), ref) ->
+[<ReactComponent>]
+let ForwardRefImperativeChild(ref: IRefValue<{| focus: unit -> unit |} option>) =
     let divText,setDivText = React.useState ""
     let inputRef = React.useInputRef()
 
@@ -21,14 +22,14 @@ let ForwardRefImperativeChild = React.forwardRef(fun ((), ref) ->
         Html.div [
             prop.text divText
         ]
-    ])
+    ]
 
 [<ReactComponent(true)>]
 let ForwardRefImperativeParent() =
     let ref = React.useRef<{| focus: unit -> unit |} option>(None)
 
     Html.div [
-        ForwardRefImperativeChild((), ref)
+        ForwardRefImperativeChild(ref)
         Html.button [
             prop.text "Focus Input"
             prop.onClick <| fun ev ->

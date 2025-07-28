@@ -212,3 +212,5 @@ dist
 0.bundle.js
 .yarn
 fableoutput/
+# keep fableoutput from older docs versions
+!docs/versioned_docs/**/fableoutput
