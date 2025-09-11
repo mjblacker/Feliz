@@ -1,0 +1,35 @@
+---
+title: useCallback
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useCallback#usage" name="useCallback"/>
+
+---
+
+`useCallback` is a hook that lets you memoize callback functions so they are not recreated on every render. This is useful when passing callbacks to child components to prevent unnecessary rerenders.
+
+```fsharp
+[<ReactComponent(true)>]
+let UseCallback() =
+    let count, setCount = React.useState(0)
+    let increment = React.useCallback((fun () -> setCount(count + 1)), [| box count |])
+    
+    // ...
+```
+
+import UseCallback from '../../../feliz-docs/fableoutput/Examples/React/UseCallback'
+import RawUseCallback from '!!raw-loader!../../../feliz-docs/Examples/React/UseCallback.fs'
+
+In the following example the `increment` function is memoized using `useCallback` and passed to the `ChildComponent`. This prevents `ChildComponent` from rerendering unless `increment` changes, which only happens when `count` changes. Therefore updating `theme` will not cause `ChildComponent` to rerender.
+
+<ComponentRender code={RawUseCallback}>
+  <UseCallback />
+</ComponentRender>
+
+
+## Feliz specifics
+
+The API is similar to React's JavaScript version, but the dependencies array must be of type `obj[]` due to F#'s strong typing.

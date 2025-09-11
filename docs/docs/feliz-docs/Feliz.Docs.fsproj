@@ -26,6 +26,7 @@
     <Compile Include="Examples/React/ImperativeHandle.fs" />
     <Compile Include="Examples/React/CodeSplitting.fs" />
     <Compile Include="Examples/React/UseStateWithUpdater.fs" />
+  <Compile Include="Examples/React/UseCallback.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>
