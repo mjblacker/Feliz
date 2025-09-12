@@ -1,0 +1,51 @@
+---
+title: useReducer
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useReducer#usage" name="useReducer"/>
+
+---
+
+`useReducer` lets you manage complex state logic in your components using a reducer function, similar to Redux/[Elmish](https://elmish.github.io/elmish/).
+
+This hook is useful for managing state transitions that depend on previous state, or when state logic is too complex for `useState`.
+
+The example is very simple and just demonstrates the basic usage of `useReducer`. 
+
+```fsharp
+type State = { Count : int }
+
+type Msg = Increment | Decrement
+
+let initialState = { Count = 0 }
+
+let update (state: State) = function
+    | Increment -> { state with Count = state.Count + 1 }
+    | Decrement -> { state with Count = state.Count - 1 }
+
+[<ReactComponent(true)>]
+let UseReducer() =
+    let (state, dispatch) = React.useReducer(update, initialState)
+    Html.div [
+        Html.p [ prop.text $"Count: {state.Count}" ]
+        Html.button [
+            prop.text "+"
+            prop.onClick (fun _ -> dispatch Increment)
+        ]
+        Html.button [
+            prop.text "-"
+            prop.onClick (fun _ -> dispatch Decrement)
+        ]
+        Html.p [ prop.text "useReducer is useful for complex state logic." ]
+    ]
+```
+
+import UseReducer from '../../../feliz-docs/fableoutput/Examples/React/UseReducer'
+import RawUseReducer from '!!raw-loader!../../../feliz-docs/Examples/React/UseReducer.fs'
+
+<ComponentRender code={RawUseReducer}>
+  <UseReducer />
+</ComponentRender>

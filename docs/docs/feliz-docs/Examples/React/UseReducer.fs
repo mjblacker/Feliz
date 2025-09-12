@@ -8,23 +8,24 @@ type Msg = Increment | Decrement
 
 let initialState = { Count = 0 }
 
-let update (state: State) = function
+let update (state: State) (msg: Msg) =
+    match msg with
     | Increment -> { state with Count = state.Count + 1 }
     | Decrement -> { state with Count = state.Count - 1 }
 
+
 [<ReactComponent(true)>]
-let Counter() =
+let UseReducer() =
     let (state, dispatch) = React.useReducer(update, initialState)
     Html.div [
+        Html.p [ prop.text $"Count: {state.Count}" ]
         Html.button [
+            prop.text "+"
             prop.onClick (fun _ -> dispatch Increment)
-            prop.text "Increment"
         ]
-
         Html.button [
+            prop.text "-"
             prop.onClick (fun _ -> dispatch Decrement)
-            prop.text "Decrement"
         ]
-
-        Html.h1 state.Count
+        Html.p [ prop.text "useReducer is useful for complex state logic." ]
     ]

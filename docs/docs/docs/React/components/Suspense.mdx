@@ -1,0 +1,35 @@
+---
+title: Suspense
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/Suspense#usage" name="Suspense"/>
+
+---
+
+`Suspense` lets you show a fallback UI (like a loading spinner) while waiting for lazy-loaded components to load.
+
+Suspense is useful for code-splitting and lazy-loading components, providing a better user experience while waiting for content to load.
+
+```fsharp
+[<ReactComponent(true)>]
+let SuspenseDemo() =
+    Html.div [
+        React.suspense(
+            [ 
+              // children
+            ],
+            Html.div [ prop.text "fallback" ]
+        )
+    ]
+```
+
+import SuspenseDemo from '../../../feliz-docs/fableoutput/Examples/React/Suspense'
+import RawSuspenseDemo from '!!raw-loader!../../../feliz-docs/Examples/React/Suspense.fs'
+
+<ComponentRender code={RawSuspenseDemo}>
+  <SuspenseDemo />
+</ComponentRender>
+

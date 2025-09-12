@@ -32,6 +32,11 @@
   <Compile Include="Examples/React/UseImperativeHandle.fs" />
   <Compile Include="Examples/React/UseLayoutEffect.fs" />
   <Compile Include="Examples/React/UseMemo.fs" />
+  <Compile Include="Examples/React/UseRef.fs" />
+  <Compile Include="Examples/React/UseInputRef.fs" />
+  <Compile Include="Examples/React/Fragment.fs" />
+  <Compile Include="Examples/React/StrictMode.fs" />
+  <Compile Include="Examples/React/Suspense.fs" />
     <Compile Include="Examples/React/UseEffectOnce.fs" />
     <Compile Include="Examples/React/UseEffectDisposable.fs" />
   </ItemGroup>

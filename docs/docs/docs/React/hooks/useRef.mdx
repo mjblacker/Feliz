@@ -1,0 +1,61 @@
+---
+title: useRef
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useRef#usage" name="useRef"/>
+
+---
+
+`useRef` lets you persist values across renders without causing a re-render. It's commonly used to access DOM elements directly.
+
+This hook is useful for accessing DOM nodes, storing mutable values, or keeping track of values that should not trigger a re-render.
+
+
+```fsharp
+[<ReactComponent(true)>]
+let UseRef() =
+    let ref = React.useRef(None)
+    let inputRef = React.useInputRef()
+    let eleRef = React.useElementRef()
+
+    // ..
+```
+
+import UseRef from '../../../feliz-docs/fableoutput/Examples/React/UseRef'
+import RawUseRef from '!!raw-loader!../../../feliz-docs/Examples/React/UseRef.fs'
+
+<ComponentRender code={RawUseRef}>
+  <UseRef />
+</ComponentRender>
+
+:::info
+
+Feliz provides two specialized hooks, `useInputRef` and `useElementRef`, built on top of `useRef` for easier access to input elements and general DOM elements, respectively.
+
+:::
+
+## useInputRef
+
+Can be used for input elements and casts the ref value to `Browser.Types.HTMLInputElement option`.
+
+import UseInputRef from '../../../feliz-docs/fableoutput/Examples/React/UseInputRef'
+import RawUseInputRef from '!!raw-loader!../../../feliz-docs/Examples/React/UseInputRef.fs'
+
+<ComponentRender code={RawUseInputRef}>
+  <UseInputRef />
+</ComponentRender>
+
+
+## useElementRef
+
+Can be used for general DOM elements and casts the ref value to `Browser.Types.HTMLElement option`.
+
+import UseLayoutEffect from '../../../feliz-docs/fableoutput/Examples/React/UseLayoutEffect'
+import RawUseLayoutEffect from '!!raw-loader!../../../feliz-docs/Examples/React/UseLayoutEffect.fs'
+
+<ComponentRender code={RawUseLayoutEffect}>
+  <UseLayoutEffect />
+</ComponentRender>

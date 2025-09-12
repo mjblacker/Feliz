@@ -1,0 +1,27 @@
+---
+title: Fragment
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/Fragment#usage" name="Fragment"/>
+
+---
+
+`Fragment` lets you group multiple elements without adding extra nodes to the DOM.
+
+```fsharp
+[<ReactComponent(true)>]
+let FragmentDemo() =
+  React.Fragment [
+    // ... grouped elements
+  ]
+```
+
+import FragmentDemo from '../../../feliz-docs/fableoutput/Examples/React/Fragment'
+import RawFragmentDemo from '!!raw-loader!../../../feliz-docs/Examples/React/Fragment.fs'
+
+<ComponentRender code={RawFragmentDemo}>
+	<FragmentDemo />
+</ComponentRender>

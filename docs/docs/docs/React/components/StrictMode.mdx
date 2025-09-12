@@ -1,0 +1,31 @@
+---
+title: StrictMode
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/StrictMode#usage" name="StrictMode"/>
+
+---
+
+`StrictMode` is a tool for highlighting potential problems in your React application during development. It does not render any visible UI, but activates additional checks and warnings for its descendants.
+
+StrictMode helps you find unsafe lifecycle methods, legacy API usage, and other issues early in development. It does not affect production builds.
+
+```fsharp
+[<ReactComponent(true)>]
+let StrictModeDemo() =
+    React.StrictMode [
+        // ... children
+    ]
+```
+
+import StrictModeDemo from '../../../feliz-docs/fableoutput/Examples/React/StrictMode'
+import RawStrictModeDemo from '!!raw-loader!../../../feliz-docs/Examples/React/StrictMode.fs'
+
+<ComponentRender code={RawStrictModeDemo}>
+  <StrictModeDemo />
+</ComponentRender>
+
+
