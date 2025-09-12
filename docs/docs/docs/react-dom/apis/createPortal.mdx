@@ -1,0 +1,30 @@
+---
+title: createPortal
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react-dom/createPortal" name="createPortal"/>
+
+---
+
+`React.createPortal` lets you render children into a DOM node that exists outside the DOM hierarchy of the parent component. This is useful for modals, tooltips, and overlays.
+
+```fsharp
+
+React.createPortal(
+  Html.div [
+      // ..  component
+  ],
+  Browser.Dom.document.body // target DOM node
+)
+```
+
+import PortalDemo from '../../../feliz-docs/fableoutput/Examples/ReactDOM/CreatePortal'
+import RawPortalDemo from '!!raw-loader!../../../feliz-docs/Examples/ReactDOM/CreatePortal.fs'
+
+<ComponentRender code={RawPortalDemo}>
+  <PortalDemo />
+</ComponentRender>
+

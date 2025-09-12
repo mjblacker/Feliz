@@ -1,0 +1,25 @@
+---
+title: memo
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/memo#usage" name="memo"/>
+
+---
+
+`React.memo` lets you optimize components by memoizing their output. This prevents unnecessary rerenders when the props haven't changed, improving performance for pure components.
+
+```fsharp
+[<ReactMemoComponent>] // memoizes component to prevent rerender whenever parent rerenders
+let ChildComponent (onClick: unit -> unit) = 
+    // ... component implementation
+```
+
+import UseCallback from '../../../feliz-docs/fableoutput/Examples/React/UseCallback'
+import RawUseCallback from '!!raw-loader!../../../feliz-docs/Examples/React/UseCallback.fs'
+
+<ComponentRender code={RawUseCallback}>
+  <UseCallback />
+</ComponentRender>

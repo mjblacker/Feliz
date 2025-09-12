@@ -1,4 +1,4 @@
-module Example.React
+module Example.Counter
 
 open Fable.Core
 open Feliz

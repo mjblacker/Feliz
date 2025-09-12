@@ -39,6 +39,9 @@
   <Compile Include="Examples/React/Suspense.fs" />
     <Compile Include="Examples/React/UseEffectOnce.fs" />
     <Compile Include="Examples/React/UseEffectDisposable.fs" />
+    <Compile Include="Examples/ReactDOM/CreatePortal.fs" />
+    <Compile Include="Examples/ReactDOM/CreateRoot.fs" />
+    <Compile Include="Examples/ReactDOM/HydrateRoot.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>
