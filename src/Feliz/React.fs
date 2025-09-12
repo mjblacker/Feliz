@@ -206,6 +206,9 @@ useEffect(() => {
     static member inline useEffectOnce(setup: unit -> #IDisposable option) =
         React.useEffect (setup >> Helpers.optDispose, [||])
 
+    [<ImportMember("react")>]
+    static member inline useId() : string = jsNative
+
     /// The `useLayoutEffect` hook that creates a disposable effect for React function components.
     /// This effect has no dependencies which means the effect is re-executed on every re-render.
     /// To make the effect run once (for example you subscribe once to web sockets) then provide an empty array

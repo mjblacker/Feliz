@@ -1,0 +1,33 @@
+---
+title: useImperativeHandle
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useImperativeHandle#usage" name="useImperativeHandle"/>
+
+---
+
+`useImperativeHandle` lets you customize the instance value that is exposed when using `ref` with a component. This is useful for exposing imperative methods to parent components.
+
+This hook is useful when you want to expose imperative methods (like `focus`) from a child component to its parent, while keeping the internal implementation encapsulated.
+
+```fsharp
+
+[<ReactComponent(true)>]
+let Component(inputRef: IRefValue<obj option>) =
+    
+    React.useImperativeHandle(inputRef, (fun () ->
+        // return an object with the methods you want to expose
+    ), [||])
+    // ... 
+
+```
+
+import UseImperativeHandle from '../../../feliz-docs/fableoutput/Examples/React/UseImperativeHandle'
+import RawUseImperativeHandle from '!!raw-loader!../../../feliz-docs/Examples/React/UseImperativeHandle.fs'
+
+<ComponentRender code={RawUseImperativeHandle}>
+  <UseImperativeHandle />
+</ComponentRender>

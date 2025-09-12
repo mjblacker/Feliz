@@ -1,0 +1,64 @@
+---
+title: useEffect
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useEffect#usage" name="useEffect"/>
+
+---
+
+`useEffect` lets you run side effects in your components, such as data fetching, subscriptions, or logging. Effects run after every render by default, but you can control when they run using a dependencies array.
+
+Effects are useful for running code that interacts with the outside world, such as APIs, timers, or logging. You can also return a cleanup function to run when the component unmounts or before the effect runs again.
+
+```fsharp
+[<ReactComponent(true)>]
+let UseEffect() =
+    let count, setCount = React.useState(0)
+    // useEffect: run side effect when count changes
+    React.useEffect((fun () ->
+        JS.console.log($"Count changed to {count}")
+        // Optional cleanup function
+        fun () -> JS.console.log("Cleanup effect")
+    ), [| box count |])
+    Html.div [
+        Html.button [
+            prop.text $"Clicked {count} times"
+            prop.onClick (fun _ -> setCount(count + 1))
+        ]
+        Html.p [ prop.text "Open the browser console to see useEffect logs when count changes." ]
+    ]
+```
+
+import UseEffect from '../../../feliz-docs/fableoutput/Examples/React/UseEffect'
+import RawUseEffect from '!!raw-loader!../../../feliz-docs/Examples/React/UseEffect.fs'
+
+<ComponentRender code={RawUseEffect}>
+  <UseEffect />
+</ComponentRender>
+
+
+## UseEffectOnce
+
+`useEffectOnce` is a specialized version of `useEffect` that automatically passes an empty array as dependencies, therefore running only once when the component mounts.
+
+import UseEffectOnce from '../../../feliz-docs/fableoutput/Examples/React/UseEffectOnce'
+import RawUseEffectOnce from '!!raw-loader!../../../feliz-docs/Examples/React/UseEffectOnce.fs'
+
+<ComponentRender code={RawUseEffectOnce}>
+  <UseEffectOnce />
+</ComponentRender>
+
+
+## UseEffect with IDisposable
+
+If your effect returns an `IDisposable`, Feliz will automatically call its `Dispose` method when the component unmounts or before the effect runs again.
+
+import UseEffectDisposable from '../../../feliz-docs/fableoutput/Examples/React/UseEffectDisposable'
+import RawUseEffectDisposable from '!!raw-loader!../../../feliz-docs/Examples/React/UseEffectDisposable.fs'
+
+<ComponentRender code={RawUseEffectDisposable}>
+  <UseEffectDisposable />
+</ComponentRender>

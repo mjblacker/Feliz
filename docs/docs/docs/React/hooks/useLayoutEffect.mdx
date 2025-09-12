@@ -1,0 +1,38 @@
+---
+title: useLayoutEffect
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useLayoutEffect#usage" name="useLayoutEffect"/>
+
+---
+
+`useLayoutEffect` runs synchronously after all DOM mutations, before the browser paints. It's useful for reading layout and synchronously re-rendering.
+
+```fsharp
+[<ReactComponent(true)>]
+let UseLayoutEffect() =
+    React.useLayoutEffect((fun () ->
+        JS.console.log($"layout effect!")
+        fun () -> JS.console.log("Cleanup layout effect")
+    ), 
+    [| 
+      // .. dependencies
+    |]
+  )
+```
+
+import UseLayoutEffect from '../../../feliz-docs/fableoutput/Examples/React/UseLayoutEffect'
+import RawUseLayoutEffect from '!!raw-loader!../../../feliz-docs/Examples/React/UseLayoutEffect.fs'
+
+<ComponentRender code={RawUseLayoutEffect}>
+  <UseLayoutEffect />
+</ComponentRender>
+
+## useLayoutEffectOnce
+
+`useLayoutEffectOnce` is a Feliz helper that runs a layout effect only once after the initial render.
+
+See example above.

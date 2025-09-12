@@ -1,0 +1,44 @@
+---
+title: useContext
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useContext#usage" name="useContext"/>
+
+---
+
+`useContext` lets you share state or values between multiple components without passing props down manually at every level.
+
+Context is useful for sharing state, themes, or configuration between deeply nested components without prop drilling. In Feliz, you create a context, provide it at a high level, and consume it in any child component.
+
+It can also be used to configure multiple components with the same settings, such as theming or localization.
+
+```fsharp
+// Define a context for shared state
+let CounterContext = React.createContext(None: (int * (int -> unit)) option)
+
+[<ReactComponent(true)>]
+let CounterProvider(children: ReactElement list) =
+    let count, setCount = React.useState(0)
+    CounterContext.Provider(Some(count, setCount), children)
+
+[<ReactComponent(true)>]
+let CounterDisplay() =
+    let ctx = React.useContext(CounterContext)
+
+    // .. use the context value
+```
+
+import UseContext from '../../../feliz-docs/fableoutput/Examples/React/UseContext'
+import RawUseContext from '!!raw-loader!../../../feliz-docs/Examples/React/UseContext.fs'
+
+<ComponentRender code={RawUseContext}>
+  <UseContext />
+</ComponentRender>
+
+
+## Feliz specifics
+
+The API closely matches React's JavaScript version, but you should specify the type for the context value due to F#'s strong typing.

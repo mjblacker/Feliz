@@ -1,0 +1,35 @@
+---
+title: useMemo
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useMemo#usage" name="useMemo"/>
+
+---
+
+`useMemo` lets you memoize the result of an expensive calculation so it only recalculates when its dependencies change.
+
+This hook is useful for optimizing performance by avoiding unnecessary recalculations of expensive values when dependencies haven't changed.
+
+```fsharp
+[<ReactComponent(true)>]
+let UseMemo() =
+    let expensive = React.useMemo((fun () -> 
+      /// ... perform expensive calculation here
+      ()
+    ), 
+    [|
+      // .. dependencies  
+    |]
+  )
+
+```
+
+import UseMemo from '../../../feliz-docs/fableoutput/Examples/React/UseMemo'
+import RawUseMemo from '!!raw-loader!../../../feliz-docs/Examples/React/UseMemo.fs'
+
+<ComponentRender code={RawUseMemo}>
+  <UseMemo />
+</ComponentRender>

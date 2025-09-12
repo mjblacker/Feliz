@@ -1,0 +1,28 @@
+---
+title: useId
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useId#usage" name="useId"/>
+
+---
+
+`useId` generates a unique ID. This can be used for accessibility and associating elements, such as labels and inputs, in your components.
+
+`useId` helps ensure that IDs are unique across server and client renders, which is important for accessibility and forms. It is especially useful when rendering multiple components that need unique IDs.
+
+```fsharp
+[<ReactComponent(true)>]
+let UseId() =
+    let id = React.useId()
+    // ... use the id in your component
+```
+
+import UseId from '../../../feliz-docs/fableoutput/Examples/React/UseId'
+import RawUseId from '!!raw-loader!../../../feliz-docs/Examples/React/UseId.fs'
+
+<ComponentRender code={RawUseId}>
+  <UseId />
+</ComponentRender>

@@ -1,0 +1,36 @@
+---
+title: useDebugValue
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import ReactRefAdmonition from '@site/src/components/ReactRefAdmonition';
+
+<ReactRefAdmonition href="https://react.dev/reference/react/useDebugValue#usage" name="useDebugValue"/>
+
+---
+
+`useDebugValue` lets you display a label for custom hooks in [React DevTools](https://react.dev/learn/react-developer-tools), making debugging easier.
+
+```fsharp
+// Custom hook that uses useDebugValue
+let useOnlineStatus() =
+    let isOnline, setIsOnline = React.useState(true)
+    React.useDebugValue(if isOnline then "Online" else "Offline")
+    // ..
+
+```
+
+import UseDebugValue from '../../../feliz-docs/fableoutput/Examples/React/UseDebugValue'
+import RawUseDebugValue from '!!raw-loader!../../../feliz-docs/Examples/React/UseDebugValue.fs'
+
+<ComponentRender code={RawUseDebugValue}>
+  <UseDebugValue />
+</ComponentRender>
+
+## Why useDebugValue?
+
+When you build custom hooks, `useDebugValue` helps you show useful information in React DevTools for easier debugging. In Feliz, you can use it to display the current value or a formatted label for your hook.
+
+## Feliz specifics
+
+The API closely matches React's JavaScript version. You can pass any value or string to `useDebugValue`.

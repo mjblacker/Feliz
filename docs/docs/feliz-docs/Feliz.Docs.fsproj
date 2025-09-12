@@ -15,9 +15,7 @@
     <Compile Include="Examples/React/MultipleStateVariables.fs" />
     <Compile Include="Examples/React/UseReducer.fs" />
     <Compile Include="Examples/React/EffectfulCounter.fs" />
-    <Compile Include="Examples/React/EffectfulOnce.fs" />
     <Compile Include="Examples/React/EffectfulWithDependency.fs" />
-    <Compile Include="Examples/React/EffectfulTimer.fs" />
     <Compile Include="Examples/React/UseCancellationTokenHook.fs" />
     <Compile Include="Examples/React/Portal.fs" />
     <Compile Include="Examples/React/HoverAnimations.fs" />
@@ -27,6 +25,15 @@
     <Compile Include="Examples/React/CodeSplitting.fs" />
     <Compile Include="Examples/React/UseStateWithUpdater.fs" />
   <Compile Include="Examples/React/UseCallback.fs" />
+    <Compile Include="Examples/React/UseContext.fs" />
+  <Compile Include="Examples/React/UseDebugValue.fs" />
+  <Compile Include="Examples/React/UseEffect.fs" />
+  <Compile Include="Examples/React/UseId.fs" />
+  <Compile Include="Examples/React/UseImperativeHandle.fs" />
+  <Compile Include="Examples/React/UseLayoutEffect.fs" />
+  <Compile Include="Examples/React/UseMemo.fs" />
+    <Compile Include="Examples/React/UseEffectOnce.fs" />
+    <Compile Include="Examples/React/UseEffectDisposable.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>

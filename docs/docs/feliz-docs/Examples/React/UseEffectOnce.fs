@@ -1,4 +1,4 @@
-module Example.EffectfulOnce
+module Example.UseEffectOnce
 
 open Feliz
 
@@ -11,12 +11,14 @@ let EffectWithAsyncOnce() =
         setLoading true
         do! Async.Sleep 1500
         setLoading false
-        setContent "Content"
+        setContent "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
     }
 
-    React.useEffect(loadData >> Async.StartImmediate, [| |])
+    React.useEffectOnce(loadData >> Async.StartImmediate)
 
     Html.div [
+        Html.p "Refresh this component to see the load effect run once"
+        Html.p "This simulates loading data on mount"
         if isLoading
         then Html.h1 "Loading..."
         else Html.h1 content
