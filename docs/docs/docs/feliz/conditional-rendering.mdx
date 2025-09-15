@@ -1,0 +1,73 @@
+---
+title: Conditional Rendering
+sidebar_position: 3
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+
+import ConditionalRendering from '../../feliz-docs/fableoutput/Examples/Feliz/ConditionalRendering'
+import RawConditionalRendering from '!!raw-loader!../../feliz-docs/Examples/Feliz/ConditionalRendering.fs'
+
+F# syntax allows for multiple solutions to conditional rendering in React components. Here are some of the most common patterns:
+
+:::info
+
+You can use any F# pattern normally used for conditional logic in your React components.
+
+:::
+
+<ComponentRender code={RawConditionalRendering}>
+  <ConditionalRendering />
+</ComponentRender>
+
+## if ... else
+
+The classic `if ... else` expression can be used to conditionally include elements in the render output. Inside lists you can omit the `else` case if you don't want to do anything in that case. If you have multiple if ... else cases you can use `elif` to chain them together.
+
+```fsharp
+Html.div [
+    Html.text text
+    if not isMany then Html.text " ⚠️" // inside a list `else` case can be omitted
+] 
+
+// in this case we cannot omit `else` case
+let className = if isMany then "text-green-500" else "text-red-500"
+// but we can also use the expression directly 
+prop.className [
+    if isMany then "text-green-500" else "text-red-500"
+]
+
+if count > 5 then
+  "Many"
+elif count > 10 then
+  "A lot"
+else
+  "Few"
+```
+
+## Pattern matching
+
+Pattern matching is a powerful feature of F# that can be used for conditional rendering. It allows you to match against specific values or patterns and render different elements based on the match.
+
+It provides a clean and expressive way to handle multiple conditions, while at the same time allowing for deconstruction logic on some types (like `option`, `list`, `tuple`, and discriminated unions).
+
+```fsharp
+
+match (Some 5) with // option
+| Some count -> Html.div [ Html.textf "%d left in store" count ]
+| None -> Html.div [ Html.text "Out of stock" ]
+
+type Person = { Name: string option; IsSignedIn: bool }
+
+match { Name = Some "Alice"; IsSignedIn = true } with // record type
+| { IsSignedIn = true; Name = name } -> Html.div [ Html.textf "Welcome back, %s!" name ]
+| { IsSignedIn = false } -> Html.div [ Html.textf "Hello, please sign in." ]
+
+match [1; 2; 3] with // list
+| [] -> Html.div [ Html.text "Empty list" ]
+| [x] -> Html.div [ Html.textf "Single item: %d" x ]
+| [x; y] -> Html.div [ Html.textf "Two items: %d and %d" x y ]
+| x :: xs -> Html.div [ Html.textf "Head: %d, Tail length: %d" x (List.length xs) ]
+
+```
+

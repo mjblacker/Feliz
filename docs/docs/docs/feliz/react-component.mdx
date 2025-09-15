@@ -1,0 +1,134 @@
+---
+title: `[<ReactComponent>]`
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Feliz offers a simple way to define React components using the `[<ReactComponent>]` attribute. This attribute can be applied to a function that returns a React element.
+
+With the help of `[<ReactComponent>]` Feliz can ensure that the components are correctly transformend and called after transpilation to JavaScript.
+
+:::info
+
+If you are interested in what happens under the hood, here is a short summary of notable points:
+
+<details>
+<summary>Click to expand</summary>
+- Transform all arguments into an JavaScript object.
+  
+  Tupled/curried arguments are transformed into object and exactly one argument as (anonymous) record type will be used as object.
+
+    <Tabs>
+
+    <TabItem value="tupled" label="Tupled Args">
+
+    ```fsharp
+    [<ReactComponent>]
+    let Component(text: string, count: int) = ...
+
+    ```
+
+    </TabItem>
+
+    <TabItem value="curried" label="Curried Args">
+
+    ```fsharp
+    [<ReactComponent>]
+    let Component (text: string) (count: int) = ...
+
+    ```
+
+    </TabItem>
+
+    <TabItem value="record" label="Record Type">
+
+    ```fsharp
+    type Props = { text: string; count: int } // record type
+
+    [<ReactComponent>]
+    let Component(props: Props) = ...
+    ```
+
+    </TabItem>
+
+    <TabItem value="anon" label="Anonymous Record Type">
+
+    ```fsharp
+    type Props = {| text: string; count: int |} // anonymous record type
+
+    [<ReactComponent>]
+    let Component(props: Props) = ...
+    ```
+
+    </TabItem>
+
+    <TabItem value="transpiled" label="JSX">
+
+    ```jsx
+    function Component({text, count}) { ... }
+    ```
+
+    </TabItem>
+
+
+    </Tabs>
+
+- Component will be called using the `createElement` function from React.
+- Import `React` automatically.
+
+</details>
+
+:::
+
+## export default
+
+You can pass a boolean parameter to the attribute to export the component as the default export of the module.
+
+```fsharp
+[<ReactComponent(exportDefault = true)>]
+let Component() = ...
+// or 
+
+[<ReactComponent(true)>]
+let Component() = ...
+```
+
+## `[<ReactMemoComponent>]`
+
+React `memo` components can be created using the `[<ReactMemoComponent>]` attribute. It works the same way as `[<ReactComponent>]`, but wraps the component in `React.memo` and ensures that it is defined as a `const` in the generated JavaScript code.
+
+<Tabs>
+
+<TabItem value="F#" label="F#">
+
+```fsharp
+[<ReactMemoComponent>]
+let Component(text: string, count: int) =
+    Html.div [
+        for i in 1 .. count do
+            Html.p [
+                prop.key i
+                prop.text (sprintf "%d: %s" i text)
+            ]
+    ]
+
+```
+
+</TabItem>
+
+<TabItem value="JSX" label="JSX">
+
+```jsx
+export const Component = memo((componentInputProps) => {
+    const count = componentInputProps.count;
+    const text = componentInputProps.text;
+    // ... 
+});
+```
+
+</TabItem>
+
+
+</Tabs>

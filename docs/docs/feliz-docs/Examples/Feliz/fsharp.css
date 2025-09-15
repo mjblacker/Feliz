@@ -1,0 +1,33 @@
+.fsharp-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  background-color: #007acc;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #005f99;
+  }
+
+  &:active {
+    outline: 2px solid #004d80;
+  }
+
+  &.sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  &.lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.25rem;
+  }
+}
+

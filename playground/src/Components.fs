@@ -82,6 +82,16 @@ let LazyLoadComponent =
         }
     )
 
+type Test =
+
+    [<ReactLazyComponent>]
+    static member LazyHello2() = 
+        promise {
+            do! Promise.sleep 2000
+            return! Fable.Core.JsInterop.importDynamic "./LazyComponent.jsx"
+        }
+        |> unbox<ReactElement>
+
 [<Erase; Mangle(false)>]
 type Components =
 

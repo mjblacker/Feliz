@@ -24,7 +24,7 @@ module HtmlHelper =
 
     let createElement (name: string) (props: IReactProperty list) : ReactElement =
         match unbox<(string*obj) list> props |> tryExtractFirst (fun (key, _) -> key = "children") with
-        | Some (_, children), props when Interop.isIterable children ->
+        | Some (_, children), props when not (Interop.isString children) && Interop.isIterable children ->
             ReactLegacy.createElement(
                 name, 
                 Fable.Core.JsInterop.createObj props,

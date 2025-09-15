@@ -1,0 +1,56 @@
+---
+title: F# in Html
+sidebar_position: 1
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+
+In Feliz you can use F# code directly in your Html structure as it is abstracted into F# native lists. This means you can use all the power of F# to create dynamic and reusable components.
+
+In the following example we define a simple button component that takes a text parameter and renders a styled button with that text.
+
+import FSharpExample from '../../feliz-docs/fableoutput/Examples/Feliz/FSharp'
+import RawFSharpExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/FSharp.fs'
+
+<ComponentRender code={RawFSharpExample}>
+  <FSharpExample text={"Hello from F#"}/>
+</ComponentRender>
+
+- We define the button size as discriminated union type.
+
+  ```FSharp
+  type ISize =
+    | Small
+    | Medium
+    | Large
+  ```
+- We make size an optional parameter with a default value.
+
+  ```FSharp
+  static member Example(text: string, onClick: Browser.Types.MouseEvent -> unit, ?size: ISize) =
+        let size = defaultArg size Medium
+  
+  ```
+
+  :::info
+  Because of this we create the component as `static member` of a class. Using `let` bindings does not allow for optional parameters
+  :::
+
+- We use a `match case` on `size` to determine the appropriate CSS class to apply.
+
+  ```fsharp
+  let sizeClass =
+    match size with
+    | Small -> "sm"
+    | Medium -> ""
+    | Large -> "lg"
+  ```
+
+- We define a function and pass it to the `onClick` event handler.
+
+  ```fsharp
+  let fn = fun _ -> Browser.Dom.console.log("Button clicked!")
+  // ...
+  Button.Example("Submit", fn, size = Large)
+  ```
+

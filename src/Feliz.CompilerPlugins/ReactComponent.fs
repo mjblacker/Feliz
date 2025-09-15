@@ -25,15 +25,15 @@ module internal ReactComponentHelpers =
             yield! body
         ]
 
-    let applyImportOrMemo import from memo (decl: MemberDecl) =
-        match import, from, memo with
-        | Some _, Some _, _ ->
+    let applyImportOrMemoOrLazy import from memo (lazy': bool option) (decl: MemberDecl) =
+        match import, from, memo, lazy' with
+        | Some _, Some _, _, _ ->
             let reactElType = decl.Body.Type
             // imported component doesn't need to emit any JS
             let tags = "remove-declaration" :: decl.Tags
             { decl with Body = AstUtils.emptyReactElement reactElType; Tags = tags }
 
-        | _, _, Some true ->
+        | _, _, Some true, _ ->
             let memoFn = AstUtils.makeImport "memo" "react"
             let body =
                 decl.Body
@@ -48,12 +48,27 @@ module internal ReactComponentHelpers =
                 |> GeneratedMemberRef
             { decl with MemberRef = info; Args = []; Body = body }
 
+        | _, _, _, Some true ->
+            let lazyFn = AstUtils.makeImport "lazy" "react"
+            let body =
+                decl.Body
+                |> injectReactImport 
+                |> fun body -> [Delegate(decl.Args, body, None, Tags.empty)]
+                |> AstUtils.makeCall lazyFn
+            // Change declaration kind from function to value
+            let info =
+                AstUtils.memberName decl.MemberRef
+                |> AstUtils.makeMemberInfo false body.Type
+                |> GeneratedValue
+                |> GeneratedMemberRef
+            { decl with MemberRef = info; Args = []; Body = body }
+
         | _ -> { decl with Body = injectReactImport decl.Body }
 
 open ReactComponentHelpers
 
 /// <summary>Transforms a function into a React function component. Make sure the function is defined at the module level</summary>
-type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string, ?memo: bool) =
+type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string, ?memo: bool, ?lazy': bool) =
     inherit MemberDeclarationPluginAttribute()
     override _.FableMinimumVersion = "5.0"
     new() = ReactComponentAttribute(exportDefault=false)
@@ -111,9 +126,10 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string
                     | None -> reactEl
                     | Some(ident, value) -> Let(ident, value, reactEl)                
                 
-                match [|memo, callee|] with
-                // If the call is memo and the function has an identifier, we can set the displayName
-                | [|(Some true), (IdentExpr i)|] -> 
+                match [|memo, lazy', callee|] with
+                // If the call is memo or lazy and the function has an identifier, we can set the displayName
+                | [|(Some true), _, (IdentExpr i)|] 
+                | [| _, (Some true), (IdentExpr i)|] ->
                     Sequential [
                         (AstUtils.makeSet (IdentExpr(i)) "displayName" (AstUtils.makeStrConst i.Name))
                         expr
@@ -125,7 +141,11 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string
 
     override this.Transform(compiler, file, decl) =
         let info = compiler.GetMember(decl.MemberRef)
-        if info.IsValue || info.IsGetter || info.IsSetter then
+        if memo.IsSome && lazy'.IsSome && memo.Value && lazy'.Value then
+            let errorMessage = sprintf "Cannot use both memo and lazy options in [<ReactComponent>] for %s" decl.Name
+            compiler.LogWarning(errorMessage, ?range=decl.Body.Range)
+            decl
+        else if info.IsValue || info.IsGetter || info.IsSetter then
             // Invalid attribute usage
             let errorMessage = sprintf "Expecting a function declaration for %s when using [<ReactComponent>]" decl.Name
             compiler.LogWarning(errorMessage, ?range=decl.Body.Range)
@@ -186,11 +206,11 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string
                     ()
 
                 decl
-                |> applyImportOrMemo import from memo
+                |> applyImportOrMemoOrLazy import from memo lazy'
             else if decl.Args.Length = 1 && decl.Args[0].Type = Type.Unit then
                 // remove arguments from functions requiring unit as input
                 { decl with Args = [ ] }
-                |> applyImportOrMemo import from memo
+                |> applyImportOrMemoOrLazy import from memo lazy'
             else
                 // rewrite all other arguments into getters of a single props object
                 // TODO: transform any callback into into useCallback(callback) to stabilize reference
@@ -219,9 +239,12 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from:string
                         propBindings |> List.fold (fun body (k,v) -> Let(k, v, body)) decl.Body
 
                 { decl with Args = [propsArg]; Body = body }
-                |> applyImportOrMemo import from memo
+                |> applyImportOrMemoOrLazy import from memo lazy'
 
 type ReactMemoComponentAttribute(?exportDefault: bool) =
-    inherit ReactComponentAttribute(?exportDefault=exportDefault, ?import=None, ?from=None, memo=true)
+    inherit ReactComponentAttribute(?exportDefault=exportDefault, ?import=None, ?from=None, memo=true, lazy'=false)
     new() = ReactMemoComponentAttribute(exportDefault=false)
 
+type ReactLazyComponentAttribute(?exportDefault: bool) =
+    inherit ReactComponentAttribute(?exportDefault=exportDefault, ?import=None, ?from=None, memo=false, lazy'=true)
+    new() = ReactLazyComponentAttribute(exportDefault=false)

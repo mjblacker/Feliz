@@ -1,0 +1,47 @@
+---
+title: Html
+sidebar_position: 0
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+
+Writing Html in Feliz is done through the `Html` module, which provides a set of functions corresponding to HTML elements.
+
+import HtmlExample from '../../feliz-docs/fableoutput/Examples/Feliz/Html'
+import RawHtmlExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/Html.fs'
+
+<ComponentRender code={RawHtmlExample} defaultOpen>
+  <HtmlExample />
+</ComponentRender>
+
+## Overloads
+
+All `Html.*` functions take a variable number of arguments, they are defined using so called "overloads". Properties are defined in the `prop` module.
+
+The following example showcases these overloads:
+
+`Rightlick` and inspect on the example below to see the generated HTML.
+
+import OverloadsExample from '../../feliz-docs/fableoutput/Examples/Feliz/Overloads'
+import RawOverloadsExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/Overloads.fs'
+
+<ComponentRender code={RawOverloadsExample} defaultOpen>
+  <OverloadsExample />
+</ComponentRender>
+
+:::tip[When to use which?]
+You can use whichever you prefer. They should offer you the flexibility to write as much or as little boilerplate as you want.
+:::
+
+## Inline styling
+
+Inline styling can be done using the `prop.style` property. It takes a list of styles defined in the `style` module.
+
+This module allows you to write all inline styling in a type-safe way, with autocompletion and compile-time checks.
+
+import StylingExample from '../../feliz-docs/fableoutput/Examples/Feliz/Styling'
+import RawStylingExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/Styling.fs'
+
+<ComponentRender code={RawStylingExample} defaultOpen>
+  <StylingExample />
+</ComponentRender>
