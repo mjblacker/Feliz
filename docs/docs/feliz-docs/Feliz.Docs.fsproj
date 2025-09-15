@@ -49,6 +49,7 @@
     <Compile Include="Examples/Feliz/ConditionalRendering.fs" />
     <Compile Include="Examples/Feliz/RenderingLists.fs" />
     <Compile Include="Examples/Feliz/ReactComponent.fs" />
+    <Compile Include="Examples/Feliz/ReactComponentImport.fs" />
   </ItemGroup>
 
   <!--<ItemGroup>

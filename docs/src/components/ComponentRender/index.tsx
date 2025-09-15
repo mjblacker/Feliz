@@ -60,6 +60,7 @@ export default function ComponentRender({ children, code, language = "fsharp", t
       <details open={defaultOpen}>
         <summary style={{ cursor: "pointer", userSelect: "none" }}>Show code</summary>
         {isMultiFile ? (
+            
             <Tabs>
               {(code as CodeFile[]).map((file) => (
                 <TabItem key={file.fileName} value={file.fileName} label={file.fileName}>
@@ -68,7 +69,7 @@ export default function ComponentRender({ children, code, language = "fsharp", t
                     showLineNumbers
                     title={file.fileName}
                   >
-                    {file.content}
+                    {file.content as string}
                   </CodeBlock>
                 </TabItem>
               ))}

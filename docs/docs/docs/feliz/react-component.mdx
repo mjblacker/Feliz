@@ -1,8 +1,9 @@
 ---
-title: `[<ReactComponent>]`
+title: "[<ReactComponent>]"
 sidebar_position: 4
 ---
 
+import ComponentRender from '@site/src/components/ComponentRender';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -95,6 +96,21 @@ let Component() = ...
 let Component() = ...
 ```
 
+## import .. from
+
+You can pass string arguments to the attribute to import specific named imports from a module.
+
+import RawNativeCounter from '!!raw-loader!../../feliz-docs/Examples/Feliz/NativeCounter.tsx'
+import RawReactComponentImport from '!!raw-loader!../../feliz-docs/Examples/Feliz/ReactComponentImport.fs'
+import ReactComponentImport from '../../feliz-docs/fableoutput/Examples/Feliz/ReactComponentImport'
+
+<ComponentRender code={[
+  {fileName: 'NativeCounter.tsx', content: RawNativeCounter, language: 'tsx'},
+  {fileName: 'ReactComponentImport.fs', content: RawReactComponentImport, language: 'fsharp'}
+]} defaultOpen>
+  <ReactComponentImport />
+</ComponentRender>
+
 ## `[<ReactMemoComponent>]`
 
 React `memo` components can be created using the `[<ReactMemoComponent>]` attribute. It works the same way as `[<ReactComponent>]`, but wraps the component in `React.memo` and ensures that it is defined as a `const` in the generated JavaScript code.
@@ -126,6 +142,44 @@ export const Component = memo((componentInputProps) => {
     const text = componentInputProps.text;
     // ... 
 });
+```
+
+</TabItem>
+
+
+</Tabs>
+
+
+## `[<ReactLazyComponent>]`
+
+:::danger
+
+This is still work in progress and might change in future releases.
+
+:::
+
+React `lazy` components can be created using the `[<ReactLazyComponent>]` attribute. It works similarly to `[<ReactComponent>]`, but is intended for components that are loaded dynamically using `React.lazy`.
+
+<Tabs>
+
+<TabItem value="F#" label="F#">
+
+```fsharp
+[<ReactLazyComponent>]
+let ComponentLazy () = 
+  Fable.Core.JsInterop.importDynamic "./RenderingLists" // path to file
+  |> unbox<ReactElement>
+```
+
+</TabItem>
+
+<TabItem value="JSX" label="JSX">
+
+```jsx
+export const ComponentLazy = lazy(() => {
+    return import("./RenderingLists");
+});
+
 ```
 
 </TabItem>
