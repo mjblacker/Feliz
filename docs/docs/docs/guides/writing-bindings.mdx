@@ -4,6 +4,9 @@ description: How to write bindings for JavaScript libraries in Fable
 sidebar_position: 1
 ---
 
+import ComponentRender from '@site/src/components/ComponentRender';
+import CodeBlock from '@theme/CodeBlock';
+
 I will split this guide into two main sections, one for writing bindings for functions and objects, and one for writing bindings for React components.
 
 Generic concepts will be explained and referenced in the sections.
@@ -16,22 +19,183 @@ There are multiple ways to write bindings, and this is just one way of doing it.
 
 ## ReactComponent
 
+:::info[@floating-ui/react]
+[Floating UI](https://floating-ui.com/docs/react) is a low-level library for positioning "floating" elements like tooltips, popovers, dropdowns, and more. It provides a set of utilities to help you position these elements relative to a reference element while handling edge cases like viewport boundaries and scrolling.
+
+All bindings were written based on "@floating-ui/react": "^0.27.15",
+:::
+
+I got quite some reports that users were annoyed with dropdowns or context menus being positioned outside of the viewport, so I wanted to use a library which handles that for me. In this case floating ui.
+
+In this example we are looking at the [`FloatingFocusManager`](https://floating-ui.com/docs/FloatingFocusManager) component.
+
+### Import
+
+The official docs show the following import statement, and a look over the arguments shows that most of them are optional.
+
+```tsx
+import {FloatingFocusManager} from '@floating-ui/react';
+```
+
+```ts
+// props
+interface FloatingFocusManagerProps {
+  context: FloatingContext;
+  disabled?: boolean;
+  initialFocus?:
+    | number
+    | React.MutableRefObject<HTMLElement | null>;
+  returnFocus?:
+    | boolean
+    | React.MutableRefObject<HTMLElement | null>;
+  restoreFocus?: boolean;
+  guards?: boolean;
+  modal?: boolean;
+  visuallyHiddenDismiss?: boolean | string;
+  closeOnFocusOut?: boolean;
+  outsideElementsInert?: boolean;
+  getInsideElements?: () => Element[];
+  order?: Array<'reference' | 'floating' | 'content'>;
+}
+```
+
+We can start by writing a static class with a static member that imports the component.
+
+```fsharp
+[<Erase>]
+type FloatingUI =
+
+    [<ReactComponent("FloatingFocusManager", "@floating-ui/react")>]
+    static member FloatingFocusManager(props: obj) = React.Imported ()
+
+```
+
+### Props
+
+Because `[<ReactComponent>]` will ensure that arguments passed as props are correctly transpiled to JavaScript, we can just start adding the props in as much detail as we want.
+
+```fsharp
+type FloatingContext = obj // you can improve this type later
+
+[<Erase>]
+type FloatingUI =
+
+    [<ReactComponent("FloatingFocusManager", "@floating-ui/react")>]
+    static member FloatingFocusManager
+        (
+            context: FloatingContext,
+            ?disabled: bool,
+            ?initialFocus: obj, // don't want to deal with number or ref
+            ?returnFocus: obj, // don't want to deal with number or ref
+            ?restoreFocus: bool,
+            ?guards: bool,
+            ?modal: bool,
+            ?visuallyHiddenDismiss: bool, // bool is enough for my case
+            ?closeOnFocusOut: bool,
+            ?outsideElementsInert: bool,
+            ?getInsideElements: unit -> ReactElement[],
+            ?order: string[] // could use StringEnum here
+        ) =
+        React.Imported ()
+```
+
+Now we already have a working binding for the `FloatingFocusManager` component, ... or do we!?! 👀
+
+### Children prop
+
+From the an example in the official docs we can see that the component expects children as well, which we did not include in our binding.
+
+```tsx
+<FloatingFocusManager context={context} modal={false}>
+  <div
+    ref={refs.setFloating}
+    style={{
+      ...floatingStyles,
+      overflowY: "auto",
+      background: "#eee",
+      minWidth: 100,
+      borderRadius: 8,
+      outline: 0,
+    }}
+    {...getFloatingProps()}
+  >
+  ..
+  </div>
+</FloatingFocusManager>
+```
+
+This jsx syntax is the same as passing a prop called `children`, so we can add that to our binding as well.
+
+:::tip
+There are more properties like this. For example the React `key` property, which we can also add.
+:::
+
+```fsharp
+
+//..
+    [<ReactComponent("FloatingFocusManager", "@floating-ui/react")>]
+    static member FloatingFocusManager
+        (
+            context: obj,
+            // highlight-start
+            // add children prop as required, as it does not really make sense without it
+            children: ReactElement, 
+            // highlight-end
+            ?disabled: bool,
+            ?initialFocus: obj,
+            ?returnFocus: obj,
+            ?restoreFocus: bool,
+            ?guards: bool,
+            ?modal: bool,
+            ?visuallyHiddenDismiss: bool,
+            ?closeOnFocusOut: bool,
+            ?outsideElementsInert: bool,
+            ?getInsideElements: unit -> ReactElement[],
+            ?order: string[],
+            // highlight-next-line
+            ?key: string // optional key prop
+        ) =
+        React.Imported ()
+```
+
+:::info
+This example shows that writing bindings can be an iterative process, where you start with the basics and then improve the types and add missing props as you go.
+:::
+
+### Feliz style bindings
+
+Most of the time I write bindings _not_ in the Feliz style, but rather as static members with optional arguments. 
+
+I prefer this style because most Components I use have required and optional props and the feliz style has issues in communicating that some props are required.
+
+In addition Feliz style bindings come with a log more boilerplate on part of the author, as you have to write a lot of code to get the same functionality as the static member approach.
+
+:::info[Help Wanted]
+If you know of better ways to write these please open a PR or issue!
+:::
+
+import RawFelizStyleBindings from '!!raw-loader!../../feliz-docs/Examples/Guides/FelizStyleBindings.fs'
+
+<CodeBlock language="fsharp">
+{RawFelizStyleBindings}
+</CodeBlock>
+
 ## JavaScript library
 
 Lately it made sense for me to use some sort of data frame library in a project. I found Danfo.js which fit my criteria, so I started writing some bindings so i could use it in my project.
-
-The general workflow i had to do can be summarized in the following steps:
-
-1. Read external file into dataframe
-2. Create new dataframe from additional info
-3. Merge two dataframes based on key
-4. Export dataframe to file
 
 :::info[Danfo.js]
 [Danfo.js](https://danfo.jsdata.org/) is a JavaScript library for data manipulation and analysis, similar to Python's Pandas library. It provides data structures like DataFrames and Series, along with various functions for data manipulation, cleaning, and visualization.
 
 All bindings were written based on "danfojs": "^1.2.0" 
 :::
+
+The general workflow I had to do can be summarized in the following steps:
+
+1. Read external file into dataframe
+2. Create new dataframe from additional info
+3. Merge two dataframes based on key
+4. Export dataframe to file
 
 I installed `danfojs` via npm, as i wanted to use it in the browser.
 
@@ -66,13 +230,14 @@ dfd.readCSV("https://raw.githubusercontent.com/plotly/datasets/master/finance-ch
   })
 ```
 
-We can see the library assumes an import on which we can call the `readCSV` function. After a quick search we can find that `const dfd = require("danfojs-node")` is similiar to `import * as dfd from "danfojs"` in ES6, which is what we want to use in the browser.
+We can see the library assumes an import on which we can call the `readCSV` function. After a quick google search we can find that `const dfd = require("danfojs-node")` is similiar to `import * as dfd from "danfojs"` in ES6, which is what we want to use in the browser.
 
 So we can start by writing a binding for the `dfd` object.
 
 ```fsharp
 open Fable.Core
 
+[<Erase>] // ensure that fable does not generate any js code for this type
 type Danfojs =
 
     [<ImportAll("danfojs")>] // danfojs instead of `danfojs-node` for browser
