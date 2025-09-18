@@ -5,68 +5,50 @@ open Fable.Core
 open Fable.Core.JsInterop
 open Browser.Types
 
-module internal ReactInternal =
-
-    [<Import("useEffect", "react")>]
-    let useEffect (effect: obj) : unit =  jsNative
-
-
 [<Erase>]
 type ReactLegacy =
 
-    [<Import("createElement","react")>]
-    static member internal internalCreateElement(``type``: ReactNode, props: obj, [<ParamArray>] children: seq<ReactElement>): ReactElement = jsNative
-
-    [<Import("createElement","react")>]
-    static member internal internalCreateElement(``type``: ReactNode, props: obj, children: ReactElement): ReactElement = jsNative
-
-    [<Import("createElement","react")>]
-    static member internal internalCreateElement(``type``: ReactNode, props: obj): ReactElement = jsNative
-
-    [<Import("createElement","react")>]
-    static member internal internalCreateElement(``type``: ReactNode): ReactElement = jsNative
-
     static member inline createElement(``type``: string, props: obj, children: seq<ReactElement>): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, props, children = children)
+        (import "createElement" "react")(``type``, props, children)
 
     static member inline createElement(``type``: string, props: obj, children: ReactElement): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, props, children = children)
+        (import "createElement" "react")(``type``, props, children = children)
 
     static member inline createElement(``type``: string, children: seq<ReactElement>): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, null, children = children)
+        (import "createElement" "react")(``type``, null, children = children)
 
     static member inline createElement(``type``: string, children: ReactElement): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, null, children = children)
+        (import "createElement" "react")(``type``, null, children = children)
 
     static member inline createElement(``type``: string, props: obj): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, props)
+        (import "createElement" "react")(``type``, props)
 
     static member inline createElement(``type``: ReactElement, props: obj, children: seq<ReactElement>): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, props, children = children)
+        (import "createElement" "react")(``type``, props, children = children)
     static member inline createElement(``type``: ReactElement, props: obj, children: ReactElement): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, props, children = children)
+        (import "createElement" "react")(``type``, props, children = children)
 
     static member inline createElement(``type``: ReactElement, children: seq<ReactElement>): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, null, children = children)
+        (import "createElement" "react")(``type``, null, children = children)
     static member inline createElement(``type``: ReactElement, children: ReactElement): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, null, children = children)
+        (import "createElement" "react")(``type``, null, children = children)
 
     static member inline createElement(``type``: ReactElement, props: obj): ReactElement = 
-        ReactLegacy.internalCreateElement(!^``type``, props)
+        (import "createElement" "react")(``type``, props)
 
     static member inline createElement(``type``: ReactNode, props: obj, children: seq<ReactElement>): ReactElement = 
-        ReactLegacy.internalCreateElement(``type``, props, children = children)
+        (import "createElement" "react")(``type``, props, children = children)
     static member inline createElement(``type``: ReactNode, props: obj, children: ReactElement): ReactElement = 
-        ReactLegacy.internalCreateElement(``type``, props, children = children)
+        (import "createElement" "react")(``type``, props, children = children)
 
     static member inline createElement(``type``: ReactNode, children: seq<ReactElement>): ReactElement = 
-        ReactLegacy.internalCreateElement(``type``, null, children = children)
+        (import "createElement" "react")(``type``, null, children = children)
 
     static member inline createElement(``type``: ReactNode, children: ReactElement): ReactElement = 
-        ReactLegacy.internalCreateElement(``type``, null, children = children)
+        (import "createElement" "react")(``type``, null, children = children)
 
     static member inline createElement(``type``: ReactNode, props: obj): ReactElement = 
-        ReactLegacy.internalCreateElement(``type``, props)
+        (import "createElement" "react")(``type``, props)
 
 
     [<ImportMember("react")>]
