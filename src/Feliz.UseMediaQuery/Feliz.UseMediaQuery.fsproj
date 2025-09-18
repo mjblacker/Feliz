@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageVersion>1.5.0</PackageVersion>
     <Authors>Jonas Bösch, Zaid Ajaj</Authors>
     <Description>useMediaQuery hooks to build responsive websites </Description>
     <PackageTags>fsharp;fable;react;html;feliz</PackageTags>

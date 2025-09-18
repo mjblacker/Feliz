@@ -5,7 +5,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>FreymaurerK</Authors>
     <PackageTags>fsharp;fable;react;test;testing-tools;vite</PackageTags>
-    <Version>1.0.0-rc.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

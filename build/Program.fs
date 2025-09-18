@@ -1,6 +1,7 @@
+module Build
+
 open SimpleExec
 open BlackFox.CommandLine
-
 
 module Tests =
 
@@ -66,6 +67,7 @@ module Tests =
             run folder
             printfn "Finished running tests in %s" folderName
 
+
 [<EntryPoint>]
 let main args =
     let argv = args |> Array.map (fun x -> x.ToLower()) |> Array.toList
@@ -76,6 +78,9 @@ let main args =
         | [] -> Tests.runAll None
         | filter :: _ ->
             Tests.runAll (Some filter)
+    | "develop" :: _ ->
+        // Placeholder for develop command
+        printfn "Develop command is not implemented yet."
     | _ -> 
         printfn "Unknown command."
     0

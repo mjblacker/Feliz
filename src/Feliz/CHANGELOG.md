@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 3.0.0-rc.1 - 2025-09-18
+
 ### Added
 
 - Feliz.JSX module
-- Test suit 
+- Test suite
 
 ### Changed
 

@@ -7,9 +7,13 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>fable_logo.png</PackageIcon>
-        <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+        <!--<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>-->
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="EasyBuild.PackageReleaseNotes.Tasks">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
         <None Include="$(MSBuildThisFileDirectory)\..\fable_logo.png" Pack="true" PackagePath="\" />
         <None Include="$(MSBuildThisFileDirectory)\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
