@@ -1,6 +1,5 @@
 # EditorConfig is awesome: https://EditorConfig.org
 
-# top-most EditorConfig file
 [*]
 indent_style = space
 indent_size = 4
@@ -12,12 +11,3 @@ insert_final_newline = false
 fsharp_multiline_bracket_style = stroustrup
 fsharp_newline_before_multiline_computation_expression = false
 fsharp_multi_line_lambda_closing_newline = true
-
-[*.{fsproj,yml,json,ts,tsx}]
-indent_style = space
-indent_size = 2
-
-[*.{fs,fsx}]
-fsharp_multi_line_lambda_closing_newline = true
-fsharp_multiline_bracket_style = stroustrup
-fsharp_newline_before_multiline_computation_expression = false
