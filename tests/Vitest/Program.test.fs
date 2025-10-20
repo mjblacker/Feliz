@@ -28,6 +28,12 @@ Vitest.describe("Vitest basics", fun () ->
         Vitest.expect(result).toBe(5)
     )
 
+    Vitest.test("sum adds two numbers with custom message", fun () ->
+        let result = Examples.sum 2 3
+        // To test this API, you need to make the test fail and check the message in the output
+        Vitest.expect(result, "custom message, value should be 5").toBe(5)
+    )
+
     Vitest.test("TestOptions timeout", TestOptions(timeout = 1000), fun () ->
         let result = Examples.sum 2 3
         Vitest.expect(result).toBe(5)
@@ -196,6 +202,12 @@ Vitest.describe("TextContext", fun () ->
     Vitest.test("sum adds two numbers with context", fun (ctx: TestContext) -> 
         let result = Examples.sum 2 3
         ctx.expect(result).toBe(5)
+    )
+
+    Vitest.test("sum adds two numbers with context and custom message", fun (ctx: TestContext) -> 
+        let result = Examples.sum 2 3
+        // To test this API, you need to make the test fail and check the message in the output
+        ctx.expect(result, "custom message, value should be 5").toBe(5)
     )
 
     Vitest.test("sum adds two numbers with context", fun (ctx: TestContext) -> 
