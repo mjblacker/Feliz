@@ -1,4 +1,5 @@
 {
+    "name": "feliz-packages",
     "private": true,
     "scripts": {
         "publish-docs": "npm run build && node publish.js",

@@ -239,6 +239,7 @@ type TestAPI =
 type TestContext =
     abstract member task: Task
     abstract member expect: value: obj -> IAssertion<obj>
+    abstract member expect: value: obj * ?msg: string -> IAssertion<obj>
     abstract member skip: unit -> unit
     abstract member skip: note: string -> unit
     abstract member skip: condition: bool -> unit
@@ -396,7 +397,7 @@ type Vitest =
     // static member expectPromise<'a>(value: Promise<'a>) : IPromiseAssertion<'a> = jsNative
 
     [<ImportMember("vitest")>]
-    static member expect<'a>(value: 'a) : IAssertion<'a> = jsNative
+    static member expect<'a>(value: 'a, ?msg : string) : IAssertion<'a> = jsNative
 
     [<Import("expect", "vitest")>]
     static member Expect: ExpectStatic = jsNative
