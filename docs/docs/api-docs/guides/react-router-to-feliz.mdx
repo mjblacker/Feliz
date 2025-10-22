@@ -1,0 +1,690 @@
+---
+title: React Router to Feliz
+description: A guide on how to migrate a React Router app to use Fable and Feliz.
+sidebar_position: 4
+toc_max_heading_level: 4
+---
+
+> Assumes version v7.9.4 of `create-react-router`
+
+## Initialize Template 
+
+```bash
+npx create-react-router@7.9.4 .
+```
+
+This scaffolds a new React Router app in the current folder (the trailing `.` means "here").
+
+## Install Fable
+
+```bash
+dotnet new tool-manifest
+dotnet tool install fable
+```
+
+This creates a local tools manifest for the repo and installs the Fable CLI as a local tool (so everyone uses the same version). 
+
+The config file will be placed in `.config/dotnet-tools.json`.
+
+## Init dotnet project
+
+1. Create F# console project
+
+```
+dotnet new console -f net8.0 --language f# -o .\app\ -n App
+```
+
+2. Create F# library project for React Router bindings
+
+```
+dotnet new classlib -f net8.0 --language f# -o .\lib\React.Router\ -n React.Router
+```
+
+3. Add Fable packages
+
+```
+dotnet add .\lib\React.Router\React.Router.fsproj package Feliz 
+
+dotnet add .\lib\React.Router\React.Router.fsproj package Fable.Core
+```
+
+Adds Feliz (the React DSL) and Fable.Core (interop/runtime) to the bindings library.
+
+4. Create .sln file and add both projects
+
+```
+dotnet new sln -n ReactRouterFable
+
+dotnet sln add .\app\App.fsproj
+
+dotnet sln add .\lib\React.Router\React.Router.fsproj
+```
+
+Optional but helpful for multi-project workflows and IDE tooling.
+
+3. Mirror existing `.tsx` files to `.fs` files in the `app` folder:
+
+Make sure to create the following files and add them to `app/App.fsproj`
+
+```xml
+<ItemGroup>
+  <Compile Include="welcome/welcome.fs" />
+  <Compile Include="routes/home.fs" />
+  <Compile Include="routes.fs" />
+  <Compile Include="root.fs" />
+</ItemGroup>
+```
+
+:::info
+F# projects require `.fs` files to be added to the project file to be compiled. The order of files matters. Code can only be referenced from files after/below them in the list.
+:::
+
+## Add fable script
+
+```json
+# package.json
+"scripts": {
+    "fable": "dotnet fable ./app/App.fsproj --outDir ./app/fable_output -e .fs.jsx",
+    "build": "npm run fable -- --run react-router build",
+    "dev": "npm run fable -- --watch --run react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+  },
+```
+
+- `fable`: compiles F# to `app/fable_output`. `--outDir` specifies a directory for the output files. I like using a specific output folder to easily clean up fable output if needed. `-e` sets the file extension for the transpiled files to `.fs.jsx`.
+- `build`/`dev`: runs the React Router CLI against the compiled output (one-off vs. watch mode).
+- `start`: serves the built SSR bundle.
+
+## Start replicating the js code in F#
+
+Start by adding placeholder to all files so we get correct intellisense and no errors.
+
+```fsharp
+// example placeholder in app/routes/home.fs
+module Home 
+
+let x = 0
+```
+
+Run `dotnet build .\ReactRouterFable.sln` to verify correct placeholders.
+
+### routes.fs
+
+<details>
+<summary>routes.tsx</summary>
+
+```ts
+import { type RouteConfig, index } from "@react-router/dev/routes";
+
+export default [index("routes/home.fs.sx")] satisfies RouteConfig;
+```
+
+</details>
+
+We investigate the output type and see that `RouteConfig` is an array of `RouteConfigEntry`. Which we will import and set as return type for `index(path)` function
+
+```fsharp
+// lib/React.Router/Library.fs
+module React.Router
+
+open Fable.Core
+open Feliz
+
+[<Erase; Mangle(false)>]
+module DevRoutes =
+
+  [<Import("RouteConfigEntry", "@react-router/dev/routes")>]
+  type RouteConfigEntry =
+    interface end
+
+  [<Import("index", "@react-router/dev/routes")>]
+  let index (path: string) : RouteConfigEntry = jsNative
+```
+
+```fsharp
+// app/routes.fs
+module Routes
+
+open Fable.Core
+open Feliz
+open React.Router.DevRoutes
+
+Fable.Core.JsInterop.exportDefault [|
+  index("./routes/home.fs.jsx")
+|]
+```
+
+<details>
+<summary>transpiled routes.fs.jsx</summary>
+
+```tsx
+import { index } from "@react-router/dev/routes";
+
+export default [index("./routes/home.tsx")];
+```
+
+</details>
+
+### root.tsx
+
+<details>
+<summary>root.tsx</summary>
+
+```tsx
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "react-router";
+
+import type { Route } from "./+types/root";
+import "./app.css";
+
+export const links: Route.LinksFunction = () => [
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  {
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossOrigin: "anonymous",
+  },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+  },
+];
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+export default function App() {
+  return <Outlet />;
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  let message = "Oops!";
+  let details = "An unexpected error occurred.";
+  let stack: string | undefined;
+
+  if (isRouteErrorResponse(error)) {
+    message = error.status === 404 ? "404" : "Error";
+    details =
+      error.status === 404
+        ? "The requested page could not be found."
+        : error.statusText || details;
+  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    details = error.message;
+    stack = error.stack;
+  }
+
+  return (
+    <main className="pt-16 p-4 container mx-auto">
+      <h1>{message}</h1>
+      <p>{details}</p>
+      {stack && (
+        <pre className="w-full p-4 overflow-x-auto">
+          <code>{stack}</code>
+        </pre>
+      )}
+    </main>
+  );
+}
+```
+</details>
+
+We start by importing necessary components from `react-router`.
+
+```fsharp
+// lib/React.Router/Library.fs
+module React.Router
+
+open Fable.Core
+open Feliz
+
+[<ReactComponent("Meta", "react-router")>]
+let Meta() = React.imported()
+
+[<ReactComponent("Links", "react-router")>]
+let Links() = React.imported()
+
+[<ReactComponent("ScrollRestoration", "react-router")>]
+let ScrollRestoration() = React.imported()
+
+[<ReactComponent("Scripts", "react-router")>]
+let Scripts() = React.imported()
+
+[<ReactComponent("Outlet", "react-router")>]
+let Outlet() = React.imported()
+```
+
+Next we look at the js objects used for `links`. We can see that all objects have the `rel` and `href` properties, and an optional `crossOrigin` property. We could just use anonymous records, but to keep things clear we will define a type for it. We will use two important Fable interopt attributes:
+
+- `[<ParamObject>]` (or `[<ParamObjectAttribute>]` — both spellings work in F#) lets us build a plain JS object (POJO) from a constructor with named/optional args.
+- `[<Emit>]` is used to tell fable to emit straight up js code. Where parameters can be referenced using `$0`, `$1`, etc. 
+- Combining both into `[<ParamObject; Emit("$0")>]` tells Fable to construct a js POJO from the arguments and then emit just the constructed object instead of any class construct.
+
+Using a class with `ParamObjectAttribute` allows us to create objects with named parameters and optional parameters.
+
+```fsharp
+[<AllowNullLiteral; Global>]
+type LinkEntrycrossOrigin
+  [<ParamObject; Emit("$0")>]
+  (rel: string, href: string, ?crossOrigin: string) =
+  member val rel = rel with get, set
+  member val href = href with get, set
+  member val crossOrigin = crossOrigin with get, set
+```
+
+We translate the `links` function next. Because of the optional parameter we can easily create the objects needed.
+
+```fsharp
+let links = fun () ->
+    [|
+      LinkEntrycrossOrigin("preconnect", "https://fonts.googleapis.com")
+      LinkEntrycrossOrigin("preconnect", "https://fonts.gstatic.com", "anonymous")
+      LinkEntrycrossOrigin("stylesheet", "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap")
+    |]
+```
+
+If we check the output we see that our `links` function looks not exactly like the original: `export function links() {..`, but if we check the official docs we can find the example in the same syntax as we have it: 
+
+```ts
+export function links() {
+  return [
+    {
+      rel: "icon",
+      href: "/favicon.png",
+      type: "image/png",
+    },
+  // ...
+  ]
+}
+```
+
+Then we try to replicate the react components `Layout`, `App` and `ErrorBoundary`.
+Pay attention to: `[<ReactComponentAttribute(true)>]` as we want to define the `App` component as default export.
+
+```fsharp
+[<ReactComponentAttribute>]
+let Layout(children: ReactElement) =
+    Html.html [
+        prop.lang "en"
+        prop.children [
+            Html.head [
+                Html.meta [prop.charset "utf-8"]
+                Html.meta [prop.name "viewport"; prop.content "width=device-width, initial-scale=1"]
+                Meta()
+                Links()
+            ]
+            Html.body [
+                children
+                ScrollRestoration()
+                Scripts()
+            ]
+        ]
+    ]
+
+[<ReactComponentAttribute(true)>]
+let App() =
+    Outlet()
+
+[<Emit("import.meta.env.DEV")>]
+let metaEnvDev: bool = jsNative
+
+[<ReactComponent>]
+let ErrorBoundary(error: ErrorBoundaryProps) =
+
+    let mutable message = "Oops!"
+    let mutable details = "An unexpected error occurred."
+    let mutable stack: string option = None
+
+    if isRouteErrorResponse(error) then
+        let is404 = error.status = 404
+        message <- if is404 then "404" else "Error"
+        details <- if is404 then
+                        "The requested page could not be found."
+                    else
+                        error.statusText |> Option.defaultValue details
+        stack <- error.stack
+    elif metaEnvDev then
+        details <- error.message
+        stack <- error.stack
+
+    Html.main [
+      prop.className "pt-16 p-4 container mx-auto"
+      prop.children [
+        Html.h1 message
+        Html.p details
+        match stack with
+        | Some stack ->
+            Html.pre [
+                prop.className "w-full p-4 overflow-x-auto"
+                prop.children [
+                    Html.code stack
+                ]
+            ]
+        | None -> 
+          Html.none
+      ]
+    ]
+```
+
+### welcome/welcome.fs & routes/home.fs
+
+Copying `welcome.tsx` to Feliz is straightforward, but busy work. Below you can find the code if you are interested.
+
+<details>
+<summary>welcome.fs</summary>
+
+```fsharp
+module Welcome
+
+open Fable.Core
+open Fable.Core.JsInterop
+open Feliz
+
+let logoDark: string = importDefault "./logo-dark.svg"
+let logoLight: string = importDefault "./logo-light.svg"
+
+let resources = [
+      {| 
+          href = "https://reactrouter.com/docs"
+          text = "React Router Docs"
+          icon =
+              Svg.svg [
+                  svg.xmlns "http://www.w3.org/2000/svg"
+                  svg.width 24
+                  svg.height 20
+                  svg.viewBox (0,0,20,20)
+                  svg.fill "none"
+                  svg.className "stroke-gray-600 group-hover:stroke-current dark:stroke-gray-300"
+                  svg.children [
+                    Svg.path [
+                      svg.d "M9.99981 10.0751V9.99992M17.4688 17.4688C15.889 19.0485 11.2645 16.9853 7.13958 12.8604C3.01467 8.73546 0.951405 4.11091 2.53116 2.53116C4.11091 0.951405 8.73546 3.01467 12.8604 7.13958C16.9853 11.2645 19.0485 15.889 17.4688 17.4688ZM2.53132 17.4688C0.951566 15.8891 3.01483 11.2645 7.13974 7.13963C11.2647 3.01471 15.8892 0.951453 17.469 2.53121C19.0487 4.11096 16.9854 8.73551 12.8605 12.8604C8.73562 16.9853 4.11107 19.0486 2.53132 17.4688Z"
+                      svg.strokeWidth 1.5
+                      svg.strokeLineCap "round"
+                    ]
+                  ]
+              ]
+      |}
+      {|
+          href = "https://rmx.as/discord"
+          text = "Join Discord"
+          icon =
+              Svg.svg [
+                  svg.xmlns "http://www.w3.org/2000/svg"
+                  svg.width 24
+                  svg.height 20
+                  svg.viewBox(0,0,24,20)
+                  svg.fill "none"
+                  svg.className "stroke-gray-600 group-hover:stroke-current dark:stroke-gray-300"
+                  svg.children [
+                    Svg.path [
+                      svg.d "M15.0686 1.25995L14.5477 1.17423L14.2913 1.63578C14.1754 1.84439 14.0545 2.08275 13.9422 2.31963C12.6461 2.16488 11.3406 2.16505 10.0445 2.32014C9.92822 2.08178 9.80478 1.84975 9.67412 1.62413L9.41449 1.17584L8.90333 1.25995C7.33547 1.51794 5.80717 1.99419 4.37748 2.66939L4.19 2.75793L4.07461 2.93019C1.23864 7.16437 0.46302 11.3053 0.838165 15.3924L0.868838 15.7266L1.13844 15.9264C2.81818 17.1714 4.68053 18.1233 6.68582 18.719L7.18892 18.8684L7.50166 18.4469C7.96179 17.8268 8.36504 17.1824 8.709 16.4944L8.71099 16.4904C10.8645 17.0471 13.128 17.0485 15.2821 16.4947C15.6261 17.1826 16.0293 17.8269 16.4892 18.4469L16.805 18.8725L17.3116 18.717C19.3056 18.105 21.1876 17.1751 22.8559 15.9238L23.1224 15.724L23.1528 15.3923C23.5873 10.6524 22.3579 6.53306 19.8947 2.90714L19.7759 2.73227L19.5833 2.64518C18.1437 1.99439 16.6386 1.51826 15.0686 1.25995ZM16.6074 10.7755L16.6074 10.7756C16.5934 11.6409 16.0212 12.1444 15.4783 12.1444C14.9297 12.1444 14.3493 11.6173 14.3493 10.7877C14.3493 9.94885 14.9378 9.41192 15.4783 9.41192C16.0471 9.41192 16.6209 9.93851 16.6074 10.7755ZM8.49373 12.1444C7.94513 12.1444 7.36471 11.6173 7.36471 10.7877C7.36471 9.94885 7.95323 9.41192 8.49373 9.41192C9.06038 9.41192 9.63892 9.93712 9.6417 10.7815C9.62517 11.6239 9.05462 12.1444 8.49373 12.1444Z"
+                      svg.strokeWidth 1.5
+                    ]
+                  ]
+              ]
+      |}
+  ]
+
+[<ReactComponent>]
+let Welcome() = 
+    Html.main [
+        prop.className "flex items-center justify-center pt-16 pb-4"
+        prop.children [
+          Html.div [
+              prop.className "flex-1 flex flex-col items-center gap-16 min-h-0"
+              prop.children [
+                Html.header [
+                    prop.className "flex flex-col items-center gap-9"
+                    prop.children [
+                      Html.div [
+                          prop.className "w-[500px] max-w-[100vw] p-4"
+                          prop.children [
+                            Html.img [
+                                prop.src logoLight
+                                prop.alt "React Router"
+                                prop.className "block w-full dark:hidden"
+                            ]
+                            Html.img [
+                                prop.src logoDark
+                                prop.alt "React Router"
+                                prop.className "hidden w-full dark:block"
+                            ]
+                          ]
+                      ]
+                    ]
+                ]
+
+                Html.div [
+                    prop.className "max-w-[300px] w-full space-y-6 px-4"
+                    prop.children [
+                      Html.nav [
+                          prop.className "rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4"
+                          prop.children [
+                            Html.p [
+                                prop.className "leading-6 text-gray-700 dark:text-gray-200 text-center"
+                                prop.text "What's next?"
+                            ]
+                            Html.ul [
+                                for res in resources ->
+                                    Html.li [
+                                        prop.key res.href
+                                        prop.children [
+                                          Html.a [
+                                              prop.className "group flex items-center gap-3 self-stretch p-3 leading-normal text-blue-700 hover:underline dark:text-blue-500"
+                                              prop.href res.href
+                                              prop.target.blank
+                                              prop.rel.noreferrer
+                                              prop.children [
+                                                res.icon
+                                                Html.text res.text
+                                              ]
+                                          ]
+                                        ]
+                                    ]
+                            ]
+                          ]
+                      ]
+                    ]
+                ]
+              ]
+          ]
+        ]
+    ]
+```
+
+</details>
+
+For `home.tsx` we just need to use the `Welcome` component and export default the new parent. Only the `meta` function is not straightforward. It is a function that returns an array of differently shaped objects. To translate this into f# syntax we will use an erased discriminated union. `[<Erase>]` will tell fable that we don't want to transpile it as a union, but just use the cases to create objects. 
+
+:::danger
+Erased unions will only work if the `of ...` cases are distincly different shapes. If two cases have the same shape you might run into runtime errors.
+:::
+
+```fsharp
+[<Erase>]
+type MetaDescriptor =
+  | CharSet of {|charSet: string|}
+  | Title of {|title: string|}
+  | NameContent of {|content: string; name: string|}
+  | PropertyContent of {|content: string; property: string|}
+  | HttpEquivContent of {|content: string; httpEquiv: string|}
+```
+
+This is not a full list of all possible meta tag shapes, but it is enough for our example. Now we can create the `meta` function.
+
+:::info
+Currently the official React Router docs do recommend using the built in `<meta>` component instead of the `meta` function. 
+
+> Since React 19, using the built-in `<meta>` element is recommended over the use of the route module's meta export.
+
+For the sake of this example we will still use the `meta` function as it was used in the original `home.tsx` file.
+:::
+
+```fsharp 
+module Home 
+
+open Feliz
+open React.Router
+
+let meta(_: obj) =
+  [|
+    MetaDescriptor.Title {|title = "New React Router App"|}
+    MetaDescriptor.NameContent {|name = "description"; content = "Welcome to the new React Router app!"|}
+  |]
+
+[<ReactComponent(true)>]
+let Home() =
+    Welcome.Welcome()
+```
+
+## Replacing entry points
+
+React Router configures entry points via `react-router.config.ts` file. If we look at the official docs we can find:
+
+> **appDirectory**: The path to the app directory, relative to the root directory. Defaults to "app".
+
+So we only need to add a `appDirectory` property to point to our fable output folder `app/fable_output`.
+
+```ts
+import type { Config } from "@react-router/dev/config";
+
+export default {
+  appDirectory: "app/fable_output",
+  // Config options...
+  // Server-side render by default, to enable SPA mode set this to `false`
+  ssr: true,
+} satisfies Config;
+```
+
+## Final steps
+
+1. Run `npm run dev` to start the fable compiler in watch mode and the react-router dev server.
+
+💣💥 Oh no! Something went wrong!
+
+> Error: Could not find a root route module in the app directory as "app/fable_output/root.tsx"
+
+Ahh seems like it looks exactly for a file named `root.tsx`. We can fix this by updating our fable script in `package.json` to use `-e .jsx` instead of `-e .fs.jsx`.
+
+```json
+"fable": "dotnet fable ./app/App.fsproj --outDir ./app/fable_output -e .jsx",
+```
+
+Clear the `app/fable_output` folder, update the filepath in `app/routes.fs` and restart `npm run dev`.
+
+2. Open the link shown in the terminal to see your Fable React Router app in action! 🎉
+
+3. Delete all .tsx files and tsconfig.json if you want to fully switch to Fable.
+
+## Add a new route
+
+In this section we want to quickly add a new route, as well as some navigation using `NavLink`.
+
+1. Create a new `.fs` file in the `app/routes` folder, e.g. `about.fs`.
+
+<details>
+<summary>about.fs</summary>
+
+```fsharp
+module About 
+
+open Feliz
+open React.Router
+
+let meta(_: obj) =
+  [|
+      MetaDescriptor.Title {|title = "About"|}
+      MetaDescriptor.NameContent {|name = "description"; content = "Welcome to the About page!"|}
+  |]
+
+[<ReactComponent(true)>]
+let About() =
+    Html.div [
+        Html.h1 "About Page"
+        Html.p "This is the about page of our Fable React Router application."
+    ]
+```
+</details>
+
+2. Update `app/routes.fs` to add the new route.
+
+```fsharp
+// lib/React.Router/Library.fs
+[<Erase; Mangle(false)>]
+module DevRoutes =
+  //...
+
+  [<Import("route", "@react-router/dev/routes")>]
+  let route(url: string, filePath: string) : RouteConfigEntry =
+    jsNative
+```
+
+```fsharp
+// app/routes.fs
+module Routes
+
+open Fable.Core
+open Feliz
+open React.Router.DevRoutes
+
+Fable.Core.JsInterop.exportDefault [|
+  index("./routes/home.jsx")
+  route("about", "./routes/about.jsx")
+|]
+```
+
+3. Add navigation using `NavLink` component.
+
+In this example I still used a `let` binding for `NavLink`. To correctly bind this component we should instead use an approach allowing for easier optional parameters, like a `static member` or Feliz style with `list` of properties. But for the sake of simplicity I kept it like this.
+
+```fsharp
+// lib/React.Router/Library.fs
+[<ReactComponent("NavLink", "react-router")>]
+let NavLink(``to``: string, children: ReactElement, className: NavLinkState -> string) =
+    React.imported()
+```
+
+```fsharp
+// app/root.fs
+[<ReactComponentAttribute(true)>]
+let App() =
+
+    let MyNavLink(to': string, label: string) =
+        NavLink(to', Html.text label, fun state -> if state.isActive then "underline" else "")
+
+    React.fragment [
+      Html.div [
+        prop.className "w-full p-2 bg-gray-900 fixed top-0 left-0 z-10 shadow-md h-12 flex flex-row items-center gap-2 "
+        prop.children [
+          MyNavLink("/", "Home")
+          MyNavLink("/about", "About")
+        ]
+      ]
+      Html.div [
+        prop.className "mt-12"
+        prop.children [
+          Outlet()
+        ]
+      ]
+    ]
+```
