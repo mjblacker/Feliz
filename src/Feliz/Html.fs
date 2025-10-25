@@ -12,7 +12,7 @@ module HtmlHelper =
     let inline createElementWithChildren (tag: string) (children: seq<ReactElement>) =
         ReactLegacy.createElement(tag, children = children)
 
-    /// Iterates once, returns (firstMatch, restWithoutMatch).
+    /// This function changes the order of the input array. Last item replaces children key, then we remove the last item.
     let extractByKeyFast (key: string) (arr: seq<(string * obj)>) : (string * obj)[] * (string * obj) option =
         Fable.Core.JsInterop.emitJsStatement (arr, key) """const arrNext_ = Array.from($0);
             for (let i = 0; i < arrNext_.length; i++) {

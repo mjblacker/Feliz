@@ -101,3 +101,47 @@ describe "HtmlHelper.createElement" <| fun _ ->
         let propsContainChildren: bool = extractedProps |> Array.exists (fun (k, _) -> k = "children")
         expect(propsContainChildren).toBeFalsy()
         expect(extractedProps.Length).toBe((props |> Seq.length) - 1)
+
+    test "extract as last" <| fun _ ->
+        let child = [ Html.span []; Html.div [] ] 
+        let props = 
+            [
+                "id", box "my-div"
+                "data-test", box true
+                "style", box {| color = "red" |}
+                "onClick", box (fun _ -> ())
+                "tabIndex", box 0
+                "className", box "container"
+                "children", box child
+            ]
+        let extractedProps, childOption = HtmlHelper.extractByKeyFast "children" props
+        expect(child).toBeTruthy()
+        let key, child =
+            match childOption with
+            | Some kvp -> kvp
+            | None -> failwith "Expected to find 'children' key"
+        expect(key).toBe("children")
+        expect(child).toEqual(child)
+        let propsContainChildren: bool = extractedProps |> Array.exists (fun (k, _) -> k = "children")
+        expect(propsContainChildren).toBeFalsy()
+        expect(extractedProps.Length).toBe((props |> Seq.length) - 1)
+
+    test "extract as exactlyOne" <| fun _ ->
+        let child = [ Html.span []; Html.div [] ] 
+        let props = 
+            [
+                "children", box child
+            ]
+        let extractedProps, childOption = HtmlHelper.extractByKeyFast "children" props
+        Browser.Dom.console.log(extractedProps)
+        Browser.Dom.console.log(childOption)
+        expect(child).toBeTruthy()
+        let key, child =
+            match childOption with
+            | Some kvp -> kvp
+            | None -> failwith "Expected to find 'children' key"
+        expect(key).toBe("children")
+        expect(child).toEqual(child)
+        let propsContainChildren: bool = extractedProps |> Array.exists (fun (k, _) -> k = "children")
+        expect(propsContainChildren).toBeFalsy()
+        expect(extractedProps.Length).toBe((props |> Seq.length) - 1)
