@@ -17,6 +17,7 @@ type MarkdownFetcherProps = {
   github?: string;
   nuget?: string;
   docs?: string;
+  children?: ReactNode;
 };
 
 type ExternalRefBannerProps = MarkdownFetcherProps & {

@@ -1,0 +1,52 @@
+
+import NugetPkgAdmonition from '@site/src/components/NugetPkgAdmonition';
+
+<NugetPkgAdmonition 
+  href="https://www.nuget.org/packages/Vitest"
+  name="Vitest"
+  source="https://github.com/fable-hub/Feliz"
+  >
+</NugetPkgAdmonition>
+
+<NugetPkgAdmonition 
+  href="https://www.nuget.org/packages/Vitest.JestDom"
+  name="Vitest.JestDom"
+  source="https://github.com/fable-hub/Feliz"
+  >
+</NugetPkgAdmonition>
+
+<NugetPkgAdmonition 
+  href="https://www.nuget.org/packages/Vitest.ReactTestingLibrary"
+  name="Vitest.ReactTestingLibrary"
+  source="https://github.com/fable-hub/Feliz"
+  >
+</NugetPkgAdmonition>
+
+<NugetPkgAdmonition 
+  href="https://www.nuget.org/packages/Vitest.UserEvent"
+  name="Vitest.UserEvent"
+  source="https://github.com/fable-hub/Feliz"
+  >
+</NugetPkgAdmonition>
+
+Vitest integrates well with the vite bundler and provides a fast and reliable testing framework for unit as well as component tests. There are even options to integrate Vitest with [Storybook](https://storybook.js.org/docs/writing-tests/integrations/vitest-addon).
+
+The bindings for the Vitest ecosystem are developed and maintained by the [Fable Hub](https://github.com/fable-hub/Feliz) and used for testing in the Feliz project.
+
+:::info
+The [Feliz template](../../api-docs/GettingStarted.mdx#template-nuget) also ships with Vitest preconfigured. You can get started with Vitest right away when creating a new Feliz project using the template.
+:::
+
+```fsharp
+describe "FragmentComponent" <| fun _ ->
+    testPromise "renders multiple elements from a fragment" <| fun _ -> promise {
+        RTL.render (Components.FragmentComponent())
+        |> ignore
+
+        let first = RTL.screen.getByTestId "first"
+        let second = RTL.screen.getByTestId "second"
+
+        expect(first).toHaveTextContent "Hello"
+        expect(second).toHaveTextContent "World"
+    }
+```
