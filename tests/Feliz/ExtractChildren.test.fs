@@ -133,8 +133,6 @@ describe "HtmlHelper.createElement" <| fun _ ->
                 "children", box child
             ]
         let extractedProps, childOption = HtmlHelper.extractByKeyFast "children" props
-        Browser.Dom.console.log(extractedProps)
-        Browser.Dom.console.log(childOption)
         expect(child).toBeTruthy()
         let key, child =
             match childOption with
