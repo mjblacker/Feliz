@@ -41,6 +41,14 @@ import RawOverloadsExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/Ov
 You can use whichever you prefer. They should offer you the flexibility to write as much or as little boilerplate as you want.
 :::
 
+:::warning[No warnings for missing keys]
+Feliz passes all children as spread argument to React.createElement. This means that React is not able to warn you about missing `key` properties on dynamic children. You need to ensure that you provide `key` properties yourself when rendering dynamic elements (e.g. in for loops, or mapping functions).
+
+You can refer to the [official docs](https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key) for more information on this topic.
+
+If you use the [Feliz.JSX](../guides/output-jsx.mdx) syntax, the compiler will warn you about missing `key` properties as it will generate compile time JSX code instead of runtime calls to `React.createElement`.
+:::
+
 ## Inline styling
 
 Inline styling can be done using the `prop.style` property. It takes a list of styles defined in the `style` module.
