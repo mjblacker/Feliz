@@ -16,9 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 3.0.0-rc.2 - 2025-11-03
+
 ### 🔄 Changed
 
 - Relax validation of record props defined along the react component to allow lower cased record types #463, #666, #667 by @melanore
+
+### 🐛 Fixed
+
+- Resolve relative import paths between call site and reference file for `[<ReactComponent(import="...", from="...")>]` #624 by @Freymaurer
 
 ## 3.0.0-rc.1 - 2025-09-18
 
