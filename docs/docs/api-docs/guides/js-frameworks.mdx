@@ -1,12 +1,598 @@
 ---
-title: React Router to Feliz
-description: A guide on how to migrate a React Router app to use Fable and Feliz.
+title: JS Frameworks
+description: A guide on how to integrate established JavaScript frameworks with Fable and Feliz.
 sidebar_position: 4
-toc_max_heading_level: 4
+toc_max_heading_level: 3
 ---
 
 import ComponentRender from '@site/src/components/ComponentRender';
 import CodeBlock from '@theme/CodeBlock';
+
+## Electron Forge to Feliz
+
+:::info[Electron Forge]
+[Electron Forge](https://www.electronforge.io/) is an all-in-one tool for packaging and distributing Electron applications. It combines many single-purpose packages to create a full build pipeline that works out of the box, complete with code signing, installers, and artifact publishing.
+
+The follow along was done using "create-electron-app": "^7.10.2",
+:::
+
+In this guide we will walk through the steps needed to migrate a Electron Forge template created with `create-electron-app` to use Fable and Feliz. It should point towards common patterns and practices using F# in existing JavaScript frameworks.
+
+
+### Initialize Template
+
+```bash
+npx create-electron-app@7.10.2 my-app --template=vite
+```
+
+This scaffolds a new Electron Forge app in the `my-app` folder. We use the `vite` template as it is easy to setup and we do not really need `vite-typescript`, as we will use the F# compiler for type safety.
+
+We start with a minimal Electron app with the following structure:
+
+```
+.
+├── src
+│   ├── main.js                   # nodejs main process
+│   ├── preload.js                # bridge between main and renderer
+│   ├── renderer.js               # website renderer process
+│   └── index.css
+├── forge.config.ts               # electron forge config
+├── index.html
+├── package.json
+├── vite.main.config.mjs
+├── vite.preload.config.mjs
+├── vite.renderer.config.mjs
+└── ...
+```
+
+We directly can see that the separation of "main", "preload" and "renderer" processes is done via separate entry points and vite configs. In addtion we will have to update the entrypoint reference in `index.html`.
+
+<details>
+
+<summary>forge.config.js</summary>
+
+```js showLineNumbers=29
+//..
+config: {
+        // `build` can specify multiple entry builds, which can be Main process, Preload scripts, Worker process, etc.
+        // If you are familiar with Vite configuration, it will look really familiar.
+        build: [
+          {
+            // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
+            // highlight-next-line
+            entry: 'src/main.js',
+            config: 'vite.main.config.mjs',
+            target: 'main',
+          },
+          {
+            // highlight-next-line
+            entry: 'src/preload.js',
+            config: 'vite.preload.config.mjs',
+            target: 'preload',
+          },
+        ],
+        renderer: [
+          {
+            name: 'main_window',
+            config: 'vite.renderer.config.mjs',
+          },
+        ],
+      },
+//..
+```
+
+</details>
+
+<details>
+
+<summary>index.html</summary>
+
+```html showLineNumbers=11
+    <script type="module" src="/src/renderer.js"></script>
+```
+
+</details>
+
+To mirror this separation in F# we will create three separate projects: `Main`, `Preload` and `Renderer`. And for good measure a fourth project for shared code: `Shared`. Because Fable allows only for a single entrypoint we will create a 5th project `App` that will reference the three process projects and serve as our Fable entrypoint.
+
+### Init dotnet projects
+
+#### Renderer project
+
+```bash
+dotnet new console --language f# -f net8.0 -o src/Renderer -n Renderer
+```
+
+#### Main project
+
+```bash
+dotnet new console --language f# -f net8.0 -o src/Main -n Main
+```
+
+#### Preload project
+
+```bash
+dotnet new console --language f# -f net8.0 -o src/Preload -n Preload
+```
+
+#### Shared project
+
+```bash
+dotnet new classlib --language f# -f net8.0 -o src/Shared -n Shared
+```
+
+#### App project
+
+```bash
+dotnet new console --language f# -f net8.0 -o src -n App
+```
+
+#### Create project references
+
+We need to tell the F# compiler which projects depend on which other projects. We do this by adding project references.
+
+We can either edit the `.fsproj` files manually or use the `dotnet add <target_project_path> reference <path_to_other_project>` command.
+
+Add the following references to `src/App.fsproj`:
+
+- `dotnet add src/App.fsproj reference src/Renderer/Renderer.fsproj`
+- `dotnet add src/App.fsproj reference src/Preload/Preload.fsproj`
+- `dotnet add src/App.fsproj reference src/Main/Main.fsproj`
+
+Add the reference to `src/Shared/Shared.fsproj`:
+
+- `dotnet add src/Main/Main.fsproj reference src/Shared/Shared.fsproj`
+- `dotnet add src/Preload/Preload.fsproj reference src/Shared/Shared.fsproj`
+- `dotnet add src/Renderer/Renderer.fsproj reference src/Shared/Shared.fsproj`
+
+### Init Central Package Management (CPM)
+
+Because we already have multiple projects it is a good idea to use [Central Package Management (CPM)](https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management) to manage package versions in a single place.
+
+```bash
+dotnet new packagesprops
+```
+
+#### Adding Depdendencies
+
+Add the following packages to `Directory.Packages.props`:
+
+```xml showLineNumbers=6
+  <ItemGroup>
+    <PackageVersion Include="Fable.Core" Version="4.5.0" />
+    <PackageVersion Include="Feliz" Version="3.0.0-rc.2" />
+    <PackageVersion Include="FSharp.Core" Version="9.0.303" />
+  </ItemGroup>
+```
+
+In `Shared.fsproj` we will add references for Fable.Core and FSharp.Core. As this project is shared between all processes, its dependencies will be transitively available.
+
+```xml showLineNumbers=12
+    <ItemGroup>
+      <PackageReference Include="Fable.Core" />
+      <PackageReference Include="FSharp.Core" />
+    </ItemGroup>
+```
+
+And in the `Renderer.fsproj` add a reference to Feliz.
+
+```xml showLineNumbers=16
+    <ItemGroup>
+      <PackageReference Include="Feliz" />
+    </ItemGroup>
+```
+
+Verify that all projects build correctly by running:
+
+```bash
+dotnet build src/App.fsproj
+```
+
+### Init Fable
+
+First we need a .NET tools manifest to install Fable as a local tool.
+
+```bash
+dotnet new tool-manifest
+```
+
+Now we can install fable as a local tool.
+
+```bash
+dotnet tool install fable --prerelease
+```
+
+:::info
+At the time of writing this Fable v5 is in prerelease and Feliz v3 requires Fable v5. Hence the `--prerelease` flag.
+:::
+
+Verify correct installation by running:
+
+```bash
+dotnet fable --version # 5.0.0-alpha.14
+```
+
+Nice! 🎉 
+
+#### Setup Fable script
+
+In `./package.json` we create the `fable` script, and update the `start` script to use it. We will transpile all our code into `src/fableoutput` folder.
+This will make it easy to clean up fable output if needed.
+
+```json showLineNumbers=7
+"scripts": {
+    // highlight-start
+    "fable": "dotnet fable src/App.fsproj --outDir src/fableoutput",
+    "start": "npm run fable -- --watch --run electron-forge start",
+    // highlight-end
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+```
+
+And update the `.gitignore` to ignore the fable output folder as well as some common f# files we do not want to track.
+
+```yml showLineNumbers=93
+
+# f# + fable
+bin/
+obj/
+fableoutput/
+```
+
+### Migrate code
+
+#### Preload 
+
+In `preload.js` we have no code to migrate, so we can create a small `print` statement and keep it like this.
+
+```fsharp title="src/Preload/Program.fs"
+namespace Preload
+
+// See the Electron documentation for details on how to use preload scripts:
+// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+module Main =
+    printfn "Hello from Preload!"
+```
+
+#### Main 
+
+In `main.js` we have quite some bindings to write. If you are interested they are included in the `<details>` below.
+
+<details>
+
+<summary>main.js - bindings</summary>
+
+```fsharp
+open Fable.Core
+
+module Node =
+
+    type NodeJSProcess =
+        abstract member platform: string
+
+    [<Erase>]
+    type IPath =
+        abstract member join: [<ParamSeqAttribute>] paths: string[] -> string
+
+    type node =
+        [<ImportDefaultAttribute("node:path")>]
+        static member path: IPath = jsNative
+
+    [<Erase; AutoOpen>]
+    module Globals =
+
+        [<GlobalAttribute>]
+        let ``process``: NodeJSProcess = jsNative
+
+        [<GlobalAttribute>]
+        let __dirname: string = jsNative
+
+module Electron =
+
+    [<StringEnum(CaseRules.KebabCase)>]
+    type AppEvents =
+        | Ready
+        | WindowAllClosed
+        | Activate
+
+    [<Erase>]
+    type IApp =
+        abstract member quit: unit -> unit
+
+        [<Emit("$0.on($1, $2)")>]
+        abstract member on: event: AppEvents -> (unit -> unit) -> unit
+
+    type IWebContents =
+        abstract member openDevTools: unit -> unit
+
+    [<Erase>]
+    type IBrowserWindow =
+        [<Emit("new $0($1)")>]
+        abstract member create: obj -> IBrowserWindow
+
+        abstract member loadURL: string -> unit
+
+        abstract member loadFile: string -> unit
+
+        abstract member webContents: IWebContents
+
+        abstract member getAllWindows: unit -> IBrowserWindow[]
+
+    open Fable.Core
+
+    module ElectronSquirrelStartup =
+
+        [<ImportDefault("electron-squirrel-startup")>]
+        let started: bool = jsNative
+
+    [<Import("app", "electron")>]
+    let app: IApp = jsNative
+
+    [<Import("BrowserWindow", "electron")>]
+    let BrowserWindow: IBrowserWindow = jsNative
+
+```
+
+</details>
+
+
+```fsharp title="src/Main/Main.fs"
+module Main
+
+// ... bindings here ...
+
+[<Erase; AutoOpen>]
+module Globals =
+
+    [<GlobalAttribute>]
+    let MAIN_WINDOW_VITE_DEV_SERVER_URL: string = jsNative
+
+    [<GlobalAttribute>]
+    let MAIN_WINDOW_VITE_NAME: string = jsNative
+
+open Node
+open Electron
+
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+if ElectronSquirrelStartup.started then
+    app.quit ()
+
+open Fable.Core.JsInterop
+
+let createWindow () =
+    // Create the browser window.
+    let mainWindow =
+        BrowserWindow.create (
+            {|
+                width = 800
+                height = 600
+                webPreferences = {|
+                    preload = node.path.join [| __dirname; "preload.js" |]
+                |}
+            |}
+        )
+
+    // and load the index.html of the app.
+    if not (isNullOrUndefined MAIN_WINDOW_VITE_DEV_SERVER_URL) then
+        mainWindow.loadURL MAIN_WINDOW_VITE_DEV_SERVER_URL
+    else
+        mainWindow.loadFile (node.path.join [| __dirname; $"`../renderer/{MAIN_WINDOW_VITE_NAME}/index.html`" |])
+
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools ()
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on AppEvents.Ready createWindow
+
+app.on
+    AppEvents.WindowAllClosed
+    (fun () ->
+        if ``process``.platform <> "darwin" then
+            app.quit ()
+    )
+
+app.on
+    AppEvents.Activate
+    (fun () ->
+        if BrowserWindow.getAllWindows().Length = 0 then
+            createWindow ()
+    )
+```
+
+#### Renderer
+
+As we want to show some Feliz component in the renderer process we will make some adjustments to the simple print statement in `renderer.js`.
+
+```fsharp title="src/Renderer/Program.fs"
+module Renderer
+
+open Feliz
+
+type private Components =
+
+    /// <summary>
+    /// A stateful React component that maintains a counter
+    /// </summary>
+    [<ReactComponent>]
+    static member Counter() =
+        let (count, setCount) = React.useState (0)
+
+        Html.div [
+            Html.div [
+                Html.h1 [ prop.testId "counter-display"; prop.text count ]
+                Html.div [
+                    prop.text "Click the button to increment the counter:"
+                ]
+                Html.button [
+                    prop.testId "inc-btn"
+                    prop.onClick (fun _ -> setCount (count + 1))
+                    prop.text "Increment"
+                ]
+            ]
+        ]
+
+open Browser.Dom
+
+let root = ReactDOM.createRoot (document.getElementById "feliz-app")
+root.render (Components.Counter())
+```
+
+Update `./index.html` to have a `<div>` element with the id `feliz-app`. 
+
+```html showLineNumbers=8
+  <body>
+    <div id="feliz-app"></div>
+    <script type="module" src="/src/renderer.js"></script>
+  </body>
+```
+
+:::info
+**Q:** But what about the file name `/src/renderer.js`?
+
+**A:** Good thinking! We will update the file name later when we adjust all entry points!
+:::
+
+And we need to install a npm dependency to let vite handle our React components correctly.
+
+```bash
+npm i -D @vitejs/plugin-react react react-dom
+```
+
+```js title="vite.renderer.config.mjs" showLineNumbers
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config
+export default defineConfig({
+    plugins: [react()],
+});
+```
+
+#### Shared + App
+
+We do not need to share any code for now, so we adjust `src/Shared/Program.fs` to a minimal code statement.
+
+```fsharp title="src/Shared/Program.fs"
+module Shared
+
+let placeholder = ()
+```
+
+And for `App` we can actually remove all code files. We delete `src/Program.fs` and remove the reference from `src/App.fsproj`.
+
+```xml showLineNumbers title="src/App.fsproj"
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Renderer\Renderer.fsproj" />
+    <ProjectReference Include="Preload\Preload.fsproj" />
+    <ProjectReference Include="Main\Main.fsproj" />
+  </ItemGroup>
+
+</Project>
+```
+
+### Update entry points
+
+Now that we actually update the F# files with real code, let us run `npm run fable` to check the transpiled code.
+
+```bash
+npm run fable
+```
+
+This will create the transpiled .js files in `src/fableoutput` folder. If we look inside we can see:
+
+- `src/fableoutput/fable_modules/*` contains transpiled f# dependencies
+- `src/fableoutput/Main/Program.js`
+- `src/fableoutput/Preload/Program.js`
+- `src/fableoutput/Renderer/Program.js`
+- `src/fableoutput/Shared/Program.js`
+
+We start by updating `./index.html` with
+
+```html title="index.html" showLineNumbers=8
+  <body>
+    <div id="feliz-app"></div>
+    <script type="module" src="/src/fableoutput/Renderer/Program.js"></script>
+  </body>
+```
+
+Next we update `forge.config.ts` to point to the new entry points.
+
+```js title="forge.config.mjs" showLineNumbers=33
+        build: [
+          {
+            // `entry` is just an alias for `build.lib.entry` in the corresponding file of `config`.
+            entry: 'src/fableoutput/Main/Program.js',
+            config: 'vite.main.config.mjs',
+            target: 'main',
+          },
+          {
+            entry: 'src/fableoutput/Preload/Program.js',
+            config: 'vite.preload.config.mjs',
+            target: 'preload',
+          },
+        ],
+```
+
+We also find an entry point reference in `./package.json`. But at this point we are not sure what it should be. So we leave it for now.
+
+```json showLineNumbers=6
+    "main": ".vite/build/main.js",
+```
+
+### Delete JavaScript files
+
+Now that we have updated all entry points to point to the transpiled Fable output we can delete the original JavaScript files to avoid confusion.
+
+- 🗑️ `src/main.js`
+- 🗑️ `src/preload.js`
+- 🗑️ `src/renderer.js`
+
+### Run the app!
+
+To run the app we can use the `start` script we defined earlier.
+
+```bash
+npm run start
+```
+
+💣💥 As expected we get an error. The entrypoint referenced in `./package.json` does not exist!
+
+```
+Cannot find module
+\.vite\build\main.js. Please verify that the package.json has a valid "main" entry.
+```
+
+In `./.vite/build/`, we can find a single `Program.js` file... 👀 wait a single file? With the same name as our F# files? We should go back and rename some files, to avoid future errors, we use the same names as they had as .js files.
+
+- `src/Main/Program.fs` -> `src/Main/main.fs`
+- `src/Preload/Program.fs` -> `src/Preload/preload.fs`
+- `src/Renderer/Program.fs` -> `src/Renderer/renderer.fs`
+
+:::warning
+Remember to update the project files (`.fsproj`) to include the renamed files! 
+
+This step heavily depends on your IDE/Editor
+:::
+
+And update all entrypoints in `./forge.config.mjs` and `./index.html` accordingly. 
+
+🗑️ Finally delete the `src/fableoutput` folder to have a clean build and run `npm run fable` again.
+
+Tada 🎉 Our Fable Electron app opens up! We check the developer tools and see a nice `Hello from Preload!` printed in the console!
+
+## React Router to Feliz
 
 :::info[React Router]
 [React Router](https://reactrouter.com/home) is a multi-strategy router for React bridging the gap from React 18 to React 19. You can use it maximally as a React framework or as minimally as you want.
@@ -16,7 +602,7 @@ The follow along was done using "create-react-router": "^7.9.4",
 
 In this guide we will walk through the steps needed to migrate a React Router app created with `create-react-router` to use Fable and Feliz. It should point towards common patterns and practices using F# in existing JavaScript frameworks.
 
-## Initialize Template 
+### Initialize Template 
 
 For this example we will use the "framework" mode for React Router, which can be initialized as a template using `create-react-router`.
 
@@ -44,7 +630,7 @@ We start with a minimal React Router app with the following structure:
 └── ...
 ```
 
-## Install Fable
+### Install Fable
 
 ```bash
 dotnet new tool-manifest
@@ -55,7 +641,7 @@ This creates a local tools manifest for the repo and installs the Fable CLI as a
 
 The config file will be placed in `.config/dotnet-tools.json`.
 
-## Init dotnet project
+### Init dotnet project
 
 1. Create F# console project
 
@@ -108,7 +694,7 @@ Make sure to create the following files and add them to `app/App.fsproj`
 F# projects require `.fs` files to be added to the project file to be compiled. The order of files matters. Code can only be referenced from files after/below them in the list.
 :::
 
-## Add fable script
+### Add fable script
 
 ```json
 # package.json
@@ -124,7 +710,7 @@ F# projects require `.fs` files to be added to the project file to be compiled. 
 - `build`/`dev`: runs the React Router CLI against the compiled output (one-off vs. watch mode).
 - `start`: serves the built SSR bundle.
 
-## Start replicating the js code in F#
+### Start replicating the js code in F#
 
 Start by adding placeholder to all files so we get correct intellisense and no errors.
 
@@ -137,7 +723,7 @@ let x = 0
 
 Run `dotnet build .\ReactRouterFable.sln` to verify correct placeholders.
 
-### routes.fs
+#### routes.fs
 
 <details>
 <summary>routes.tsx</summary>
@@ -194,7 +780,7 @@ export default [index("./routes/home.tsx")];
 
 </details>
 
-### root.tsx
+#### root.tsx
 
 <details>
 <summary>root.tsx</summary>
@@ -415,7 +1001,7 @@ let ErrorBoundary(error: ErrorBoundaryProps) =
     ]
 ```
 
-### welcome/welcome.fs & routes/home.fs
+#### welcome/welcome.fs & routes/home.fs
 
 Copying `welcome.tsx` to Feliz is straightforward, but busy work. Below you can find the code if you are interested.
 
@@ -586,7 +1172,7 @@ let Home() =
     Welcome.Welcome()
 ```
 
-## Replacing entry points
+### Replacing entry points
 
 React Router configures entry points via `react-router.config.ts` file. If we look at the official docs we can find:
 
@@ -605,7 +1191,7 @@ export default {
 } satisfies Config;
 ```
 
-## Final steps
+### Final steps
 
 1. Run `npm run dev` to start the fable compiler in watch mode and the react-router dev server.
 
@@ -625,7 +1211,7 @@ Clear the `app/fable_output` folder, update the filepath in `app/routes.fs` and 
 
 3. Delete all .tsx files and tsconfig.json if you want to fully switch to Fable.
 
-## Add a new route
+### Add a new route
 
 In this section we want to quickly add a new route, as well as some navigation using `NavLink`.
 
