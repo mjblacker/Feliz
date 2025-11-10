@@ -181,14 +181,12 @@ module Subscriber =
                 100
         { new System.IDisposable with member _.Dispose() = clearInterval subscriptionId }
 
-    let makeProgram initialValue =
-        Program.mkProgram (fun () -> init initialValue) update (fun _ _ -> ())
-        |> Program.withSubscription (fun _model ->
-            [ ["timer"], subscribeToTimer ])
+    let subscribe _model =
+        [ ["timer"], subscribeToTimer ]
 
     [<ReactComponent>]
     let render (props: {| initialValue: int |}) =
-        let model, dispatch = React.useElmish((fun () -> makeProgram props.initialValue), (), [||])
+        let model, dispatch = React.useElmish((fun () -> init props.initialValue), update, subscribe, [||])
 
         Html.div [
             Html.h1 [
@@ -220,7 +218,7 @@ describe "UseElmish with subscriptions" <| fun () ->
 
         do!
             RTL.waitFor (fun () ->
-                let ticks = render.getByTestId("subscriber-ticks").innerText |> int
+                let ticks = render.getByTestId("subscriber-ticks").textContent |> int
                 expect(ticks >= 3).toBeTruthy() //"Subscriber should have ticked at least 3 times"
             )
 
