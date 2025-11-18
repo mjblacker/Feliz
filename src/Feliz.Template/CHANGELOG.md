@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 5.0.0-rc.5 - 2025-11-18
+
+### 🐛 Fixed
+
+- improve template performance by ignoring .fs files in vite server watch (by @Freymaurer)
+
 ## 5.0.0-rc.4 - 2025-11-18
 
 ### 🔄 Changed
