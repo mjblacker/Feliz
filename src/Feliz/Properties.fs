@@ -609,7 +609,7 @@ type prop =
 
     /// This attribute, if present, indicates that the author intends the hyperlink to be used for downloading a resource.
     static member inline download (value: bool) = PropHelper.mkAttr "download" value
-    
+
     /// This attribute, if present, indicates that the author intends the hyperlink to be used for downloading a resource.
     /// The value specifies the default file name for use in labeling the resource in a local file system.
     static member inline download (value: string) = PropHelper.mkAttr "download" value
@@ -1494,6 +1494,10 @@ type prop =
     /// in the initial local coordinate system, the positive z-axis comes out towards the person
     /// viewing the content and assuming that one unit along the z-axis equals one unit in x and y.
     static member inline pointsAtZ (value: int) = PropHelper.mkAttr "pointsAtZ" value
+
+    /// Turns a <button> or <input> element into a popover control button.
+    /// Takes the ID of the popover element to control as its value.
+    static member inline popoverTarget(value: string) = PropHelper.mkAttr "popovertarget" value
 
     /// Indicates how a <feConvolveMatrix> element handles alpha transparency.
     static member inline preserveAlpha (value: bool) = PropHelper.mkAttr "preserveAlpha" value
@@ -3089,6 +3093,26 @@ module prop =
         /// Indicates that all coordinates for the geometry properties refer to the user coordinate system as defined
         /// when the pattern was applied.
         static member inline userSpaceOnUse = PropHelper.mkAttr "patternUnits" "userSpaceOnUse"
+
+    /// A global attribute that turns an element into a popover element.
+    [<Erase>]
+    type popover =
+        /// Auto popovers can be hidden by clicking outside it or pressing the Esc key.
+        static member inline auto = PropHelper.mkAttr "popover" "auto"
+        /// Hint popovers do not close auto popovers when they are displayed, but will close other hint popovers.
+        static member inline hint = PropHelper.mkAttr "popover" "hint"
+        /// Manual popovers must be displayed and closed using declarative show/hide/toggle buttons or JavaScript.
+        static member inline manual = PropHelper.mkAttr "popover" "manual"
+
+    /// Specifies the action to be performed on the popover element being controlled by a control <button> or <input>.
+    [<Erase>]
+    type popoverTargetAction =
+        /// The button will hide a shown popover. If you try to hide an already hidden popover, no action will be taken.
+        static member inline hide = PropHelper.mkAttr "popoverTargetAction" "hide"
+        /// The button will show a hidden popover. If you try to show an already showing popover, no action will be taken.
+        static member inline show = PropHelper.mkAttr "popoverTargetAction" "show"
+        ///The button will toggle a popover between showing and hidden.
+        static member inline toggle = PropHelper.mkAttr "popoverTargetAction" "toggle"
 
     /// Provide a hint to the browser about what the author thinks will lead to the best user experience with regards
     /// to what content is loaded before the video is played.
