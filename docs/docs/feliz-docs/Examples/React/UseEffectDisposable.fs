@@ -9,7 +9,9 @@ let UseEffect() =
     React.useEffect((fun () ->
         Fable.Core.JS.console.log($"Count changed to {count}")
         // Optional cleanup function
-        { new System.IDisposable with member this.Dispose() = Fable.Core.JS.console.log("Cleanup effect") }
+        FsReact.createDisposable(fun () -> Fable.Core.JS.console.log("Cleanup effect"))
+        // same as:
+        // { new System.IDisposable with member this.Dispose() = Fable.Core.JS.console.log("Cleanup effect") }
     ), [| box count |])
     Html.div [
         Html.button [

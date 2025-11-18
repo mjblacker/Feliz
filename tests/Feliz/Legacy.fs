@@ -449,52 +449,6 @@ let RenderCount (input: {| label: string |}) =
 //         ]
 //     ]
 
-module TokenCancellation =
-    [<ReactComponent>]
-    let EleUseToken (input: {| failedCallback: unit -> unit |}) =
-        let token = React.useCancellationToken()
-
-        React.useEffectOnce(fun () ->
-            async {
-                do! Async.Sleep 500
-                input.failedCallback()
-            }
-            |> fun a -> Async.StartImmediate(a,token.current)
-        )
-
-        Html.none
-
-    [<ReactComponent>]
-    let ResultComp (input: {| result: string |}) =
-        Html.div [
-            prop.testId "useTokenCancellation" // this is tested for disposed
-            prop.text input.result
-        ]
-
-    [<ReactComponent>]
-    let Main (input: {| failTest: bool |}) =
-        let renderChild,setRenderChild = React.useState true
-        let resultText,setResultText = React.useState ""
-
-        let setFailed = React.useCallback <| fun () -> setResultText "Failed"
-
-        React.useLayoutEffectOnce(fun () ->
-            async {
-                do! Async.Sleep 100
-
-                if not input.failTest then
-                    setResultText "Disposed"
-                    setRenderChild false
-            }
-            |> Async.StartImmediate
-        )
-
-        Html.div [
-            if renderChild then
-                EleUseToken {| failedCallback = setFailed |}
-            ResultComp {| result = resultText |}
-        ]
-
 // module OptionalDispose =
 
 //     // let useEffectWithDis (setup: unit -> System.IDisposable) = 

@@ -68,7 +68,7 @@ module React =
                 | Some options -> document.addEventListener(eventType, fn, options)
                 | None -> document.addEventListener(eventType, fn)
 
-                React.createDisposable(fun () ->
+                FsReact.createDisposable(fun () ->
                     match removeOptions with
                     | Some options -> document.removeEventListener(eventType, fn, options)
                     | None -> document.removeEventListener(eventType, fn)
@@ -232,7 +232,7 @@ module React =
                     | None -> elem.addEventListener(eventType, fn)
                 )
                 
-                React.createDisposable(fun () -> 
+                FsReact.createDisposable(fun () -> 
                     elemRef.current |> Option.iter(fun elem ->
                         match removeOptions with
                         | Some options -> elem.removeEventListener(eventType, fn, options)
@@ -426,7 +426,7 @@ module React =
                 | Some options -> window.addEventListener(eventType, fn, options)
                 | None -> window.addEventListener(eventType, fn)
 
-                React.createDisposable(fun () ->
+                FsReact.createDisposable(fun () ->
                     match removeOptions with
                     | Some options -> window.removeEventListener(eventType, fn, options)
                     | None -> window.removeEventListener(eventType, fn)

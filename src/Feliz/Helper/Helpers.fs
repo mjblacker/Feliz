@@ -18,14 +18,6 @@ module Interop =
     open Fable.Core
     open Fable.React
 
-    // let reactApi : IReactApi = importDefault "react"
-    // #if FABLE_COMPILER_3 || FABLE_COMPILER_4
-    // let inline reactElement (name: string) (props: 'a) : ReactElement = import "createElement" "react"
-    // #else
-    // let reactElement (name: string) (props: 'a) : ReactElement = import "createElement" "react"
-    // #endif
-
-
     [<Emit "undefined">]
     let undefined: obj = jsNative
 

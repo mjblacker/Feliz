@@ -61,7 +61,7 @@ module UseMediaQueryExtension =
 
                 addListener mediaQueryList handler
 
-                React.createDisposable(fun () -> removeListener mediaQueryList handler)
+                FsReact.createDisposable(fun () -> removeListener mediaQueryList handler)
             , [| mediaQuery :> obj |])
 
             mq

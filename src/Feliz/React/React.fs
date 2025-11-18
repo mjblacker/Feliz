@@ -199,6 +199,7 @@ useEffect(() => {
         return setup;
         }, []);"
 
+
     /// The `useEffect` hook that creates a disposable effect for React function components.
     /// This effect has no dependencies which means the effect is re-executed on every re-render.
     /// To make the effect run once (for example you subscribe once to web sockets) then provide an empty array
@@ -372,52 +373,6 @@ useLayoutEffect(() => {
     /// <param name='createFunction'>A create function returning a value to be memoized.</param>
     static member inline useMemo<'a>(calculateValue: unit -> 'a): 'a = React.useMemo(calculateValue, [||])
 
-    // //
-    // // React.functionComponent
-    // //
-
-    // /// <summary>
-    // /// Creates a React function component from a function that accepts a "props" object and renders a result.
-    // /// A component key can be provided in the props object, or a custom `withKey` function can be provided.
-    // /// </summary>
-    // /// <param name='render'>A render function that returns an element.</param>
-    // /// <param name='withKey'>A function to derive a component key from the props.</param>
-    // static member inline functionComponent(render: 'props -> ReactElement, ?withKey: 'props -> string) =
-    //     Internal.functionComponent render None withKey
-
-    // /// <summary>
-    // /// Creates a React function component from a function that accepts a "props" object and renders a result.
-    // /// A component key can be provided in the props object, or a custom `withKey` function can be provided.
-    // /// </summary>
-    // /// <param name='name'>The component name to display in the React dev tools.</param>
-    // /// <param name='render'>A render function that returns an element.</param>
-    // /// <param name='withKey'>A function to derive a component key from the props.</param>
-    // [<Obsolete "React.functionComponent is obsolete. Use [<ReactComponent>] attribute to automatically convert them to React components">]
-    // static member inline functionComponent(name: string, render: 'props -> ReactElement, ?withKey: 'props -> string) =
-    //     Internal.functionComponent render (Some name) withKey
-
-    // /// <summary>
-    // /// Creates a React function component from a function that accepts a "props" object and renders a result.
-    // /// A component key can be provided in the props object, or a custom `withKey` function can be provided.
-    // /// </summary>
-    // /// <param name='render'>A render function that returns a list of elements.</param>
-    // /// <param name='withKey'>A function to derive a component key from the props.</param>
-    // [<Obsolete "React.functionComponent is obsolete. Use [<ReactComponent>] attribute to automatically convert them to React components">]
-    // static member inline functionComponent(render: 'props -> #seq<ReactElement>, ?withKey: 'props -> string) =
-    //     Internal.functionComponent (render >> React.fragment) None withKey
-
-    // /// <summary>
-    // /// Creates a React function component from a function that accepts a "props" object and renders a result.
-    // /// A component key can be provided in the props object, or a custom `withKey` function can be provided.
-    // /// </summary>
-    // /// <param name='render'>A render function that returns a list of elements.</param>
-    // /// <param name='name'>The component name to display in the React dev tools.</param>
-    // /// <param name='withKey'>A function to derive a component key from the props.</param>
-    // [<Obsolete "React.functionComponent is obsolete. Use [<ReactComponent>] attribute to automatically convert them to React components">]
-    // static member inline functionComponent
-    //     (name: string, render: 'props -> #seq<ReactElement>, ?withKey: 'props -> string)
-    //     =
-    //     Internal.functionComponent (render >> React.fragment) (Some name) withKey
 
     //
     // React.memo
@@ -636,62 +591,6 @@ useLayoutEffect(() => {
     [<ImportMember("react")>]
     static member inline useImperativeHandle(ref: IRefValue<'t>, createHandle: unit -> 't, ?dependencies: obj[]) = jsNative
 
-    /// Creates a disposable instance by providing the implementation of the dispose member.
-    static member inline createDisposable(dispose: unit -> unit) = { new IDisposable with member _.Dispose() = dispose() }
-
-    [<Hook>]
-    static member inline useDisposable(dispose: unit -> unit): IDisposable = 
-        React.useMemo(
-            (fun () -> React.createDisposable dispose),
-            [| box dispose |] 
-        )
-
-    /// <summary>
-    /// Creates a CancellationToken that is cancelled when a component is unmounted.
-    /// </summary>
-    [<Hook>]
-    static member inline useCancellationToken() = 
-        let cts = React.useRef(new System.Threading.CancellationTokenSource())
-        let token = React.useRef(cts.current.Token)
-
-        React.useEffectOnce(
-            fun () ->
-                React.createDisposable(fun () ->
-                    cts.current.Cancel()
-                    cts.current.Dispose()
-                )
-        )
-        token
-
-// [<AutoOpen; Erase>]
-// module ReactOverloadMagic =
-//     type React with
-//         /// Creates a disposable instance by merging multiple IDisposables.
-//         static member inline createDisposable([<ParamArray>] disposables: #IDisposable[]) =
-//             React.createDisposable (fun () -> disposables |> Array.iter (fun d -> d.Dispose()))
-
-//         /// Creates a disposable instance by merging multiple IDisposable options.
-//         static member inline createDisposable([<ParamArray>] disposables: #IDisposable option[]) =
-//             React.createDisposable (fun () -> disposables |> Array.iter (Option.iter (fun d -> d.Dispose())))
-
-//         /// Creates a disposable instance by merging multiple IDisposable refs.
-//         static member inline createDisposable([<ParamArray>] disposables: IRefValue<#IDisposable>[]) =
-//             React.createDisposable (fun () -> disposables |> Array.iter (fun d -> d.current.Dispose()))
-
-//         /// Creates a disposable instance by merging multiple IDisposable refs.
-//         static member inline createDisposable([<ParamArray>] disposables: IRefValue<#IDisposable option>[]) =
-//             React.createDisposable (fun () ->
-//                 disposables
-//                 |> Array.iter (fun d -> d.current |> Option.iter (fun d -> d.Dispose())))
-
-//         /// The `useState` hook that creates a state variable for React function components.
-//         static member inline useState<'t>(initial: 't) =
-//             Interop.reactApi.useState<'t, 't> (initial)
-
-
-//         static member inline useStateWithUpdater<'t>(initializer: unit -> 't) : ('t * (('t -> 't) -> unit)) =
-//             import "useState" "react"
-
 // This extensions module is required to help f# compiler understand overloads. 
 // Without this, for me the compiler was unable to resolve e.g. `useState` overload between `'t` and `unit -> 't`
 [<AutoOpen>]
@@ -711,29 +610,3 @@ module ReactExtensions =
         /// The `useState` hook that creates a state variable for React function components from an initialization function.
         [<ImportMember("react")>]
         static member inline useState<'t>(init: 't): ('t * ('t -> unit)) = jsNative
-
-        /// Creates a disposable instance by merging multiple IDisposables.
-        static member inline createDisposable([<ParamArray>] disposables: #IDisposable []) =
-            React.createDisposable(fun () ->
-                disposables
-                |> Array.iter (fun d -> d.Dispose())
-            )
-        /// Creates a disposable instance by merging multiple IDisposable options.
-        static member inline createDisposable([<ParamArray>] disposables: #IDisposable option []) =
-            React.createDisposable(fun () ->
-                disposables
-                |> Array.iter (Option.iter (fun d -> d.Dispose()))
-            )
-        /// Creates a disposable instance by merging multiple IDisposable refs.
-        static member inline createDisposable([<ParamArray>] disposables: IRefValue<#IDisposable> []) =
-            React.createDisposable(fun () ->
-                disposables
-                |> Array.iter (fun d -> d.current.Dispose())
-            )
-
-        /// Creates a disposable instance by merging multiple IDisposable refs.
-        static member inline createDisposable([<ParamArray>] disposables: IRefValue<#IDisposable option> []) =
-            React.createDisposable(fun () ->
-                disposables
-                |> Array.iter (fun d -> d.current |> Option.iter (fun d -> d.Dispose()))
-            )

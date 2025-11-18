@@ -34,7 +34,7 @@ module Delay =
     [<EditorBrowsable(EditorBrowsableState.Never)>]
     [<ReactComponent>]
     let DelayComp(input: DelayProps) =
-        let ct = React.useCancellationToken()
+        let ct = FsReact.useCancellationToken()
         let timeElapsed, setTimeElapsed = React.useState false
         let setTimeElapsed = React.useCallback(setTimeElapsed)
 

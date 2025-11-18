@@ -193,14 +193,14 @@ describe "useEffect" <| fun _ ->
         expect(dispose).toHaveBeenCalledTimes 1
     }
 
-    testPromise "calls effect on mount and disposeEffect on unmount" <| fun _ -> promise {
+    testPromise "calls effect on mount and IDisposable.Dispose() on unmount" <| fun _ -> promise {
 
         let effect: unit -> unit = vi.fn(fun () -> ())
         let dispose: unit -> unit = vi.fn(fun () -> ())
 
         // Render the component
         let renderResult = RTL.render (
-            Components.ComponentUseEffectWithUnmount(effect, dispose)
+            Components.ComponentUseEffectIDisposable(effect, dispose)
         )
 
         // Check that effect was called once on mount
@@ -262,14 +262,14 @@ describe "useLayoutEffect" <| fun _ ->
         expect(dispose).toHaveBeenCalledTimes 1
     }
 
-    testPromise "calls effect on mount and disposeEffect on unmount" <| fun _ -> promise {
+    testPromise "calls effect on mount and IDisposable.Dispose() on unmount" <| fun _ -> promise {
 
         let effect: unit -> unit = vi.fn(fun () -> ())
         let dispose: unit -> unit = vi.fn(fun () -> ())
 
         // Render the component
         let renderResult = RTL.render (
-            Components.ComponentUseLayoutEffectWithUnmount(effect, dispose)
+            Components.ComponentUseLayoutEffectIDisposable(effect, dispose)
         )
 
         // Check that effect was called once on mount

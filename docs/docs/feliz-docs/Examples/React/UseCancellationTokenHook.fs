@@ -8,7 +8,7 @@ type Main =
 
     [<ReactComponent>]
     static member private UseToken (failedCallback: unit -> unit) =
-        let token = React.useCancellationToken ()
+        let token = FsReact.useCancellationToken ()
 
         React.useEffect (fun () ->
             async {

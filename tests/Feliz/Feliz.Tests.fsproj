@@ -22,6 +22,8 @@
     <Compile Include="Basic.test.fs" />
     <Compile Include="ReactBindings.fs" />
     <Compile Include="ReactBindings.test.fs" />
+    <Compile Include="FsReact.fs" />
+    <Compile Include="FsReact.test.fs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

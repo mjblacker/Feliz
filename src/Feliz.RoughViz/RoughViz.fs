@@ -60,7 +60,7 @@ module RoughViz =
 
                 observer.current.observe element
 
-            React.createDisposable(fun () ->
+            FsReact.createDisposable(fun () ->
                 match elementRef.current with
                 | None -> ()
                 | Some element ->
@@ -95,7 +95,7 @@ module RoughViz =
                         let barHtml = unbox<HTMLElement> bars.[barIndex]
                         barHtml.addEventListener("click", fun _ -> handler barIndex)
 
-            React.createDisposable(fun () -> 
+            FsReact.createDisposable(fun () -> 
                 let bars = Browser.Dom.document.getElementsByClassName(elementId.current)
                 for barIndex in [0 .. bars.length - 1] do
                     let barHtml = unbox<HTMLElement> bars.[barIndex]

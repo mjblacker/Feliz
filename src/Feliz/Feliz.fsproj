@@ -28,6 +28,7 @@
         <Compile Include="React/ReactTypes.fs" />
         <Compile Include="React/React.fs" />
         <Compile Include="React/ReactDOM.fs" />
+        <Compile Include="React/FsReact.fs" />
         <Compile Include="Svg.fs" />
         <Compile Include="Html.fs" />
         <Compile Include="JSX.fs" />

@@ -261,7 +261,8 @@ let main args =
     match argv with
     | "setup" :: _ ->
         Setup.all()
-    | "test" :: a ->
+    | "test" :: a
+    | "tests" :: a ->
         match a with
         | filter :: _ ->
             Tests.runAll (Some filter)

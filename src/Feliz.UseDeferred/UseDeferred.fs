@@ -63,7 +63,7 @@ module ReactHookExtensions =
         [<Hook>]
         static member useDeferred(operation: Async<'T>, dependencies: obj array) =
             let (deferred, setDeferred) = React.useState(Deferred.HasNotStartedYet)
-            let token = React.useCancellationToken()
+            let token = FsReact.useCancellationToken()
             let executeOperation = async {
                 try
                     do setDeferred(Deferred<'T>.InProgress)
@@ -96,7 +96,7 @@ module ReactHookExtensions =
             }
 
             React.useEffectOnce(fun () ->
-                React.createDisposable(fun () -> cancellationToken.current.Cancel())
+                FsReact.createDisposable(fun () -> cancellationToken.current.Cancel())
             )
 
             let start = React.useCallback(fun arg ->
@@ -110,7 +110,7 @@ module ReactHookExtensions =
         static member useDeferredParallel<'T, 'U, 'Key when 'Key : comparison>(deferred: Deferred<'T>, map: 'T -> ('Key * Async<'U>) list) =
             let (data, setData) = React.useStateWithUpdater(Map.empty)
             let addData = React.useCallback(fun (key, value) -> setData(fun prev -> Map.add key value prev))
-            let token = React.useCancellationToken()
+            let token = FsReact.useCancellationToken()
             let mapKeyedOperatons (operations: ('Key * Async<'U>) list) = [
                 for (key, operation) in operations do
                     async {

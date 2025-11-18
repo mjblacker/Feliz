@@ -216,7 +216,7 @@ type Components =
         React.useEffectOnce(
             (fun () ->
                 effect()
-                React.createDisposable(disposeEffect)
+                FsReact.createDisposable(disposeEffect)
             )
         )
 
@@ -243,23 +243,13 @@ type Components =
         React.useEffectOnce(
             (fun () ->
                 effect()
-                React.createDisposable(disposeEffect)
+                FsReact.createDisposable(disposeEffect)
             )
         )
 
         Html.div [
 
         ]
-
-    [<ReactComponent>]
-    static member ComponentUseCancelationTokenSubcomponent(onToken: System.Threading.CancellationToken -> unit) =
-        let token = React.useCancellationToken()
-
-        React.useEffectOnce(fun () ->
-            onToken token.current
-        )
-
-        Html.div [ ]
 
     [<ReactComponent>]
     static member LazyLoad() =
@@ -444,6 +434,17 @@ type Components =
                 prop.text (if paused then "Resume" else "Pause")
             ]
         ]
+
+    // [<ReactComponent>]
+    // static member ComponentUseCancelationTokenSubcomponent(onToken: System.Threading.CancellationToken -> unit) =
+    //     let token = React.useCancellationToken()
+
+    //     React.useEffectOnce(fun () ->
+    //         onToken token.current
+    //     )
+
+    //     Html.div [ ]
+
 
     // [<ReactComponent>]
     // static member ComponentUseCancelationToken() =
