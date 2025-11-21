@@ -12,45 +12,54 @@ In the following example we define a simple button component that takes a text p
 import FSharpExample from '../../feliz-docs/fableoutput/Examples/Feliz/FSharp'
 import RawFSharpExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/FSharp.fs'
 
-<ComponentRender code={RawFSharpExample}>
+<ComponentRender code={RawFSharpExample} defaultOpen>
   <FSharpExample text={"Hello from F#"}/>
 </ComponentRender>
 
-- We define the button size as discriminated union type.
+## Discriminated Unions
 
-  ```FSharp
-  type ISize =
-    | Small
-    | Medium
-    | Large
-  ```
-- We make size an optional parameter with a default value.
+We define the button size as discriminated union type.
 
-  ```FSharp
-  static member Example(text: string, onClick: Browser.Types.MouseEvent -> unit, ?size: ISize) =
-        let size = defaultArg size Medium
-  
-  ```
+```FSharp
+type ISize =
+  | Small
+  | Medium
+  | Large
+```
 
-  :::info
-  Because of this we create the component as `static member` of a class. Using `let` bindings does not allow for optional parameters
-  :::
+## Optional Parameters
 
-- We use a `match case` on `size` to determine the appropriate CSS class to apply.
+We make size an optional parameter with a default value.
 
-  ```fsharp
-  let sizeClass =
-    match size with
-    | Small -> "sm"
-    | Medium -> ""
-    | Large -> "lg"
-  ```
+```FSharp
+static member Example(text: string, onClick: Browser.Types.MouseEvent -> unit, ?size: ISize) =
+      let size = defaultArg size Medium
 
-- We define a function and pass it to the `onClick` event handler.
+```
 
-  ```fsharp
-  let fn = fun _ -> Browser.Dom.console.log("Button clicked!")
-  // ...
-  Button.Example("Submit", fn, size = Large)
-  ```
+:::info
+Because of this we create the component as `static member` of a class. Using `let` bindings does not allow for optional parameters
+:::
+
+## Pattern Matching
+
+We use a `match .. with` on `size` to determine the appropriate CSS class to apply.
+
+```fsharp
+let sizeClass =
+  match size with
+  | Small -> "sm"
+  | Medium -> ""
+  | Large -> "lg"
+```
+
+## Lambda Functions
+
+We define a function and pass it to the `onClick` event handler.
+
+```fsharp
+let fn = fun _ -> Browser.Dom.console.log("Button clicked!")
+// ...
+Button.Example("Submit", fn, size = Large)
+```
 

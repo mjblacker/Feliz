@@ -50,6 +50,7 @@
     <Compile Include="Examples/Feliz/Overloads.fs" />
     <Compile Include="Examples/Feliz/Styling.fs" />
     <Compile Include="Examples/Feliz/FSharp.fs" />
+    <Compile Include="Examples/Feliz/PassingProps.fs" />
     <Compile Include="Examples/Feliz/ConditionalRendering.fs" />
     <Compile Include="Examples/Feliz/RenderingLists.fs" />
     <Compile Include="Examples/Feliz/ReactComponent.fs" />
