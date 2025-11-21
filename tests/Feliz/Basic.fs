@@ -172,11 +172,13 @@ type Components =
             ]
         ]
 
+
+module PropsAliasingTesting =
+
     [<ReactComponent>]
-    static member private PropsAliasingInner(props: IReactProperty list, test: string) =
+    let private PropsAliasingInner(props: IReactProperty list, test: string) =
         Html.div [
-            for prop in props do
-                prop
+            yield! props
             prop.children [
                 Html.h1 "Welcome to the Fable Playground!"
                 Html.p "This is a simple playground for experimenting with Fable and Feliz."
@@ -184,12 +186,26 @@ type Components =
         ]
 
     [<ReactComponent>]
-    static member PropsAliasing(props: IReactProperty list) =
+    let ArgsPropsAliasing(props: IReactProperty list) =
         Html.div [
-            for prop in props do
-                prop
+            yield! props
             prop.children [
-                Components.PropsAliasingInner(props, "test")
+                PropsAliasingInner(props, "test")
+                Html.h1 "Welcome to the Fable Playground!"
+                Html.p "This is a simple playground for experimenting with Fable and Feliz."
+            ]
+        ]
+
+    [<ReactComponent>]
+    let InnerLetBindingPropsAliasing(test: string, counter: int) =
+        
+        let props =
+            [ prop.testId "props-aliasing"
+              prop.id "props-aliasing"
+              prop.style [ style.backgroundColor "lightblue" ] ]
+        Html.div [
+            yield! props
+            prop.children [
                 Html.h1 "Welcome to the Fable Playground!"
                 Html.p "This is a simple playground for experimenting with Fable and Feliz."
             ]

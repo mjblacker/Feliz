@@ -401,7 +401,7 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                         |> List.unzip
                     let type_ =
                         Fable.Type.AnonymousRecordType(Array.ofList fieldNames, genericArgs, false)
-                    let mutable propsName = "props"
+                    let mutable propsName = "$props"
                     while fieldNames |> List.contains propsName do
                         propsName <- propsName + "_"
 

@@ -247,12 +247,20 @@ describe "Record Type Input Tests #606, #603" <| fun _ ->
 
 describe "Props Aliasing Tests #687" <| fun _ ->
 
-    test "Component with arg called 'props' must alias main input to 'props_'" <| fun _ ->
+    test "Component with input arg called props should be correctly aliased" <| fun _ ->
         RTL.render(
-            Components.PropsAliasing([prop.style [ style.padding 20; style.backgroundColor.blanchedAlmond ]; prop.testId "main-component"])
+            PropsAliasingTesting.ArgsPropsAliasing([prop.style [ style.padding 20; style.backgroundColor.blanchedAlmond ]; prop.testId "main-component"])
         ) |> ignore
 
         let components = RTL.screen.getAllByTestId "main-component"
         expect(components).toHaveLength(2)
         for c in components do
             expect(c).toBeInTheDocument()
+
+    test "Component inner let binding called props, should be correctly aliased" <| fun _ ->
+        RTL.render(
+            PropsAliasingTesting.InnerLetBindingPropsAliasing("test", 0)
+        ) |> ignore
+
+        let c = RTL.screen.getByTestId "props-aliasing"
+        expect(c).toBeInTheDocument()

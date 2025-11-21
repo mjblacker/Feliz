@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 3.0.0-rc.12 - 2025-11-21
+
+### 🐛 Fixed
+
+- Fix `props` aliasing issue. A `let props` inside the react component also created duplication issues (by @Freymaurer)
+
 ## 3.0.0-rc.11 - 2025-11-21
 
 ### 🐛 Fixed
