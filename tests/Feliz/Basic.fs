@@ -172,6 +172,29 @@ type Components =
             ]
         ]
 
+    [<ReactComponent>]
+    static member private PropsAliasingInner(props: IReactProperty list, test: string) =
+        Html.div [
+            for prop in props do
+                prop
+            prop.children [
+                Html.h1 "Welcome to the Fable Playground!"
+                Html.p "This is a simple playground for experimenting with Fable and Feliz."
+            ]
+        ]
+
+    [<ReactComponent>]
+    static member PropsAliasing(props: IReactProperty list) =
+        Html.div [
+            for prop in props do
+                prop
+            prop.children [
+                Components.PropsAliasingInner(props, "test")
+                Html.h1 "Welcome to the Fable Playground!"
+                Html.p "This is a simple playground for experimenting with Fable and Feliz."
+            ]
+        ]
+
 module RecordTypeInputTesting =
 
     [<AttachMembers>]

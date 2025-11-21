@@ -244,3 +244,15 @@ describe "Record Type Input Tests #606, #603" <| fun _ ->
 
         expect(RTL.screen.getByTestId "single-greet").toHaveTextContent("Hello, my name is Alice and I work as a Developer.")
         expect(RTL.screen.getByTestId "single-exists").toHaveTextContent("true")
+
+describe "Props Aliasing Tests #687" <| fun _ ->
+
+    test "Component with arg called 'props' must alias main input to 'props_'" <| fun _ ->
+        RTL.render(
+            Components.PropsAliasing([prop.style [ style.padding 20; style.backgroundColor.blanchedAlmond ]; prop.testId "main-component"])
+        ) |> ignore
+
+        let components = RTL.screen.getAllByTestId "main-component"
+        expect(components).toHaveLength(2)
+        for c in components do
+            expect(c).toBeInTheDocument()

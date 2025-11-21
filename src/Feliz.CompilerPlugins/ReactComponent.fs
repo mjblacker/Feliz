@@ -319,7 +319,7 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                             let classEntity = compiler.GetEntity(classDecl.Entity)
 
                             match decl.Args[0].Type with
-                            | Type.DeclaredType(entity, _genericArgs) ->
+                            | Type.DeclaredType(entity, _) ->
                                 let declaredEntity = compiler.GetEntity(entity)
 
                                 if
@@ -385,26 +385,27 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                             sprintf
                                 "Function component '%s' is using a single tupled argument as input parameter. This can create issues with correct transpilation. "
                                 decl.Name
-                            "To fix this issue, consider spreading the arguments or using a (anonymous) record type."
+                            "To fix this issue, consider spreading the arguments or using a anonymous record type."
                         ]
                     compiler.LogWarning(warningMsg, ?range = decl.Body.Range)
 
                 let propsArg =
+                    let fieldNames, genericArgs =
+                        decl.Args 
+                        |> List.mapi (fun i arg -> 
+                            if isPredictedTuple then
+                                "tuple_" + string i, arg.Type
+                            else
+                                arg.DisplayName, arg.Type
+                        ) 
+                        |> List.unzip
                     let type_ =
-                        let fieldNames, genericArgs =
-                            decl.Args 
-                            |> List.mapi (fun i arg -> 
-                                if isPredictedTuple then
-                                    "tuple_" + string i, arg.Type
-                                else
-                                    arg.DisplayName, arg.Type
-                            ) 
-                            |> List.unzip
-
                         Fable.Type.AnonymousRecordType(Array.ofList fieldNames, genericArgs, false)
-                    // let name = sprintf "%sInputProps" (AstUtils.camelCase decl.Name)
-                    let name = "props"
-                    AstUtils.makeIdent type_ name
+                    let mutable propsName = "props"
+                    while fieldNames |> List.contains propsName do
+                        propsName <- propsName + "_"
+
+                    AstUtils.makeIdent type_ propsName
 
                 let propBindings =
                     ([], decl.Args)

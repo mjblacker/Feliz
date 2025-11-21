@@ -58,9 +58,9 @@ let rec flattenList (head: Fable.Expr) (tail: Fable.Expr) =
         match tail with
         | Fable.Expr.Value (value, range) ->
             match value with
-            | Fable.ValueKind.NewList(Some(nextHead, nextTail), listType) ->
+            | Fable.ValueKind.NewList(Some(nextHead, nextTail), _) ->
                 yield! flattenList nextHead nextTail
-            | Fable.ValueKind.NewList(None, listType) ->
+            | Fable.ValueKind.NewList(None, _) ->
                 yield! [ ]
             | _ ->
                 yield! [ Fable.Expr.Value (value, range) ]
@@ -77,7 +77,7 @@ let makeImport (selector: string) (path: string) =
 let isRecord (compiler: PluginHelper) (fableType: Fable.Type) =
     match fableType with
     | Fable.Type.AnonymousRecordType _ -> true
-    | Fable.Type.DeclaredType (entity, genericArgs) -> compiler.GetEntity(entity).IsFSharpRecord
+    | Fable.Type.DeclaredType (entity, _) -> compiler.GetEntity(entity).IsFSharpRecord
     | _ -> false
 
 let isAnonymRecord (compiler: PluginHelper) (fableType: Fable.Type) =
@@ -89,7 +89,7 @@ let isPropertyList (compiler: PluginHelper) (fableType: Fable.Type) =
     match fableType with
     | Fable.Type.List(genericArg) ->
         match genericArg with
-        | Fable.Type.DeclaredType (entity, genericArgs) -> entity.FullName.EndsWith "IReactProperty"
+        | Fable.Type.DeclaredType (entity, _) -> entity.FullName.EndsWith "IReactProperty"
         | _ -> false
     | _ -> false
 
@@ -103,16 +103,16 @@ let isAnonymousRecord (fableType: Fable.Type) =
 
 let isReactElement (fableType: Fable.Type) =
     match fableType with
-    | Fable.Type.DeclaredType (entity, genericArgs) -> entity.FullName.EndsWith "ReactElement"
+    | Fable.Type.DeclaredType (entity, _) -> entity.FullName.EndsWith "ReactElement"
     | _ -> false
 
 let recordHasField name (compiler: PluginHelper) (fableType: Fable.Type) =
     match fableType with
-    | Fable.Type.AnonymousRecordType (fieldNames, genericArgs, _isStruct) ->
+    | Fable.Type.AnonymousRecordType (fieldNames, _, _) ->
         fieldNames
         |> Array.exists (fun field -> field = name)
 
-    | Fable.Type.DeclaredType (entity, genericArgs) ->
+    | Fable.Type.DeclaredType (entity, _) ->
         compiler.GetEntity(entity).FSharpFields
         |> List.exists (fun field -> field.Name = name)
 

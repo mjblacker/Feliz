@@ -5,42 +5,20 @@ open Fable.Core
 open Fable.Core.JsInterop
 open Shared
 
-[<AttachMembers>]
-type private RecordTypeInput = 
-    { 
-        Name: string; 
-        Job: string;  
-    }
-
-    member this.Greet() =
-        $"Hello, my name is {this.Name} and I work as a {this.Job}."
-
-let private RecordTypeCtx =
-    let init = Set.empty<RecordTypeInput>
-    let setter = fun (_: Set<RecordTypeInput>) -> () 
-    React.createContext({|state = init; setState = setter|})
 
 [<ReactComponent>]
-let private SingleRecordTypeInput(recordInput: RecordTypeInput) =
-    let ctx = React.useContext RecordTypeCtx
-    Html.div [
-        Html.div [
-            prop.testId "single-greet"
-            prop.text (recordInput.Greet())
-        ]
-        Html.div [
-            prop.testId "single-exists"
-            prop.text (ctx.state |> Set.contains recordInput |> string)
-        ]
+let LogBtn (nb:int, children: ReactElement, props: seq<IReactProperty>) =
+    Html.button [
+        for prop in props do prop // same as yield! props
+        prop.onClick (fun _ -> printfn $"You clicked me {nb}") 
+        prop.children children
     ]
 
+
 [<ReactComponent>]
-let RecordTypeContainer() = 
-    let record = React.useMemo (fun () -> { Name = "Alice"; Job = "Engineer" }) 
-    let records, setRecords = React.useState(Set [record])
+let Main() =
     Html.div [
-        RecordTypeCtx.Provider({|state = records; setState = setRecords|}, [
-            for record in records do
-                SingleRecordTypeInput(record)
-        ])
+        Html.h1 "Welcome to the Fable Playground!"
+        Html.p "This is a simple playground for experimenting with Fable and Feliz."
+        LogBtn(12, Html.text "Click me", [ prop.style [style.backgroundColor.green; style.color.white]])
     ]
