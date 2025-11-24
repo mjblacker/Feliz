@@ -133,3 +133,18 @@ type React =
 
     static member inline useElmish(init: 'Model * Cmd<'Msg>, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>, ?dependencies: obj array) =
         React.useElmish((fun () -> Program.mkProgram (fun () -> init) update (fun _ _ -> ())), ?dependencies=dependencies)
+
+    static member inline useElmish(init: 'Arg -> 'Model * Cmd<'Msg>, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>, subscribe: 'Model -> Sub<'Msg>, arg: 'Arg, ?dependencies: obj array) =
+        React.useElmish((fun () -> 
+            Program.mkProgram init update (fun _ _ -> ())
+            |> Program.withSubscription subscribe), arg, ?dependencies=dependencies)
+
+    static member inline useElmish(init: unit -> 'Model * Cmd<'Msg>, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>, subscribe: 'Model -> Sub<'Msg>, ?dependencies: obj array) =
+        React.useElmish((fun () -> 
+            Program.mkProgram init update (fun _ _ -> ())
+            |> Program.withSubscription subscribe), ?dependencies=dependencies)
+
+    static member inline useElmish(init: 'Model * Cmd<'Msg>, update: 'Msg -> 'Model -> 'Model * Cmd<'Msg>, subscribe: 'Model -> Sub<'Msg>, ?dependencies: obj array) =
+        React.useElmish((fun () -> 
+            Program.mkProgram (fun () -> init) update (fun _ _ -> ())
+            |> Program.withSubscription subscribe), ?dependencies=dependencies)

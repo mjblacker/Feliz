@@ -1,12 +1,13 @@
 ---
 title: "[<ReactComponent>]"
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 import ComponentRender from '@site/src/components/ComponentRender';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CodeBlock from '@theme/CodeBlock';
+import Admonition from '@theme/Admonition';
 
 Feliz offers a simple way to define React components using the `[<ReactComponent>]` attribute. This attribute can be applied to a function that returns a React element.
 
@@ -18,64 +19,126 @@ If you are interested in what happens under the hood, here is a short summary of
 
 <details>
 <summary>Click to expand</summary>
+
+import RawTupled from '!!raw-loader!../../feliz-docs/Examples/Feliz/ReactComponentTransform/Tupled.fs'
+import RawTupledJSX from '!!raw-loader!../../feliz-docs/fableoutput/Examples/Feliz/ReactComponentTransform/Tupled.jsx'
+
+import RawCurried from '!!raw-loader!../../feliz-docs/Examples/Feliz/ReactComponentTransform/Curried.fs'
+import RawCurriedJSX from '!!raw-loader!../../feliz-docs/fableoutput/Examples/Feliz/ReactComponentTransform/Curried.jsx'
+
+import RawRecordType from '!!raw-loader!../../feliz-docs/Examples/Feliz/ReactComponentTransform/RecordType.fs'
+import RawRecordTypeJSX from '!!raw-loader!../../feliz-docs/fableoutput/Examples/Feliz/ReactComponentTransform/RecordType.jsx'
+
+import RawAnonymRecordType from '!!raw-loader!../../feliz-docs/Examples/Feliz/ReactComponentTransform/AnonymRecordType.fs'
+import RawAnonymRecordTypeJSX from '!!raw-loader!../../feliz-docs/fableoutput/Examples/Feliz/ReactComponentTransform/AnonymRecordType.jsx'
+
 - Transform all arguments into an JavaScript object.
   
-  Tupled/curried arguments are transformed into object and exactly one argument as (anonymous) record type will be used as object.
+  Tupled/curried arguments are transformed into object and exactly one argument as **anonymous** record type will be used as object.
+
+    <details>
+    <summary>Example: Tupled arguments</summary>
 
     <Tabs>
 
-    <TabItem value="tupled" label="Tupled Args">
+    <TabItem value="fsharp" label="F#">
 
-    ```fsharp
-    [<ReactComponent>]
-    let Component(text: string, count: int) = ...
-
-    ```
+    <CodeBlock language='fsharp'>
+    {RawTupled}
+    </CodeBlock>
 
     </TabItem>
 
-    <TabItem value="curried" label="Curried Args">
+    <TabItem value="jsx" label="jsx">
 
-    ```fsharp
-    [<ReactComponent>]
-    let Component (text: string) (count: int) = ...
-
-    ```
+    <CodeBlock language='jsx'>
+    {RawTupledJSX}
+    </CodeBlock>
 
     </TabItem>
-
-    <TabItem value="record" label="Record Type">
-
-    ```fsharp
-    type Props = { text: string; count: int } // record type
-
-    [<ReactComponent>]
-    let Component(props: Props) = ...
-    ```
-
-    </TabItem>
-
-    <TabItem value="anon" label="Anonymous Record Type">
-
-    ```fsharp
-    type Props = {| text: string; count: int |} // anonymous record type
-
-    [<ReactComponent>]
-    let Component(props: Props) = ...
-    ```
-
-    </TabItem>
-
-    <TabItem value="transpiled" label="JSX">
-
-    ```jsx
-    function Component({text, count}) { ... }
-    ```
-
-    </TabItem>
-
 
     </Tabs>
+
+    </details>
+
+    <details>
+    <summary>Example: Curried arguments</summary>
+
+    <Tabs>
+
+    <TabItem value="fsharp" label="F#">
+
+    <CodeBlock language='fsharp'>
+    {RawCurried}
+    </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value="jsx" label="jsx">
+
+    <CodeBlock language='jsx'>
+    {RawCurriedJSX}
+    </CodeBlock>
+
+    </TabItem>
+
+    </Tabs>
+
+    </details>
+
+    <details>
+    <summary>Example: Anonymous Record Type</summary>
+
+    <Tabs>
+
+    <TabItem value="fsharp" label="F#">
+
+    <CodeBlock language='fsharp'>
+    {RawAnonymRecordType}
+    </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value="jsx" label="jsx">
+
+    <CodeBlock language='jsx'>
+    {RawAnonymRecordTypeJSX}
+    </CodeBlock>
+
+    </TabItem>
+
+    </Tabs>
+
+    </details>
+
+    <details>
+    <summary>Example: Record Type ⚠️</summary>
+
+    <Admonition type="warning">
+      Record types are not transformed and passed as is. Record Types are transpiled by Fable into a class like structure so we loose equality and possibly attached functions if we deconstruct them into a js object.
+    </Admonition>
+
+    <Tabs>
+
+    <TabItem value="fsharp" label="F#">
+
+    <CodeBlock language='fsharp'>
+    {RawRecordType}
+    </CodeBlock>
+
+    </TabItem>
+
+    <TabItem value="jsx" label="jsx">
+
+    <CodeBlock language='jsx'>
+    {RawRecordTypeJSX}
+    </CodeBlock>
+
+    </TabItem>
+
+    </Tabs>
+
+    </details>
 
 - Component will be called using the `createElement` function from React.
 - Import `React` automatically.

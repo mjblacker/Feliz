@@ -234,3 +234,54 @@ describe "Tests for specific style elements" <| fun _ ->
 
         expect(div).toBeInTheDocument()
         expect(div).toHaveStyle("font-size: small")
+
+describe "Record Type Input Tests #606, #603" <| fun _ ->
+
+    test "Component with record type input passes args correctly" <| fun _ ->
+        RTL.render(
+            RecordTypeInputTesting.RecordTypeContainer()
+        ) |> ignore
+
+        expect(RTL.screen.getByTestId "single-greet").toHaveTextContent("Hello, my name is Alice and I work as a Developer.")
+        expect(RTL.screen.getByTestId "single-exists").toHaveTextContent("true")
+
+describe "Props Aliasing Tests #687" <| fun _ ->
+
+    test "Component with input arg called props should be correctly aliased" <| fun _ ->
+        RTL.render(
+            PropsAliasingTesting.ArgsPropsAliasing([prop.style [ style.padding 20; style.backgroundColor.blanchedAlmond ]; prop.testId "main-component"])
+        ) |> ignore
+
+        let components = RTL.screen.getAllByTestId "main-component"
+        expect(components).toHaveLength(2)
+        for c in components do
+            expect(c).toBeInTheDocument()
+
+    test "Component inner let binding called props, should be correctly aliased" <| fun _ ->
+        RTL.render(
+            PropsAliasingTesting.InnerLetBindingPropsAliasing("test", 0)
+        ) |> ignore
+
+        let c = RTL.screen.getByTestId "props-aliasing"
+        expect(c).toBeInTheDocument()
+
+describe "Nullness Tests" <| fun _ ->
+
+    test "Component with nullable prop handles null correctly" <| fun _ ->
+        RTL.render(
+            NullnessTesting.NullishPropComponent(null)
+        ) |> ignore
+
+        let noText = RTL.screen.getByTestId "no-text"
+        expect(noText).toBeInTheDocument()
+        expect(noText).toHaveTextContent("No text provided.")
+
+    test "Component with nullable prop handles non-null correctly" <| fun _ ->
+
+        RTL.render(
+            NullnessTesting.NullishPropComponent("Hello, Nullable!")
+        ) |> ignore
+
+        let hasText = RTL.screen.getByTestId "has-text"
+        expect(hasText).toBeInTheDocument()
+        expect(hasText).toHaveTextContent("Hello, Nullable!")

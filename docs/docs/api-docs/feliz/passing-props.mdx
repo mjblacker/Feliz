@@ -1,0 +1,75 @@
+---
+title: Passing props to components
+description: How to pass props to Feliz components
+sidebar_position: 2
+---
+
+import ComponentRender from '@site/src/components/ComponentRender';
+import Example from '../../feliz-docs/fableoutput/Examples/Feliz/PassingProps'
+import RawExample from '!!raw-loader!../../feliz-docs/Examples/Feliz/PassingProps.fs'
+
+In Feliz you can pass props to components in a similar way as you would in React with JSX. Props are simply function parameters that you define in your component function.
+
+## Example
+
+<ComponentRender code={RawExample} defaultOpen>
+  <Example />
+</ComponentRender>
+
+## Passing Children
+
+In JSX syntax you typically pass children between the opening and closing tags of a component. 
+
+```JSX
+<MyButton onClick={handleClick}>
+    Click Me
+</MyButton>
+```
+
+This behavior is mimicked in Feliz by defining a `children` parameter in your component function. You can then pass the children as an argument when calling the component.
+
+```fsharp
+[<ReactComponent(true)>]
+let MyButton(children: ReactElement, onClick: unit -> unit, props: IReactProperty list) =
+    Html.button [
+        prop.style [
+            style.padding 10
+            style.backgroundColor.lightBlue
+            style.borderRadius 5
+            style.cursor.pointer
+        ]
+        prop.onClick (fun _ -> onClick())
+        yield! props // same as `...props` in JSX. Can overwrite existing props
+        prop.children children
+    ]
+```
+
+
+## Spreading props
+
+You can also spread additional props using the `yield!` syntax inside the `prop` list. This allows you to pass any number of additional properties to the component, similar to the spread operator (`...props`) in JSX. Be aware that spreading props can overwrite existing props if there are conflicts.
+
+::::info
+
+When using prop spreading, be cautious as it can lead to unintended overwrites of existing props, which may cause unexpected behavior in your components.
+
+In a list of properties, the last occurrence of a property takes precedence. Therefore, if you spread props after defining specific properties, the spread props can overwrite those specific properties.
+
+:::danger
+The exception to this rule is the `children` property. For children the first occurrence takes precedence.
+:::
+
+::::
+
+
+:::tip
+It is recommended to define most arguments explicitly for better type safety and clarity. Use spreading only when necessary.
+:::
+
+```fsharp
+[<ReactComponent(true)>]
+let MyButton(children: ReactElement, props: IReactProperty list) =
+    Html.button [
+        yield! props // same as `...props` in JSX. Can overwrite existing props
+    ]
+```

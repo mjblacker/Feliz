@@ -7,14 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Types of changes**
 
--   ✨ `Added` for new features.
--   🔄 `Changed` for changes in existing functionality.
--   🗑️ `Deprecated` for soon-to-be removed features.
--   🔥 `Removed` for now removed features.
--   🐛 `Fixed` for any bug fixes.
--   🔒 `Security` in case of vulnerabilities.
+- ✨ `Added` for new features.
+- 🔄 `Changed` for changes in existing functionality.
+- 🗑️ `Deprecated` for soon-to-be removed features.
+- 🔥 `Removed` for now removed features.
+- 🐛 `Fixed` for any bug fixes.
+- 🔒 `Security` in case of vulnerabilities.
 
 ## [Unreleased]
+
+## 3.0.0-rc.6 - 2025-11-21
+
+### 🐛 Fixed
+
+- Fix `props` aliasing issue. A `let props` inside the react component also created duplication issues (by @Freymaurer)
+
+## 3.0.0-rc.5 - 2025-11-21
+
+### 🐛 Fixed
+
+- Fix `props` aliasing issue. when passing a arg with the name `props` to a `[<ReactComponent>]` it threw with duplication error (by @Freymaurer)
+
+## 3.0.0-rc.4 - 2025-11-18
+
+### 🗑️ Deprecated
+
+- Remove transformation of single input record types for ReactComponent #603 (by @Freymaurer)
+
+### 🐛 Fixed
+
+- Fix equality issue for single input record types for ReactComponent #603 (by @Freymaurer)
 
 ## 3.0.0-rc.3 - 2025-11-03
 
@@ -47,4 +69,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✨ Added
 
 - Last release before start of Changelog
-
