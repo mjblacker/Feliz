@@ -39,6 +39,11 @@
     <Compile Include="Examples/React/Suspense.fs" />
     <Compile Include="Examples/React/UseEffectOnce.fs" />
     <Compile Include="Examples/React/UseEffectDisposable.fs" />
+    <Compile Include="Examples/React/MemoFunction.fs" />
+    <Compile Include="Examples/React/MemoFunctionAreEqual.fs" />
+    <Compile Include="Examples/React/MemoAttribute.fs" />
+    <Compile Include="Examples/React/MemoAttributeAreEqualEmit.fs" />
+    <Compile Include="Examples/React/MemoAttributeAreEqualEmitFnName.fs" />
     <Compile Include="Examples/ReactDOM/CreatePortal.fs" />
     <Compile Include="Examples/ReactDOM/CreateRoot.fs" />
     <Compile Include="Examples/ReactDOM/HydrateRoot.fs" />
@@ -57,6 +62,7 @@
     <Compile Include="Examples/Feliz/ReactComponentImport.fs" />
     <Compile Include="Examples/Feliz/ReactLazyComponent.fs" />
     <Compile Include="Examples/Feliz/ReactLazyComponentPath.fs" />
+    <Compile Include="Examples/Feliz/ReactMemoComponentAreEqualFn.fs" />
     <Compile Include="Examples/Guides/UnboxStringEnum.fs" />
     <Compile Include="Examples/Guides/BrowserTypesEvents.fs" />
     <Compile Include="Examples/Guides/BrowserTypesGlobalNamespaces.fs" />
