@@ -10,31 +10,33 @@ open System.Text.RegularExpressions
 let cleanFullDisplayName str =
     Regex.Replace(str, @"`\d+", "").Replace(".", "_")
 
-let makeIdent _type name: Fable.Ident =
-    { Name = name
-      Type = _type
-      IsCompilerGenerated = true
-      IsThisArgument = false
-      IsMutable = false
-      Range = None }
+let makeIdent _type name : Fable.Ident = {
+    Name = name
+    Type = _type
+    IsCompilerGenerated = true
+    IsThisArgument = false
+    IsMutable = false
+    Range = None
+}
 
 let makeUniqueIdent (name: string) =
     let hashToString (i: int) =
-        if i < 0
-        then "Z" + (abs i).ToString("X")
-        else i.ToString("X")
-    "$" + name + (Guid.NewGuid().GetHashCode() |> hashToString) |> makeIdent Fable.Type.Any
+        if i < 0 then
+            "Z" + (abs i).ToString("X")
+        else
+            i.ToString("X")
 
-let makeValue r value =
-    Fable.Value(value, r)
+    "$" + name + (Guid.NewGuid().GetHashCode() |> hashToString)
+    |> makeIdent Fable.Type.Any
+
+let makeValue r value = Fable.Value(value, r)
 
 let makeStrConst (x: string) =
-    Fable.StringConstant x
-    |> makeValue None
+    Fable.StringConstant x |> makeValue None
 
 let nullValue = Fable.Expr.Value(Fable.ValueKind.Null(Fable.Type.Any), None)
 
-let makeCallInfo args: Fable.CallInfo = {
+let makeCallInfo args : Fable.CallInfo = {
     ThisArg = None
     Args = args
     SignatureArgTypes = []
@@ -49,8 +51,7 @@ module ImportFromFableLib =
         match com.Options.Language with
         | TypeScript -> com.LibraryDir + "/" + moduleName + ".ts"
         | JavaScript -> com.LibraryDir + "/" + moduleName + ".js"
-        | _ ->
-            failwith "Only JavaScript and TypeScript are supported"
+        | _ -> failwith "Only JavaScript and TypeScript are supported"
 
     let private makeImportLibWithInfo (com: PluginHelper) t memberName (moduleName: string) info =
         let selector = memberName
@@ -69,42 +70,44 @@ module ImportFromFableLib =
         Fable.AST.Fable.LibraryImportInfo.Create(isInstanceMember = false, isModuleMember = true)
         |> makeImportLibWithInfo com t memberName moduleName
 
-let emitJs macro args  =
+let emitJs macro args =
     let callInfo = makeCallInfo args
 
-    let emitInfo : Fable.AST.Fable.EmitInfo =
-        { Macro = macro
-          IsStatement = false
-          CallInfo = callInfo }
+    let emitInfo: Fable.AST.Fable.EmitInfo = {
+        Macro = macro
+        IsStatement = false
+        CallInfo = callInfo
+    }
 
     Fable.Expr.Emit(emitInfo, Fable.Type.Any, None)
 
-let rec flattenList (head: Fable.Expr) (tail: Fable.Expr) =
-    [
-        yield head;
-        match tail with
-        | Fable.Expr.Value (value, range) ->
-            match value with
-            | Fable.ValueKind.NewList(Some(nextHead, nextTail), _) ->
-                yield! flattenList nextHead nextTail
-            | Fable.ValueKind.NewList(None, _) ->
-                yield! [ ]
-            | _ ->
-                yield! [ Fable.Expr.Value (value, range) ]
+let rec flattenList (head: Fable.Expr) (tail: Fable.Expr) = [
+    yield head
+    match tail with
+    | Fable.Expr.Value(value, range) ->
+        match value with
+        | Fable.ValueKind.NewList(Some(nextHead, nextTail), _) -> yield! flattenList nextHead nextTail
+        | Fable.ValueKind.NewList(None, _) -> yield! []
+        | _ -> yield! [ Fable.Expr.Value(value, range) ]
 
-        | _ ->
-            yield! [ ]
-    ]
+    | _ -> yield! []
+]
 
 let makeImport (selector: string) (path: string) =
-    Fable.Import({ Selector = selector.Trim()
-                   Path = path.Trim()
-                   Kind = Fable.UserImport(false) }, Fable.Any, None)
+    Fable.Import(
+        {
+            Selector = selector.Trim()
+            Path = path.Trim()
+            Kind = Fable.UserImport(false)
+        },
+        Fable.Any,
+        None
+    )
 
 let isRecord (compiler: PluginHelper) (fableType: Fable.Type) =
     match fableType with
     | Fable.Type.AnonymousRecordType _ -> true
-    | Fable.Type.DeclaredType (entity, _) -> compiler.GetEntity(entity).IsFSharpRecord
+    | Fable.Type.DeclaredType(entity, _) -> compiler.GetEntity(entity).IsFSharpRecord
     | _ -> false
 
 let isAnonymRecord (compiler: PluginHelper) (fableType: Fable.Type) =
@@ -116,46 +119,47 @@ let isPropertyList (compiler: PluginHelper) (fableType: Fable.Type) =
     match fableType with
     | Fable.Type.List(genericArg) ->
         match genericArg with
-        | Fable.Type.DeclaredType (entity, _) -> entity.FullName.EndsWith "IReactProperty"
+        | Fable.Type.DeclaredType(entity, _) -> entity.FullName.EndsWith "IReactProperty"
         | _ -> false
     | _ -> false
 
-let isPascalCase (input: string) = not (String.IsNullOrWhiteSpace input) && List.contains input.[0] ['A' .. 'Z']
+let isPascalCase (input: string) =
+    not (String.IsNullOrWhiteSpace input) && List.contains input.[0] [ 'A' .. 'Z' ]
+
 let isCamelCase (input: string) = not (isPascalCase input)
 
 let isAnonymousRecord (fableType: Fable.Type) =
     match fableType with
-    | Fable.Type.AnonymousRecordType  _ -> true
+    | Fable.Type.AnonymousRecordType _ -> true
     | _ -> false
 
 let isReactElement (fableType: Fable.Type) =
     match fableType with
-    | Fable.Type.DeclaredType (entity, _) -> entity.FullName.EndsWith "ReactElement"
+    | Fable.Type.DeclaredType(entity, _) -> entity.FullName.EndsWith "ReactElement"
     | _ -> false
 
 let recordHasField name (compiler: PluginHelper) (fableType: Fable.Type) =
     match fableType with
-    | Fable.Type.AnonymousRecordType (fieldNames, _, _) ->
-        fieldNames
-        |> Array.exists (fun field -> field = name)
+    | Fable.Type.AnonymousRecordType(fieldNames, _, _) -> fieldNames |> Array.exists (fun field -> field = name)
 
-    | Fable.Type.DeclaredType (entity, _) ->
+    | Fable.Type.DeclaredType(entity, _) ->
         compiler.GetEntity(entity).FSharpFields
         |> List.exists (fun field -> field.Name = name)
 
-    | _ ->
-        false
+    | _ -> false
 
-let memberName = function
-    | Fable.MemberRef(_,m) -> m.CompiledName
+let memberName =
+    function
+    | Fable.MemberRef(_, m) -> m.CompiledName
     | Fable.GeneratedMemberRef m -> m.Info.Name
 
 let makeCall callee args =
     Fable.Call(
-        callee, 
-        makeCallInfo args, 
+        callee,
+        makeCallInfo args,
         Fable.Any, // This must be adjusted to change the return type of the function
-        None)
+        None
+    )
 
 
 let makeSet target fieldName value =
@@ -168,7 +172,7 @@ let createElement reactElementType args =
 let emptyReactElement reactElementType =
     Fable.Expr.Value(Fable.Null(reactElementType), None)
 
-let makeMemberInfo isInstance typ name: Fable.GeneratedMemberInfo = {
+let makeMemberInfo isInstance typ name : Fable.GeneratedMemberInfo = {
     Name = name
     ParamTypes = []
     ReturnType = typ
@@ -178,29 +182,28 @@ let makeMemberInfo isInstance typ name: Fable.GeneratedMemberInfo = {
     DeclaringEntity = None
 }
 
-let objValue (k, v): Fable.ObjectExprMember =
-    {
-        Name = k
-        Args = []
-        Body = v
-        MemberRef =
-            makeMemberInfo true v.Type k
-            |> Fable.GeneratedValue
-            |> Fable.GeneratedMemberRef
-        IsMangled = false
-    }
+let objValue (k, v) : Fable.ObjectExprMember = {
+    Name = k
+    Args = []
+    Body = v
+    MemberRef = makeMemberInfo true v.Type k |> Fable.GeneratedValue |> Fable.GeneratedMemberRef
+    IsMangled = false
+}
 
-let objExpr kvs = Fable.ObjectExpr(List.map objValue kvs, Fable.Any, None)
+let objExpr kvs =
+    Fable.ObjectExpr(List.map objValue kvs, Fable.Any, None)
 
 let capitalize (input: string) =
-    if String.IsNullOrWhiteSpace input
-    then ""
-    else input.First().ToString().ToUpper() + String.Join("", input.Skip(1))
+    if String.IsNullOrWhiteSpace input then
+        ""
+    else
+        input.First().ToString().ToUpper() + String.Join("", input.Skip(1))
 
 let camelCase (input: string) =
-    if String.IsNullOrWhiteSpace input
-    then ""
-    else input.First().ToString().ToLower() + String.Join("", input.Skip(1))
+    if String.IsNullOrWhiteSpace input then
+        ""
+    else
+        input.First().ToString().ToLower() + String.Join("", input.Skip(1))
 
 let withTag tag =
     function
@@ -209,5 +212,4 @@ let withTag tag =
     | Fable.Operation(op, tags, t, r) -> Fable.Operation(op, tag :: tags, t, r)
     | e -> e
 
-let withJSXTag =
-    withTag "jsx"
+let withJSXTag = withTag "jsx"
