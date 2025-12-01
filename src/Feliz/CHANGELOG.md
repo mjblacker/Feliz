@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Support for the [menu HTML element](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/menu) (by @laurentpayot)
+- Support for the [Popover API HTML attributes](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API#html_attributes) (by @laurentpayot)
+
 ## 3.0.0-rc.14 - 2025-11-28
 
 ### ✨ Added
