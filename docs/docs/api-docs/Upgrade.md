@@ -33,7 +33,7 @@ Recommended is the use of .NET 8. You can check your local .NET version with `do
 
 ## React.memo
 
-`React.memo` behavior was reworked to improve compatibility with React devtools. It now **requires** to be called with `React.memoRenderer`. Check out the [docs](./api-docs/react/apis/memo) for more info and alternatives!
+`React.memo` behavior was reworked to improve compatibility with React devtools. It now **requires** to be called with `React.memoRenderer`. Check out the [docs](./react/apis/memo) for more info and alternatives!
 
 ```fsharp
 let MemoFunction =
@@ -50,7 +50,7 @@ let Main () =
 
 ## React.lazy'
 
-`React.lazy'` behavior was reworked. It now **requires** to be called with `React.lazyRenderer`. Check out the [docs](./api-docs/react/apis/lazy) for more info and alternatives!
+`React.lazy'` behavior was reworked. It now **requires** to be called with `React.lazyRenderer`. Check out the [docs](./react/apis/lazy) for more info and alternatives!
 
 ```fsharp
 let LazyHello: LazyComponent<unit> =
@@ -74,7 +74,7 @@ let SuspenseDemo() =
 
 ## React.context
 
-Using context with React was reworked to more closely align with React functionality.
+Using context with React was reworked to more closely align with React functionality. Check out the [docs](./react/apis/createContext) for more info!
 
 ```fsharp
 // Define a context for shared state
