@@ -1,5 +1,6 @@
-#if !NET7_0_OR_GREATER 
 namespace System.Diagnostics.CodeAnalysis
+#if !NET7_0_OR_GREATER
+
 open System
 
 /// <summary>Specifies the syntax used in a string.</summary>
@@ -26,4 +27,5 @@ type internal StringSyntaxAttribute
 
     /// <summary>Gets optional arguments associated with the specific syntax employed.</summary>
     member val public Arguments = arguments with get
+
 #endif

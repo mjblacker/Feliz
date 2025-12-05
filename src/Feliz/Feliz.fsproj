@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="StringSyntax.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Helper/Helpers.fs" />
         <Compile Include="Helper/DateParsing.fs" />

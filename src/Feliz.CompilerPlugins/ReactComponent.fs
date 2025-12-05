@@ -34,6 +34,23 @@ module internal ReactComponentHelpers =
             | _ -> None
         | _ -> None
 
+    let injectUseMemoDirective (useMemoDirective: bool option) (body: Expr) =
+
+        match useMemoDirective with
+        | None ->
+            body
+        | Some false ->
+            Sequential [
+                AstUtils.emitJs "\"use no memo\"" []
+                // Expr.Value (ValueKind.StringConstant "use no memo", None)
+                body
+            ]
+        | Some true ->
+            Sequential [
+                AstUtils.emitJs "\"use memo\"" []
+                body
+            ]
+
     let injectReactImport body =
         let body =
             match body with
@@ -129,6 +146,7 @@ module internal ReactComponentHelpers =
 }"""
 
     let applyImportOrMemoOrLazy import from (memo: MemoStrategy option) (lazy': bool option) (compiler: PluginHelper) (decl: MemberDecl) =
+
         match import, from, memo, lazy' with
         | Some _, Some _, _, _ ->
             let reactElType = decl.Body.Type
@@ -217,7 +235,7 @@ module internal ReactComponentHelpers =
 open ReactComponentHelpers
 
 /// <summary>Transforms a function into a React function component. Make sure the function is defined at the module level</summary>
-type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: string, ?memo: MemoStrategy, ?lazy': bool) =
+type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: string, ?memo: MemoStrategy, ?lazy': bool, ?useMemoDirective: bool) =
     inherit MemberDeclarationPluginAttribute()
     override _.FableMinimumVersion = "5.0"
     new() = ReactComponentAttribute(exportDefault = false)
@@ -408,10 +426,18 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                     // nothing to report
                     ()
 
-                decl |> applyImportOrMemoOrLazy import from memo lazy' compiler
+                let body =
+                    decl.Body
+                    |> injectUseMemoDirective useMemoDirective
+                { decl with Args = []; Body = body }
+                |> applyImportOrMemoOrLazy import from memo lazy' compiler
             else if decl.Args.Length = 1 && decl.Args[0].Type = Type.Unit then
                 // remove arguments from functions requiring unit as input
-                { decl with Args = [] }
+
+                let body =
+                    decl.Body
+                    |> injectUseMemoDirective useMemoDirective
+                { decl with Args = []; Body = body }
                 |> applyImportOrMemoOrLazy import from memo lazy' compiler
             else
                 // rewrite all other arguments into getters of a single props object
@@ -476,6 +502,7 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                         let arg = propBindings |> List.fold (fun body (k, v) -> Let(k, v, body)) arg
                         Call(reactMemo, { callInfo with Args = arg :: restArgs }, t, r)
                     | _ -> propBindings |> List.fold (fun body (k, v) -> Let(k, v, body)) decl.Body
+                    |> injectUseMemoDirective useMemoDirective
 
                 {
                     decl with
@@ -483,6 +510,18 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                         Body = body
                 }
                 |> applyImportOrMemoOrLazy import from memo lazy' compiler
+
+type ReactComponentMemoDirectiveAttribute(useMemoDirective: bool) =
+    inherit
+        ReactComponentAttribute(
+            ?exportDefault = None,
+            ?import = None,
+            ?from = None,
+            ?memo = None,
+            ?lazy' = None,
+            ?useMemoDirective = Some useMemoDirective
+        )
+
 type ReactMemoComponentAttribute private (memo: MemoStrategy) =
     inherit
         ReactComponentAttribute(
