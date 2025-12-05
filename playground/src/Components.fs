@@ -8,7 +8,7 @@ open Shared
 
 type jsx = JSX.Html
 
-[<ReactComponentMemoDirectiveAttribute(false)>]
+[<ReactMemoComponent(true)>]
 let ToggleThemeButton (theme: string, setTheme: string -> unit) =
     Html.button [
         prop.text "Toggle Theme"

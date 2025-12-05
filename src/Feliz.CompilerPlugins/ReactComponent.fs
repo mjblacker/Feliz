@@ -429,7 +429,7 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                 let body =
                     decl.Body
                     |> injectUseMemoDirective useMemoDirective
-                { decl with Args = []; Body = body }
+                { decl with Body = body }
                 |> applyImportOrMemoOrLazy import from memo lazy' compiler
             else if decl.Args.Length = 1 && decl.Args[0].Type = Type.Unit then
                 // remove arguments from functions requiring unit as input
@@ -511,30 +511,28 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                 }
                 |> applyImportOrMemoOrLazy import from memo lazy' compiler
 
-type ReactComponentMemoDirectiveAttribute(useMemoDirective: bool) =
-    inherit
-        ReactComponentAttribute(
-            ?exportDefault = None,
-            ?import = None,
-            ?from = None,
-            ?memo = None,
-            ?lazy' = None,
-            ?useMemoDirective = Some useMemoDirective
-        )
-
-type ReactMemoComponentAttribute private (memo: MemoStrategy) =
+type ReactMemoComponentAttribute private (?memo: MemoStrategy, ?useMemoDirective: bool) =
     inherit
         ReactComponentAttribute(
             exportDefault = false,
             ?import = None,
             ?from = None,
-            memo = memo,
-            lazy' = false
+            ?memo = memo,
+            lazy' = false,
+            ?useMemoDirective = useMemoDirective
         )
     new() =
-        ReactMemoComponentAttribute(memo=MemoStrategy.EqualsShallow)
+        ReactMemoComponentAttribute(memo=MemoStrategy.EqualsShallow, ?useMemoDirective = None)
+    /// <summary>
+    /// This constructor is meant to be used with **React Compiler** in annotation mode.
+    /// 
+    /// - `true` -> "use memo"
+    /// - `false` -> "use no memo"
+    /// </summary> 
+    new(useMemoDirective: bool) = 
+        ReactMemoComponentAttribute(?memo = None, useMemoDirective = useMemoDirective)
     new([<StringSyntax("javascript")>] areEqual:string) = 
-        ReactMemoComponentAttribute(memo=MemoStrategy.EqualsCustom areEqual)
+        ReactMemoComponentAttribute(memo=MemoStrategy.EqualsCustom areEqual, ?useMemoDirective = None)
     
     /// <summary>
     /// Transforms a function into a React memoized function component
