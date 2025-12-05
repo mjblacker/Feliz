@@ -1,0 +1,59 @@
+---
+title: JetBrains Rider
+sidebar_position: 1
+---
+
+JetBrains Rider is a powerful, cross-platform IDE developed by JetBrains. It provides excellent support for F# development and integrates well with .NET projects. Rider offers a rich set of features, including code analysis, refactoring tools, and debugging capabilities, making it a great choice for F# developers working with Feliz.
+
+## Features
+
+### `[<StringSyntax>]` Support
+
+Rider has built-in support for the `[<StringSyntax>]` attribute. This attribute allows you to to get IDE support (like syntax highlighting and autocompletion) for embedded DSLs in string literals, such as JSX or JavaScript.
+
+```fsharp
+module Renderer.App
+
+open Feliz
+
+let inline jsx ([<System.Diagnostics.CodeAnalysis.StringSyntax "jsx">] jsx: string) = Feliz.JSX.Html.jsx jsx
+
+[<ReactComponent>]
+let Main () =
+    let counter, setCounter = React.useState (0)
+
+    jsx // Below will be highlighted as JSX
+        $"""
+    <div>
+        <div>{counter}</div>
+        <button className="btn" onClick={fun () -> setCounter (counter + 1)}>+</button>
+        <button className="btn" onClick={fun () -> setCounter (counter - 1)}>-</button>
+    </div>
+"""
+```
+
+### Tailwind CSS Support
+
+1. Install the Tailwind CSS plugin from the JetBrains Marketplace.
+2. File -> Settings -> Languages & Frameworks -> Style Sheets -> Tailwind CSS
+3. Adjust json settings as follows:
+
+```json
+{
+  "includeLanguages": {
+    "fsharp": "javascript"
+  },
+  "experimental": {
+    "configFile": null,
+    "classRegex": [
+      "\\.className\\s+\"([^\"]*)\"",
+      ["\\.className\\s+\\[([^\\]]*)\\]", "\"([^\"]*)\""]
+    ]
+  }
+}
+```
+
+### Fantomas formatting on save
+
+1. File -> Settings -> Tools -> Actions on Save
+2. Enable "Reformat and Cleanup Code" 🎉
