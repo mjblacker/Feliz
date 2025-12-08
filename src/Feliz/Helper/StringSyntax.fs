@@ -2,8 +2,10 @@ namespace System.Diagnostics.CodeAnalysis
 #if !NET7_0_OR_GREATER
 
 open System
-
-/// <summary>Specifies the syntax used in a string.</summary>
+/// <summary>
+/// Backport of StringSyntaxAttribute from .NET 7+ for use in earlier framework versions.
+/// Specifies the syntax used in a string for enhanced IDE support (e.g., syntax highlighting, autocomplete).
+/// </summary>
 [<AttributeUsage(AttributeTargets.Parameter ||| AttributeTargets.Field ||| AttributeTargets.Property, AllowMultiple = false, Inherited = false)>]
 type internal StringSyntaxAttribute
 

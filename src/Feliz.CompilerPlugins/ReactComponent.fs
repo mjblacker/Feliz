@@ -42,7 +42,6 @@ module internal ReactComponentHelpers =
         | Some false ->
             Sequential [
                 AstUtils.emitJs "\"use no memo\"" []
-                // Expr.Value (ValueKind.StringConstant "use no memo", None)
                 body
             ]
         | Some true ->
@@ -112,7 +111,6 @@ module internal ReactComponentHelpers =
         | Sequential body ->
             let next = body |> List.map (transformToDynImport compilerInfo)
             Sequential next
-        // | Delegate(args, body, name, tags) ->
         | Let(_, _, body) -> // This case is relevant when props are used to hint at optional parameters
             // Example:
             // ```fsharp
@@ -318,15 +316,6 @@ type ReactComponentAttribute(?exportDefault: bool, ?import: string, ?from: strin
                     | None -> reactEl
                     | Some(ident, value) -> Let(ident, value, reactEl)
 
-                // match [| memo, lazy', callee |] with
-                // // If the call is memo or lazy and the function has an identifier, we can set the displayName
-                // | [| (Some true), _, (IdentExpr i) |]
-                // | [| _, (Some true), (IdentExpr i) |] ->
-                //     Sequential [
-                //         // (AstUtils.makeSet (IdentExpr(i)) "displayName" (AstUtils.makeStrConst i.Name))
-                //         expr
-                //     ]
-                // | _ -> expr
                 expr
         | _ ->
             // return expression as is when it is not a call expression
@@ -515,8 +504,6 @@ type ReactMemoComponentAttribute private (?memo: MemoStrategy, ?useMemoDirective
     inherit
         ReactComponentAttribute(
             exportDefault = false,
-            ?import = None,
-            ?from = None,
             ?memo = memo,
             lazy' = false,
             ?useMemoDirective = useMemoDirective
@@ -550,20 +537,7 @@ type ReactMemoComponentAttribute private (?memo: MemoStrategy, ?useMemoDirective
             | _ -> MemoStrategy.FSharpEquality // default case, should not happen
         ReactMemoComponentAttribute(memo=memoStrategy)
 
-// type TestComponentAttribute() =
-//     inherit ReactComponentAttribute(false, ?import = None, ?from = None, memo = MemoStrategy.FSharpEquality, lazy' = false)
 type ReactLazyComponentAttribute() =
     inherit ReactComponentAttribute(false, ?import = None, ?from = None, ?memo = None, lazy' = true)
 
-
-
-// type ReactMemoComponentFsEqualityAttribute (exportDefault: bool) =
-//     inherit ReactComponentAttribute(memo = MemoStrategy.FSharpEquality, lazy' = false, exportDefault=exportDefault, ?import=None, ?from=None)
-//     new() = ReactMemoComponentFsEqualityAttribute(exportDefault=false)
-
-// [<RequireQualifiedAccessAttribute>]
-// module ReactMemoComponent =
-
-//     type FsEqualAttribute() = 
-//         inherit ReactComponentAttribute(false, ?import = None, ?from = None, memo = MemoStrategy.FSharpEquality, lazy' = true)
 
