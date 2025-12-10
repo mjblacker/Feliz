@@ -93,7 +93,7 @@ const config: Config = {
       logo: {
         alt: 'Feliz Logo',
         src: 'img/felizlogo.svg',
-        href: '/api-docs/',
+        href: '/',
       },
       items: [
         {

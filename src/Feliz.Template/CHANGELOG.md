@@ -16,6 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 5.0.0 - 2025-12-10
+
+### 🔄 Changed
+
+- Update dependencies
+- Update .NET SDK version to 10.0
+- Update Fable to 5.0.0-alpha.20
+
 ## 5.0.0-rc.5 - 2025-11-18
 
 ### 🐛 Fixed
