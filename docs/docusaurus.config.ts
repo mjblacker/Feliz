@@ -43,12 +43,16 @@ const config: Config = {
       'classic',
       {
         docs: {
-          lastVersion: '2.9.0',
+          lastVersion: 'current',
           versions: {
             current: {
               badge: false,
-              label: "Next"
+              label: "v3",
             },
+            "2.9.0": {
+              badge: true,
+              label: "v2.9.0",
+            }
           },
           routeBasePath: '/', // Serve the docs at the site's root
           sidebarPath: './sidebars.ts',
