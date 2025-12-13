@@ -637,7 +637,20 @@ useLayoutEffect(() => {
     /// <param name='getSnapshot'>A function that returns the current value of the external data source.</param>
     /// <returns>The current value from the external data source.</returns>
     [<ImportMember("react")>]
-    static member inline useSyncExternalStore(subscribe: (unit -> unit) -> 'a , getSnapshot: unit -> 'T): 'T = jsNative
+    static member inline useSyncExternalStore(subscribe: Func<(unit -> unit),(unit -> unit)> , getSnapshot: unit -> 'T): 'T = jsNative
+
+    static member inline useSyncExternalStore(subscribe: (unit -> unit) -> (unit -> unit), getSnapshot: unit -> 'T): 'T =
+        React.useSyncExternalStore( Func<_,_> subscribe, getSnapshot)
+
+    static member inline useSyncExternalStore(subscribe: (unit -> unit) -> #IDisposable, getSnapshot: unit -> 'T): 'T =
+        React.useSyncExternalStore( Func<_,_> 
+            (fun (callback) ->
+                let disp = subscribe(callback)
+                fun () -> disp.Dispose()
+            ), 
+            getSnapshot
+        )
+
 
 // This extensions module is required to help f# compiler understand overloads. 
 // Without this, for me the compiler was unable to resolve e.g. `useState` overload between `'t` and `unit -> 't`
