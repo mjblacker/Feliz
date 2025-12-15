@@ -64,3 +64,9 @@ npm start
 ### 📚 Documentation
 
 Feliz has extensive documentation at [https://fable-hub.github.io/Feliz/](https://fable-hub.github.io/Feliz/) with live examples alongside code samples, check them out and if you have any question, let us know!
+
+### ⌚ Changelog
+
+Each project in Feliz has its own changelog file in the `src` folder. Check them out for the latest changes!
+
+Here is a direct link to the [Feliz changelog](src/Feliz/CHANGELOG.md).
