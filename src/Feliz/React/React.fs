@@ -435,7 +435,6 @@ useLayoutEffect(() => {
     /// it will read the current context value from the closest matching Provider above it in the tree.
     /// </summary>
     /// <param name='defaultValue'>A default value that is only used when a component does not have a matching Provider above it in the tree.</param>
-    /// TODO!
     [<ImportMember("react")>]
     static member inline createContext<'a>(?defaultValue: 'a) : ReactContext<'a> = jsNative
 
