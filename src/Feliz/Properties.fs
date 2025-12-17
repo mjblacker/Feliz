@@ -2484,6 +2484,13 @@ module prop =
         /// The first letter of each word defaults to a capital letter; all other letters default to lowercase
         static member inline words = PropHelper.mkAttr "autoCapitalize" "words"
 
+    [<Erase>]
+    type autoCorrect =
+        /// Disable automatic correction of editable text.
+        static member inline off = PropHelper.mkAttr "autoCorrect" "off"
+        /// Enable automatic correction of spelling and punctuation errors.
+        static member inline on' = PropHelper.mkAttr "autoCorrect" "on"
+
     /// Specifies the interpolation mode for the animation.
     [<Erase>]
     type calcMode =
