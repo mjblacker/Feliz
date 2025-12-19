@@ -27,3 +27,7 @@ module Interop =
             props
         | None -> props
 
+[<RequireQualifiedAccess; Erase>]
+module Activity = 
+    let [<Literal>] visible = "visible"
+    let [<Literal>] hidden = "hidden"
