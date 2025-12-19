@@ -662,7 +662,30 @@ useLayoutEffect(() => {
             getSnapshot,
             ?getServerSnapshot = getServerSnapshot
         )
-
+    
+    /// <summary>
+    /// lets you hide and restore the UI and internal state of its children.
+    /// </summary>
+    /// <param name='children'>The elements that will be rendered within the Activity block.</param>
+    /// <param name='mode'>A string value of either 'visible' or 'hidden'</param>
+    static member inline Activity(children: ReactElement, ?mode: string) = 
+        ReactLegacy.createElement(
+            unbox<ReactNode> (import "Activity" "react"), 
+            props = {| mode = defaultArg mode "visible" |}, 
+            children = children
+        )
+    
+    /// <summary>
+    /// lets you hide and restore the UI and internal state of its children.
+    /// </summary>
+    /// <param name='children'>The elements that will be rendered within the Activity block.</param>
+    /// <param name='mode'>A string value of either 'visible' or 'hidden'</param>
+    static member inline Activity(children: seq<ReactElement>, ?mode: string) = 
+        ReactLegacy.createElement(
+            unbox<ReactNode> (import "Activity" "react"), 
+            props = {| mode = defaultArg mode "visible" |}, 
+            children = children
+        )
 
 // This extensions module is required to help f# compiler understand overloads. 
 // Without this, for me the compiler was unable to resolve e.g. `useState` overload between `'t` and `unit -> 't`
