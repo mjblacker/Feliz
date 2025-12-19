@@ -59,3 +59,6 @@ type FsReact =
                 )
         )
         token
+
+    static member inline createSyncExternalStoreSubscribe(subscribe: (unit -> unit) -> (unit -> unit)) : UseSyncExternalStoreSubscribe =
+        UseSyncExternalStoreSubscribe(subscribe)

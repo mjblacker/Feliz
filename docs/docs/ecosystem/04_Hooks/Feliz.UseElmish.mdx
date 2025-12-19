@@ -7,6 +7,7 @@ sidebar_position: 9
 
 import ComponentRender from '@site/src/components/ComponentRender';
 import CodeBlock from '@theme/CodeBlock';
+import BrowserOnly from '@docusaurus/BrowserOnly';
 
 Besides being able to use Feliz in existing Elmish applications, you can also use Elmish as _part_ of your Feliz application. This is a different approach to building standalone React components that use Elmish internally to manage the state of the component but from the perspective of the consumer, it is just another React component.
 
@@ -30,11 +31,18 @@ Unable to show live example because Feliz.UseElmish does not support Server-Side
 
 Here is an example to demonstrate how to build such component:
 
+import ElmishCounter from '../../feliz-docs/fableoutput/Examples/React/ElmishCounter'
 import RawElmishCounter from '!!raw-loader!../../feliz-docs/Examples/React/ElmishCounter.fs'
 
-<CodeBlock language="fsharp" showLineNumbers>
-{RawElmishCounter}
-</CodeBlock>
+<ComponentRender code={RawElmishCounter}><ElmishCounter /></ComponentRender>
+
+
+<BrowserOnly fallback={<div>Loading in browser...</div>} >
+    {() => 
+    <ComponentRender code={RawElmishCounter}><ElmishCounter /></ComponentRender>
+    }
+</BrowserOnly>
+    
 
 The difference here from a full-fledged Elmish applications is that there isn't an "Elmish entry point" to run the component and manage its life-cycle. Instead, the `React.useElmish` hooks manages the Elmish life-cycle internally within the React component so that it can run standalone inside other React components:
 
